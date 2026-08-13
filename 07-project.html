@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>07 · 프로젝트와 연계하기 — 아두이노 기초</title>
+<meta name="description" content="자기장 센서를 아날로그 입력으로 읽어 X·Y·Z 세 축을 시리얼로 출력합니다. 시리얼 플로터로 파형을 보고, 세기를 계산해 LED와 부저로 연결합니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="7">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-buzzer.html"><span class="rail__num">04</span><span>버저 출력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="5">
+          <a href="05-button.html"><span class="rail__num">05</span><span>버튼 입력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="6">
+          <a href="06-traffic.html"><span class="rail__num">06</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item is-current" data-lesson-id="7">
+          <a href="07-project.html"><span class="rail__num">07</span><span>프로젝트와 연계하기<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#why">왜 자기장 센서인가</a></li>
+            <li><a href="#sensor">센서와 연결</a></li>
+            <li><a href="#analogread">아날로그 입력 이해</a></li>
+            <li><a href="#read">1단계 · 세 축 읽기</a></li>
+            <li><a href="#plotter">2단계 · 시리얼 플로터</a></li>
+            <li><a href="#calibrate">3단계 · 기준값 보정</a></li>
+            <li><a href="#strength">4단계 · 세기 계산</a></li>
+            <li><a href="#i2c">참고 · I2C 모듈이라면</a></li>
+            <li><a href="#noise">값이 이상할 때</a></li>
+            <li><a href="#quest">프로젝트로 확장하기</a></li>
+            <li><a href="#report">프로젝트 정리하기</a></li>
+            <li><a href="#checklist">마무리 체크리스트</a></li>
+          </ul>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">07강 · 프로젝트</p>
+          <h1>프로젝트와 연계하기<br><span style="font-size:.62em;color:var(--ink-3)">자기장 센서 읽기</span></h1>
+          <p class="lesson-head__lede">
+            버튼은 켜짐/꺼짐 두 가지만 알려 줍니다. 센서는 <b>“얼마나”</b>를 알려 줍니다.
+            자기장 센서를 아날로그 입력으로 읽어 X·Y·Z 세 축의 값을 시리얼로 내보내고,
+            그 값으로 무언가를 판단하는 데까지 가 봅니다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">이 강의를 마치면</p>
+            <ul>
+              <li><code>analogRead()</code>로 0~1023 값을 읽고 전압으로 바꿀 수 있다</li>
+              <li>센서 세 축을 동시에 읽어 시리얼로 보기 좋게 출력할 수 있다</li>
+              <li><b>시리얼 플로터</b>로 값의 변화를 그래프로 확인할 수 있다</li>
+              <li>기준값 보정과 노이즈 필터가 왜 필요한지 안다</li>
+              <li>센서 값으로 LED·부저를 제어해 하나의 장치를 완성할 수 있다</li>
+            </ul>
+          </div>
+        </header>
+
+        <div class="flow">
+          <div class="flow__step" data-kind="in">
+            <span class="flow__label">입력</span><b>자기장 센서</b>
+            <p>X·Y·Z 세 축을 <code>A0</code>·<code>A1</code>·<code>A2</code>로</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="cpu">
+            <span class="flow__label">연산</span><b>보정 · 세기 계산</b>
+            <p>기준값을 빼고 크기를 구합니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="out">
+            <span class="flow__label">출력</span><b>시리얼 · LED · 부저</b>
+            <p>숫자로 보내고, 임계값을 넘으면 알립니다</p>
+          </div>
+        </div>
+
+        <h2 id="why">왜 자기장 센서인가</h2>
+
+        <p>
+          자기장은 <b>눈에 보이지 않지만 항상 우리 주위에 있는 물리량</b>입니다.
+          지구 자체가 커다란 자석이라 어디서나 지구 자기장이 잡히고, 자석·전선·모터 근처에서는 값이 크게 흔들립니다.
+          센서 하나로 이런 것들을 만들 수 있습니다.
+        </p>
+
+        <ul>
+          <li><b>디지털 나침반</b> — X·Y 값으로 방향을 계산</li>
+          <li><b>금속·자석 탐지기</b> — 값이 갑자기 변하면 감지</li>
+          <li><b>문·창문 열림 감지</b> — 문틀에 자석을 붙여 두고 멀어지면 알림</li>
+          <li><b>회전수 측정</b> — 바퀴에 자석을 붙여 지나갈 때마다 세기</li>
+          <li><b>비접촉 스위치</b> — 손대지 않고 자석만 가까이 대서 켜기</li>
+        </ul>
+
+        <h2 id="sensor">센서와 연결</h2>
+
+        <div class="note note--tip">
+          <span class="note__t">이 강의가 대상으로 하는 센서</span>
+          <p>
+            <b>X·Y·Z 각각의 아날로그 출력 핀이 따로 나와 있는 3축 자기장 센서 모듈</b>입니다.
+            핀 이름이 <code>VCC · GND · X · Y · Z</code> (또는 <code>OUTX/OUTY/OUTZ</code>)로 되어 있으면 이 방식입니다.
+            홀 센서(SS49E, A1302 등)를 <b>세 개</b> 써서 축마다 하나씩 붙여도 똑같이 동작합니다.
+          </p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">내 모듈에 SDA·SCL 핀이 있다면</span>
+          <p>
+            그건 <b>I2C 방식(디지털)</b> 센서입니다. HMC5883L, QMC5883L, MLX90393 등이 여기에 해당합니다.
+            이 경우 <code>analogRead()</code>로는 읽을 수 없고 전용 라이브러리가 필요합니다.
+            아래 <a href="#i2c">I2C 모듈이라면</a> 절을 참고하세요. <b>배선과 코드는 다르지만, 읽은 뒤의 처리는 이 강의 내용이 그대로 적용됩니다.</b>
+          </p>
+        </div>
+
+        <h3>준비물</h3>
+        <ul class="parts">
+          <li><b>아두이노 우노</b><span>USB 케이블 포함</span></li>
+          <li><b>3축 자기장 센서</b><span>아날로그 출력형</span></li>
+          <li><b>브레드보드</b><span>1개</span></li>
+          <li><b>점퍼선</b><span>수-수 5개 이상</span></li>
+          <li><b>네오디뮴 자석</b><span>실험용 · 1개</span></li>
+          <li><b>LED + 부저</b><span>뒷부분에서 사용</span></li>
+        </ul>
+
+        <figure class="figure">
+          <svg viewBox="0 0 760 320" role="img" aria-label="자기장 센서 모듈의 VCC, GND, X, Y, Z 핀을 아두이노의 5V, GND, A0, A1, A2에 연결한 배선도" style="color:var(--ink-2)">
+            <!-- 아두이노 -->
+            <rect x="30" y="50" width="250" height="215" rx="9" fill="#35777a" stroke="#28595c" stroke-width="2"/>
+            <g fill="none" stroke="#a8d3d4" stroke-width="2.2" stroke-linecap="round" opacity=".6" transform="translate(56,130) scale(.8)">
+              <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+              <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+            </g>
+            <text x="56" y="168" font-size="10.5" fill="#a8d3d4" opacity=".6" font-family="system-ui">ARDUINO UNO</text>
+
+            <!-- 아날로그 헤더 (아래쪽) -->
+            <rect x="150" y="247" width="118" height="18" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841"><circle cx="170" cy="256" r="3.6"/><circle cx="200" cy="256" r="3.6"/><circle cx="230" cy="256" r="3.6"/></g>
+            <g fill="#cfe6e6" font-family="system-ui" font-size="11" text-anchor="middle">
+              <text x="170" y="241">A0</text><text x="200" y="241">A1</text><text x="230" y="241">A2</text>
+            </g>
+
+            <!-- 전원 헤더 (왼쪽 아래) -->
+            <rect x="46" y="247" width="80" height="18" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841"><circle cx="66" cy="256" r="3.6"/><circle cx="106" cy="256" r="3.6"/></g>
+            <g fill="#cfe6e6" font-family="system-ui" font-size="11" text-anchor="middle">
+              <text x="66" y="241">5V</text><text x="106" y="241">GND</text>
+            </g>
+
+            <!-- 센서 모듈 -->
+            <rect x="480" y="70" width="210" height="140" rx="7" fill="#2f5d8a" stroke="#234669" stroke-width="2"/>
+            <rect x="490" y="80" width="190" height="120" rx="5" fill="none" stroke="#3e6f9d" stroke-width="1"/>
+            <rect x="530" y="108" width="110" height="52" rx="4" fill="#20201c" stroke="#141310"/>
+            <circle cx="543" cy="121" r="3.4" fill="#4a4841"/>
+            <text x="585" y="140" font-size="11" fill="#a3a097" text-anchor="middle" font-family="system-ui">3-AXIS MAG</text>
+
+            <!-- 센서 핀 헤더 -->
+            <rect x="496" y="212" width="178" height="18" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841">
+              <circle cx="512" cy="221" r="3.6"/><circle cx="546" cy="221" r="3.6"/><circle cx="580" cy="221" r="3.6"/>
+              <circle cx="614" cy="221" r="3.6"/><circle cx="648" cy="221" r="3.6"/>
+            </g>
+            <g fill="#cfe0f0" font-family="system-ui" font-size="10.5" text-anchor="middle">
+              <text x="512" y="206">VCC</text><text x="546" y="206">GND</text>
+              <text x="580" y="206">X</text><text x="614" y="206">Y</text><text x="648" y="206">Z</text>
+            </g>
+
+            <!-- 배선 -->
+            <g fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M66 265V296H512V228" stroke="#c0503c"/>
+              <path d="M106 265V286H546V228" stroke="#3a3833"/>
+              <path d="M170 265V276H580V228" stroke="#7f8f4a"/>
+              <path d="M200 265V38H614V228" stroke="#8a6420"/>
+              <path d="M230 265V28H648V228" stroke="#6a4b8a"/>
+            </g>
+
+            <g fill="currentColor" font-family="system-ui, sans-serif" font-size="11.5">
+              <text x="700" y="112" font-weight="600">센서 모듈</text>
+              <text x="700" y="128" opacity=".65">아날로그 출력형</text>
+            </g>
+          </svg>
+          <figcaption>배선도. 세 축의 출력이 각각 A0·A1·A2로 들어갑니다. 핀 이름은 모듈마다 조금씩 다르니 <b>기판에 인쇄된 글자</b>를 기준으로 하세요.</figcaption>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">센서 핀</th><th style="width:8rem">아두이노</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>VCC</code> (또는 <code>+</code>)</td><td><code>5V</code></td><td>센서 전원. <b>모듈에 3.3V만 쓰라고 적혀 있으면 반드시 3.3V에</b> 연결하세요.</td></tr>
+              <tr><td><code>GND</code> (또는 <code>−</code>)</td><td><code>GND</code></td><td>기준점. 이게 빠지면 값이 전혀 맞지 않습니다.</td></tr>
+              <tr><td><code>X</code> / <code>OUTX</code></td><td><code>A0</code></td><td>X축 자기장 세기 (아날로그 전압)</td></tr>
+              <tr><td><code>Y</code> / <code>OUTY</code></td><td><code>A1</code></td><td>Y축</td></tr>
+              <tr><td><code>Z</code> / <code>OUTZ</code></td><td><code>A2</code></td><td>Z축</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">전압을 꼭 확인하세요</span>
+          <p>모듈이 <b>3.3V 전용</b>인데 5V를 물리면 센서가 손상됩니다. 기판에 <code>3V3</code>, <code>3.3V ONLY</code> 같은 표시가 있는지 먼저 보세요. 판단이 안 서면 <b>3.3V에 연결하는 쪽이 안전합니다</b> — 값이 작게 나올 뿐 고장은 나지 않습니다.</p>
+        </div>
+
+        <h2 id="analogread">아날로그 입력 이해하기</h2>
+
+        <p>
+          버튼은 <code>digitalRead()</code>로 0 또는 1만 읽었습니다.
+          센서는 <b>0V와 5V 사이의 어떤 전압</b>을 내보내므로, 그 중간값까지 읽어야 합니다.
+          이때 쓰는 것이 <code>analogRead()</code>입니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:11rem">들어오는 전압</th><th style="width:9rem"><code>analogRead()</code></th><th>의미</th></tr></thead>
+            <tbody>
+              <tr><td>0 V</td><td><code>0</code></td><td>최소</td></tr>
+              <tr><td>1.25 V</td><td><code>256</code></td><td></td></tr>
+              <tr><td>2.5 V</td><td><code>512</code></td><td><b>자기장이 없을 때 대개 이 근처</b></td></tr>
+              <tr><td>3.75 V</td><td><code>768</code></td><td></td></tr>
+              <tr><td>5 V</td><td><code>1023</code></td><td>최대</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          아두이노 우노의 아날로그-디지털 변환기(ADC)는 <b>10비트</b>입니다.
+          2<sup>10</sup> = 1024, 그래서 <code>0 ~ 1023</code>의 <b>1024단계</b>로 나눠 읽습니다.
+          한 칸의 크기는 <code>5V ÷ 1024 ≈ 0.0049V</code>, 약 <b>4.9mV</b>입니다.
+        </p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">값 → 전압 변환</span></div>
+          <pre><code>전압 = 읽은값 × 5.0 ÷ 1023.0
+
+  예)  512 × 5.0 ÷ 1023.0 = 2.50 V
+       800 × 5.0 ÷ 1023.0 = 3.91 V</code></pre>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">자기장 센서의 중요한 성질</span>
+          <p>
+            자기장은 <b>방향이 있어서 (+)와 (−)가 모두 나올 수 있습니다.</b>
+            그런데 센서는 음의 전압을 낼 수 없죠. 그래서 <b>자기장이 0일 때 전원의 절반(약 2.5V)</b>을 내보내고,
+            거기서 <b>올라가면 한쪽 방향, 내려가면 반대 방향</b>을 뜻하도록 만들어져 있습니다.
+            즉 <b>512가 기준선</b>이고, 우리는 <b>512에서 얼마나 벗어났는지</b>를 봐야 합니다.
+          </p>
+        </div>
+
+        <h2 id="read">1단계 · 세 축 읽어서 출력하기</h2>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">MagRead.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int PIN_X = A0;
+const int PIN_Y = A1;
+const int PIN_Z = A2;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("자기장 센서 시작");
+}
+
+void loop() {
+  int x = analogRead(PIN_X);   // 0 ~ 1023
+  int y = analogRead(PIN_Y);
+  int z = analogRead(PIN_Z);
+
+  Serial.print("X: ");
+  Serial.print(x);
+  Serial.print("\tY: ");     // \t = 탭(간격)
+  Serial.print(y);
+  Serial.print("\tZ: ");
+  Serial.println(z);         // 마지막은 println 으로 줄바꿈
+
+  delay(200);
+}</code></pre>
+        </div>
+
+        <p>업로드하고 <b>도구 → 시리얼 모니터</b>를 엽니다. 속도는 <b>9600 baud</b>입니다.</p>
+
+        <div class="serial">
+          <div class="serial__bar">시리얼 모니터 · 9600 baud</div>
+자기장 센서 시작
+X: 511	Y: 508	Z: 517
+X: 512	Y: 509	Z: 516
+X: 513	Y: 507	Z: 517
+X: 604	Y: 588	Z: 471     ← 자석을 가까이 댔을 때
+X: 712	Y: 655	Z: 402
+X: 515	Y: 510	Z: 516     ← 자석을 치웠을 때</div>
+
+        <div class="note note--tip">
+          <span class="note__t">지금 해볼 것</span>
+          <p>자석을 센서에 <b>천천히 가까이</b> 가져가 보세요. 그리고 <b>자석을 뒤집어서</b> 반대 극으로 다시 해보세요. 값이 512보다 <b>커지는지 작아지는지</b>가 바뀝니다. 이게 자기장의 방향입니다.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:11rem">문법</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>A0</code></td><td>아날로그 0번 핀. <code>const int PIN_X = A0;</code> 처럼 이름을 붙여 두면 나중에 핀을 바꾸기 쉽습니다.</td></tr>
+              <tr><td><code>analogRead(핀)</code></td><td>그 핀의 전압을 0~1023 숫자로 읽습니다. 한 번 읽는 데 약 100마이크로초가 걸립니다.</td></tr>
+              <tr><td><code>"\t"</code></td><td>탭 문자. 값들을 세로로 가지런히 맞춰 줍니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="plotter">2단계 · 시리얼 플로터로 보기</h2>
+
+        <p>
+          숫자가 빠르게 흘러가면 변화를 읽기 어렵습니다. Arduino IDE에는 <b>시리얼 플로터</b>가 들어 있어서,
+          숫자를 <b>그래프</b>로 그려 줍니다. <b>도구 → 시리얼 플로터</b>로 열 수 있습니다.
+        </p>
+
+        <p>
+          다만 플로터가 알아듣는 <b>출력 형식이 정해져 있습니다.</b>
+          <code>이름:값</code> 을 <b>쉼표</b>로 이어 붙이고 줄바꿈으로 끝내야 합니다.
+        </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">MagPlot.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int PIN_X = A0;
+const int PIN_Y = A1;
+const int PIN_Z = A2;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int x = analogRead(PIN_X);
+  int y = analogRead(PIN_Y);
+  int z = analogRead(PIN_Z);
+
+  // 시리얼 플로터 형식:  X:511,Y:508,Z:517
+  Serial.print("X:");
+  Serial.print(x);
+  Serial.print(",Y:");
+  Serial.print(y);
+  Serial.print(",Z:");
+  Serial.println(z);
+
+  delay(50);      // 초당 20번 — 그래프가 부드럽게 그려집니다
+}</code></pre>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">플로터를 쓸 때 주의</span>
+          <ul style="margin-bottom:0">
+            <li><b>시리얼 모니터와 플로터를 동시에 열 수 없습니다.</b> 하나를 닫고 다른 하나를 여세요.</li>
+            <li><code>Serial.println("시작합니다")</code> 같은 <b>글자만 있는 출력이 섞이면</b> 그래프가 깨집니다. 플로터를 쓸 때는 숫자만 보내세요.</li>
+            <li>플로터의 속도(baud)도 <b>9600</b>으로 맞춰야 합니다.</li>
+          </ul>
+        </div>
+
+        <h3>플로터에서 보이는 모습</h3>
+        <p>아래는 시리얼 플로터를 흉내 낸 것입니다. 슬라이더로 <b>자석을 가까이 가져가면</b> 세 축이 어떻게 반응하는지 보세요.</p>
+
+        <div class="sim" id="plot-sim">
+          <div class="sim__ctl">
+            <label for="plot-dist">자석 근접</label>
+            <input id="plot-dist" type="range" min="0" max="100" step="1" value="0" data-plot-dist>
+            <span class="small" data-plot-dist-out style="font-family:var(--mono)"></span>
+            <button class="btn btn--quiet" type="button" data-plot-toggle>정지</button>
+          </div>
+
+          <div class="plot">
+            <svg viewBox="0 0 640 220" preserveAspectRatio="none" style="height:200px">
+              <line x1="0" y1="110" x2="640" y2="110" stroke="#3a3a34" stroke-width="1" stroke-dasharray="4 5"/>
+              <path data-plot="x" fill="none" stroke="#82a9c4" stroke-width="1.8"/>
+              <path data-plot="y" fill="none" stroke="#d3a06a" stroke-width="1.8"/>
+              <path data-plot="z" fill="none" stroke="#9dc48d" stroke-width="1.8"/>
+            </svg>
+            <div class="plot__legend">
+              <span><i style="background:#82a9c4"></i>X</span>
+              <span><i style="background:#d3a06a"></i>Y</span>
+              <span><i style="background:#9dc48d"></i>Z</span>
+              <span style="color:#6a675e">점선 = 기준선 512</span>
+            </div>
+          </div>
+
+          <div class="sim__state" data-plot-read style="margin-top:.8rem"></div>
+        </div>
+
+        <h2 id="calibrate">3단계 · 기준값 보정</h2>
+
+        <p>
+          앞에서 “자기장이 없으면 512쯤”이라고 했지만, <b>실제로는 센서마다 다릅니다.</b>
+          어떤 축은 498, 어떤 축은 527에서 시작합니다. 제조 오차이고 정상입니다.
+          그래서 <b>켜질 때 지금 값을 기준으로 기억해 두고, 앞으로는 그 차이만 보는</b> 것이 정확합니다.
+        </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">MagCalibrate.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int PIN_X = A0;
+const int PIN_Y = A1;
+const int PIN_Z = A2;
+
+// 각 축의 기준값 (setup에서 측정)
+int baseX = 0, baseY = 0, baseZ = 0;
+
+// 여러 번 읽어 평균을 내는 함수 — 노이즈를 줄여 줍니다
+int readAverage(int pin, int times) {
+  long sum = 0;                       // 큰 수를 담아야 하므로 long
+  for (int i = 0; i &lt; times; i++) {
+    sum += analogRead(pin);
+    delay(2);
+  }
+  return sum / times;
+}
+
+void setup() {
+  Serial.begin(9600);
+
+  Serial.println("보정 중… 센서 주변에서 자석을 치워 주세요");
+  delay(2000);
+
+  baseX = readAverage(PIN_X, 50);     // 50번 읽어 평균
+  baseY = readAverage(PIN_Y, 50);
+  baseZ = readAverage(PIN_Z, 50);
+
+  Serial.print("기준값  X=");  Serial.print(baseX);
+  Serial.print("  Y=");        Serial.print(baseY);
+  Serial.print("  Z=");        Serial.println(baseZ);
+  Serial.println("보정 완료");
+}
+
+void loop() {
+  // 기준값을 뺀 '변화량'. 음수가 나올 수 있습니다.
+  int x = analogRead(PIN_X) - baseX;
+  int y = analogRead(PIN_Y) - baseY;
+  int z = analogRead(PIN_Z) - baseZ;
+
+  Serial.print("X:");   Serial.print(x);
+  Serial.print(",Y:");  Serial.print(y);
+  Serial.print(",Z:");  Serial.println(z);
+
+  delay(50);
+}</code></pre>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">보정하고 나면 무엇이 좋아지나</span>
+          <p>이제 <b>아무것도 없을 때 세 값이 모두 0 근처</b>가 됩니다. 자석을 대면 그만큼 0에서 벗어나죠. 512인지 498인지 신경 쓸 필요 없이 <b>“변했다 / 안 변했다”를 바로 판단</b>할 수 있습니다. 시리얼 플로터로 보면 세 선이 모두 0 근처에 모여 훨씬 읽기 좋습니다.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">보정 중에는 자석을 치우세요</span>
+          <p>보정하는 2초 동안 자석이 근처에 있으면, <b>그 상태가 “기준”이 되어 버립니다.</b> 그러면 자석을 치웠을 때 오히려 값이 크게 나옵니다. 시리얼 모니터의 안내 문구가 이걸 위해 있는 것입니다.</p>
+        </div>
+
+        <h2 id="strength">4단계 · 세기 계산하고 판단하기</h2>
+
+        <p>
+          축이 세 개라 값도 세 개입니다. 하지만 “자석이 가까이 있나?”를 판단할 때는
+          <b>방향과 상관없이 얼마나 센지</b> 하나의 숫자로 알면 편합니다.
+          세 축을 하나로 합치는 방법은 <b>피타고라스 정리를 3차원으로 확장한 것</b>입니다.
+        </p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">세기(크기) 구하기</span></div>
+          <pre><code>세기 = √(x² + y² + z²)
+
+  예)  x=30, y=-40, z=0  일 때
+       √(900 + 1600 + 0) = √2500 = 50</code></pre>
+        </div>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">MagDetect.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int PIN_X = A0;
+const int PIN_Y = A1;
+const int PIN_Z = A2;
+const int LED    = 13;   // 출력
+const int BUZZER = 7;    // 출력
+
+const int THRESHOLD = 40;   // 이 값을 넘으면 '감지'로 판단
+
+int baseX = 0, baseY = 0, baseZ = 0;
+
+int readAverage(int pin, int times) {
+  long sum = 0;
+  for (int i = 0; i &lt; times; i++) { sum += analogRead(pin); delay(2); }
+  return sum / times;
+}
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(LED, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
+
+  Serial.println("보정 중… 자석을 치워 주세요");
+  delay(2000);
+  baseX = readAverage(PIN_X, 50);
+  baseY = readAverage(PIN_Y, 50);
+  baseZ = readAverage(PIN_Z, 50);
+  Serial.println("보정 완료");
+}
+
+void loop() {
+  // ① 입력
+  int x = analogRead(PIN_X) - baseX;
+  int y = analogRead(PIN_Y) - baseY;
+  int z = analogRead(PIN_Z) - baseZ;
+
+  // ② 연산 — 세 축을 하나의 세기로
+  float strength = sqrt((long)x * x + (long)y * y + (long)z * z);
+
+  Serial.print("X:");   Serial.print(x);
+  Serial.print(",Y:");  Serial.print(y);
+  Serial.print(",Z:");  Serial.print(z);
+  Serial.print(",S:");  Serial.println(strength);
+
+  // ③ 출력 — 임계값을 넘으면 알린다
+  if (strength > THRESHOLD) {
+    digitalWrite(LED, HIGH);
+    tone(BUZZER, 1200, 60);      // 기다리지 않는 짧은 삑
+  } else {
+    digitalWrite(LED, LOW);
+  }
+
+  delay(50);
+}</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:13rem">문법</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>float</code></td><td>소수점이 있는 수를 담는 그릇. <code>sqrt()</code>의 결과는 소수가 될 수 있습니다.</td></tr>
+              <tr><td><code>sqrt(값)</code></td><td>제곱근을 구합니다. 아두이노에 기본으로 들어 있습니다.</td></tr>
+              <tr><td><code>(long)x * x</code></td><td><b>중요.</b> <code>int</code>는 최대 32767까지만 담깁니다. x가 200이면 x*x는 40000이라 <b>넘쳐서 이상한 값</b>이 됩니다. <code>(long)</code>을 붙여 큰 그릇으로 바꿔 계산합니다.</td></tr>
+              <tr><td><code>THRESHOLD</code></td><td>“이 정도면 감지된 것”이라고 정하는 기준선. <b>센서와 자석에 따라 직접 조정해야 합니다.</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">임계값은 어떻게 정하나</span>
+          <p>정답이 없습니다. <b>측정해서 정하는 것</b>입니다. 먼저 시리얼 플로터로 <code>S</code> 값을 보면서 ① 자석이 없을 때 얼마까지 흔들리는지, ② 원하는 거리에서 얼마가 나오는지를 확인하세요. <b>그 사이의 값</b>을 고르면 됩니다. 노이즈가 15까지 튄다면 40 정도가 안전합니다.</p>
+        </div>
+
+        <h2 id="i2c">참고 · I2C 모듈이라면</h2>
+
+        <p>
+          센서에 <code>SDA</code>·<code>SCL</code> 핀이 있다면 아날로그가 아니라 <b>I2C 디지털 통신</b>으로 값을 받습니다.
+          배선과 읽는 방법만 다르고, <b>보정·세기 계산·임계값 판단은 위와 완전히 동일합니다.</b>
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">센서 핀</th><th>아두이노 우노</th></tr></thead>
+            <tbody>
+              <tr><td><code>VCC</code></td><td><code>5V</code> 또는 <code>3.3V</code> (모듈 표시를 따를 것)</td></tr>
+              <tr><td><code>GND</code></td><td><code>GND</code></td></tr>
+              <tr><td><code>SDA</code></td><td><code>A4</code></td></tr>
+              <tr><td><code>SCL</code></td><td><code>A5</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="muted small">
+          <b>스케치 → 라이브러리 포함하기 → 라이브러리 관리</b>에서 모듈 이름(예: <code>HMC5883L</code>, <code>QMC5883L</code>)으로 검색해 설치한 뒤,
+          그 라이브러리의 예제를 열어 <code>x</code>, <code>y</code>, <code>z</code>를 얻는 부분만 위 코드에 옮겨 넣으면 됩니다.
+          <b>A4·A5를 I2C로 쓰게 되므로 그 두 핀은 아날로그 입력으로 쓸 수 없습니다.</b>
+        </p>
+
+        <h2 id="noise">값이 이상할 때</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:14rem">증상</th><th>원인과 해결</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>값이 0 또는 1023에 붙어 있음</b></td>
+                <td>배선 문제입니다. ① <code>VCC</code>·<code>GND</code>가 제대로 연결됐는지 ② 출력 핀이 A0~A2에 맞게 꽂혔는지 ③ 센서가 3.3V 전용인데 5V를 물린 건 아닌지 확인하세요.</td>
+              </tr>
+              <tr>
+                <td><b>값이 계속 심하게 떨림</b></td>
+                <td>정상 범위 내의 노이즈일 수 있습니다. <code>readAverage()</code>처럼 <b>여러 번 읽어 평균</b>을 내세요. 점퍼선이 길거나 헐거워도 심해집니다.</td>
+              </tr>
+              <tr>
+                <td><b>노트북 근처에서 값이 튐</b></td>
+                <td>스피커·모터·전원 어댑터에는 자석이나 강한 전류가 있습니다. <b>센서를 그것들과 떨어뜨려</b> 두고 측정하세요. 이건 고장이 아니라 센서가 제대로 동작한다는 증거입니다.</td>
+              </tr>
+              <tr>
+                <td><b>세 축이 모두 똑같이 움직임</b></td>
+                <td>세 점퍼선이 실제로는 <b>같은 핀에 꽂혀 있을</b> 가능성이 큽니다. 브레드보드의 세로줄을 확인하세요.</td>
+              </tr>
+              <tr>
+                <td><b>플로터에 선이 안 그려짐</b></td>
+                <td>출력 형식이 <code>이름:값,이름:값</code> 이 아니거나, 속도가 9600이 아니거나, 글자만 있는 <code>println</code>이 섞여 있습니다.</td>
+              </tr>
+              <tr>
+                <td><b>세기가 음수/이상한 큰 값</b></td>
+                <td><code>(long)</code> 형변환을 빠뜨려 <code>int</code> 범위를 넘친 것입니다. 위 표의 설명을 확인하세요.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="quest">프로젝트로 확장하기</h2>
+
+        <p>여기까지가 뼈대입니다. 이제 <b>출력 쪽만 바꾸면</b> 서로 다른 장치가 됩니다.</p>
+
+        <div class="quest">
+          <p class="quest__t">① 문 열림 감지기</p>
+          <p class="small" style="margin-bottom:0">문틀에 센서를, 문에 자석을 붙입니다. 문이 닫혀 있으면 세기가 크고, <b>열리면 급격히 작아집니다.</b> 세기가 임계값 아래로 떨어지면 부저를 울리세요. 판단의 <b>부등호 방향만 반대로</b> 하면 됩니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">② 세기에 따라 밝기가 변하는 LED</p>
+          <p class="small">자석이 가까울수록 LED가 밝아지게 만들어 보세요. 3강의 <code>analogWrite()</code>와 9번 핀을 씁니다.</p>
+          <details><summary>힌트 보기</summary>
+            <div class="code" style="margin:.5rem 0 0">
+              <div class="code__bar"><span class="code__name">map + constrain</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+              <pre><code>// 세기 0~300 을 밝기 0~255 로 비례 변환
+int level = map(strength, 0, 300, 0, 255);
+level = constrain(level, 0, 255);   // 범위 밖으로 나가지 않게
+analogWrite(9, level);</code></pre>
+            </div>
+            <p class="small" style="margin:.7rem 0 0"><code>map(값, 원래최소, 원래최대, 바꿀최소, 바꿀최대)</code>는 범위를 비례해서 옮겨 주는 함수입니다. 센서 값을 다룰 때 아주 자주 씁니다.</p>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">③ 자석 나침반</p>
+          <p class="small" style="margin-bottom:0">X와 Y 값으로 방향(각도)을 계산해 시리얼로 출력해 보세요.
+          <span class="muted">힌트: <code>float angle = atan2(y, x) * 180.0 / PI;</code> 로 −180°~180° 각도가 나옵니다. 음수면 360을 더해 0~360°로 바꾸세요.</span></p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">④ 신호등과 합치기</p>
+          <p class="small" style="margin-bottom:0">6강의 신호등에서 <b>버튼 대신 자기장 센서</b>를 쓰세요. 자석이 달린 물체(차·자전거)가 지나가면 신호가 바뀝니다. <code>digitalRead(BUTTON) == LOW</code> 자리에 <code>strength > THRESHOLD</code>를 넣기만 하면 됩니다. <b>입력만 바꿔 끼우면 되는 것</b>이 이 구조의 힘입니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">⑤ 회전수 측정기 (심화)</p>
+          <p class="small" style="margin-bottom:0">바퀴에 자석을 하나 붙이고, 자석이 지나갈 때마다 횟수를 셉니다. <b>1분에 몇 바퀴(RPM)</b>인지 계산해 출력해 보세요. 5강의 “변화 순간만 잡아내기”와 <code>millis()</code>를 함께 씁니다.</p>
+        </div>
+
+        <h2 id="report">프로젝트 정리하기</h2>
+
+        <p>만든 것을 남기려면 아래 다섯 가지만 적으면 충분한 보고서가 됩니다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">항목</th><th>쓸 내용</th></tr></thead>
+            <tbody>
+              <tr><td><b>무엇을 만드나</b></td><td>한 문장으로. “자석이 가까워지면 알려 주는 장치”</td></tr>
+              <tr><td><b>입력</b></td><td>어떤 센서를 어느 핀에 연결했고, 어떤 값이 나오는지</td></tr>
+              <tr><td><b>연산</b></td><td>읽은 값을 어떻게 처리해 판단했는지 (보정, 평균, 임계값)</td></tr>
+              <tr><td><b>출력</b></td><td>판단 결과로 무엇을 했는지 (LED, 부저, 시리얼)</td></tr>
+              <tr><td><b>안 됐던 것</b></td><td><b>가장 중요합니다.</b> 어떤 문제가 있었고 어떻게 해결했는지</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="checklist">마무리 체크리스트</h2>
+        <ul class="checks">
+          <li><label><input type="checkbox" id="c7-1"><span>센서의 동작 전압을 확인하고 VCC·GND를 연결했다</span></label></li>
+          <li><label><input type="checkbox" id="c7-2"><span>X·Y·Z를 A0·A1·A2에 연결했다</span></label></li>
+          <li><label><input type="checkbox" id="c7-3"><span>시리얼 모니터에서 세 축의 값을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c7-4"><span>자석을 대고 값이 변하는 것을, 뒤집어서 방향이 바뀌는 것을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c7-5"><span>시리얼 플로터로 그래프를 봤다</span></label></li>
+          <li><label><input type="checkbox" id="c7-6"><span>기준값 보정을 넣어 값이 0 근처에서 시작하게 만들었다</span></label></li>
+          <li><label><input type="checkbox" id="c7-7"><span>세기를 계산하고 임계값을 직접 정했다</span></label></li>
+          <li><label><input type="checkbox" id="c7-8"><span>센서 값으로 LED나 부저를 제어했다</span></label></li>
+        </ul>
+
+        <div class="note note--check">
+          <span class="note__t">일곱 강의를 관통하는 한 가지</span>
+          <p>
+            LED를 켰고, 소리를 냈고, 버튼을 읽었고, 신호등을 만들었고, 센서를 붙였습니다.
+            겉모습은 다 달랐지만 구조는 매번 똑같았습니다 —
+            <b>핀을 정하고 → 모드를 정하고 → 읽거나 쓰고 → 시간을 관리한다.</b>
+            앞으로 어떤 부품을 만나든 이 네 가지를 물어보면 됩니다.
+          </p>
+        </div>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="06-traffic.html"><span>이전</span><b>06 · 신호등 만들기</b></a>
+          <a class="next" href="index.html"><span>처음으로</span><b>강의 목록</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

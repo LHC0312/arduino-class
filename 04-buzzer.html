@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>04 · 버저 출력 — 아두이노 기초</title>
+<meta name="description" content="부저로 소리를 냅니다. 능동 부저와 수동 부저의 차이, tone() 함수, 주파수와 음높이, 배열로 멜로디 연주하기.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="4">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item is-current" data-lesson-id="4">
+          <a href="04-buzzer.html"><span class="rail__num">04</span><span>버저 출력<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#parts">준비물</a></li>
+            <li><a href="#kinds">부저는 두 종류입니다</a></li>
+            <li><a href="#build">회로 만들기</a></li>
+            <li><a href="#first">첫 소리 내기</a></li>
+            <li><a href="#pitch">주파수와 음높이</a></li>
+            <li><a href="#scale">음계 연주하기</a></li>
+            <li><a href="#melody">멜로디 연주하기</a></li>
+            <li><a href="#caution">알아둘 제약</a></li>
+            <li><a href="#quest">도전과제</a></li>
+            <li><a href="#checklist">마무리 체크리스트</a></li>
+          </ul>
+        </li>
+        <li class="rail__item" data-lesson-id="5">
+          <a href="05-button.html"><span class="rail__num">05</span><span>버튼 입력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="6">
+          <a href="06-traffic.html"><span class="rail__num">06</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="7">
+          <a href="07-project.html"><span class="rail__num">07</span><span>프로젝트와 연계하기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">04강 · 출력</p>
+          <h1>버저 출력</h1>
+          <p class="lesson-head__lede">
+            LED가 <b>빛</b>이라는 출력이었다면, 부저는 <b>소리</b>라는 출력입니다.
+            핀에 신호를 내보내는 방식은 똑같습니다. 다만 소리는 “얼마나 빠르게 껐다 켜느냐”로 높낮이가 정해집니다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">이 강의를 마치면</p>
+            <ul>
+              <li>능동 부저와 수동 부저를 구분하고 올바르게 연결할 수 있다</li>
+              <li><code>tone()</code>과 <code>noTone()</code>으로 원하는 음을 낼 수 있다</li>
+              <li>주파수와 음높이의 관계를 설명할 수 있다</li>
+              <li>배열과 반복문으로 멜로디를 연주할 수 있다</li>
+            </ul>
+          </div>
+        </header>
+
+        <div class="flow">
+          <div class="flow__step" data-kind="in">
+            <span class="flow__label">입력</span><b>—</b>
+            <p>이번 강의에서는 쓰지 않습니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="cpu">
+            <span class="flow__label">연산</span><b>주파수 계산</b>
+            <p>어떤 음을 얼마나 길게 낼지 정합니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="out">
+            <span class="flow__label">출력</span><b>부저</b>
+            <p><code>tone()</code>으로 소리를 냅니다</p>
+          </div>
+        </div>
+
+        <h2 id="parts">준비물</h2>
+        <ul class="parts">
+          <li><b>아두이노 우노</b><span>USB 케이블 포함</span></li>
+          <li><b>브레드보드</b><span>1개</span></li>
+          <li><b>부저</b><span>수동(패시브) 권장</span></li>
+          <li><b>점퍼선</b><span>수-수 2개</span></li>
+          <li><b>저항 100Ω</b><span>선택 · 소리 줄이기용</span></li>
+        </ul>
+
+        <h2 id="kinds">부저는 두 종류입니다</h2>
+
+        <p>
+          겉모습이 거의 같아서 자주 헷갈립니다. 하지만 <b>동작 방식이 완전히 다릅니다.</b>
+          키트에 어떤 것이 들어 있는지 먼저 확인하세요.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem"></th><th>능동 부저 (Active)</th><th>수동 부저 (Passive)</th></tr></thead>
+            <tbody>
+              <tr><td><b>소리 내는 법</b></td><td><code>digitalWrite(7, HIGH)</code>만 해도 삐— 소리</td><td><code>tone(7, 주파수)</code>로 주파수를 줘야 함</td></tr>
+              <tr><td><b>음 높이</b></td><td><b>고정</b> — 한 가지 소리만 가능</td><td><b>자유</b> — 도레미 연주 가능</td></tr>
+              <tr><td><b>겉모습</b></td><td>바닥이 <b>검은 스티커</b>로 막혀 있음. 키가 조금 큼</td><td>바닥에 <b>초록 회로 기판</b>이 보임</td></tr>
+              <tr><td><b>극성</b></td><td><b>있음</b> — 긴 다리가 (+)</td><td>대부분 없음 (있으면 (+) 표시를 따름)</td></tr>
+              <tr><td><b>이 수업에서</b></td><td>알람·경고음 정도</td><td><b>이걸 씁니다</b> — 멜로디를 만들 수 있어서</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">어떤 건지 모르겠다면</span>
+          <p>일단 <code>tone(7, 440)</code>을 올려 보세요. <b>수동 부저면 “라” 음이 정확히</b> 나고, <b>능동 부저면 원래 정해진 소리</b>가 납니다. 둘 다 소리는 나므로 회로가 잘못된 건 아닙니다.</p>
+        </div>
+
+        <h2 id="build">회로 만들기</h2>
+
+        <div class="note note--warn">
+          <span class="note__t">시작 전</span>
+          <p><b>USB 케이블을 뽑으세요.</b> 배선이 끝난 뒤에 다시 꽂습니다.</p>
+        </div>
+
+        <p>
+          LED보다 훨씬 간단합니다. <b>부저 (+) → 7번 핀</b>, <b>부저 (−) → GND.</b> 끝입니다.
+          수동 부저는 소비 전류가 작아서 저항 없이 바로 연결해도 됩니다.
+        </p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 720 310" role="img" aria-label="부저의 플러스 단자를 7번 핀에, 마이너스 단자를 GND에 연결한 배선도" style="color:var(--ink-2)">
+            <!-- 아두이노 -->
+            <rect x="30" y="40" width="250" height="190" rx="9" fill="#35777a" stroke="#28595c" stroke-width="2"/>
+            <g fill="none" stroke="#a8d3d4" stroke-width="2.2" stroke-linecap="round" opacity=".65" transform="translate(58,120) scale(.85)">
+              <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+              <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+            </g>
+            <text x="58" y="162" font-size="11" fill="#a8d3d4" opacity=".65" font-family="system-ui">ARDUINO UNO</text>
+
+            <rect x="248" y="70" width="20" height="76" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841"><circle cx="258" cy="82" r="3.6"/><circle cx="258" cy="106" r="3.6"/><circle cx="258" cy="130" r="3.6"/></g>
+            <g fill="#cfe6e6" font-family="system-ui" font-size="11" text-anchor="end">
+              <text x="242" y="86">8</text><text x="242" y="110">7</text><text x="242" y="134">6</text>
+            </g>
+
+            <rect x="170" y="212" width="60" height="18" rx="2.5" fill="#24231f"/>
+            <circle cx="200" cy="221" r="3.6" fill="#4a4841"/>
+            <text x="200" y="206" font-size="11" fill="#cfe6e6" text-anchor="middle" font-family="system-ui">GND</text>
+
+            <!-- 배선 -->
+            <path d="M268 106C330 106 372 225 486 225" fill="none" stroke="#c0503c" stroke-width="4" stroke-linecap="round"/>
+            <path d="M200 230V282H560V225" fill="none" stroke="#3a3833" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <!-- 부저 -->
+            <line x1="486" y1="164" x2="486" y2="228" stroke="#9c9689" stroke-width="3"/>
+            <line x1="560" y1="164" x2="560" y2="228" stroke="#9c9689" stroke-width="3"/>
+            <circle cx="523" cy="120" r="54" fill="#26251f" stroke="#141310" stroke-width="1.6"/>
+            <circle cx="523" cy="120" r="45" fill="#33322c"/>
+            <circle cx="523" cy="120" r="7" fill="#15140f"/>
+            <text x="492" y="104" font-size="17" fill="#d8d4c8" text-anchor="middle" font-family="system-ui">+</text>
+
+            <!-- 라벨 -->
+            <g fill="currentColor" font-family="system-ui, sans-serif">
+              <text x="523" y="50" font-size="14" font-weight="600" text-anchor="middle">수동 부저</text>
+              <text x="486" y="250" font-size="14" font-weight="600" text-anchor="middle">＋</text>
+              <text x="560" y="250" font-size="15" font-weight="600" text-anchor="middle">－</text>
+              <text x="392" y="196" font-size="12.5" font-weight="600" fill="#b04a30">7번 핀</text>
+              <text x="392" y="302" font-size="12.5" font-weight="600">GND</text>
+            </g>
+          </svg>
+          <figcaption>부저 배선. 브레드보드 없이 점퍼선으로 바로 연결해도 됩니다. 수동 부저는 극성이 없어 방향이 바뀌어도 소리가 나지만, 능동 부저라면 (+) 표시나 긴 다리를 7번 핀 쪽으로 놓으세요.</figcaption>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:4rem">순서</th><th>연결</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>부저 <b>(+)</b> → 브레드보드 → 아두이노 <code>7</code>번 핀</td></tr>
+              <tr><td>2</td><td>부저 <b>(−)</b> → 브레드보드 → 아두이노 <code>GND</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">교실이 시끄러워진다면</span>
+          <p>부저와 핀 사이에 <b>100Ω ~ 1kΩ 저항</b>을 하나 끼우면 소리가 확실히 작아집니다. 저항이 클수록 조용해집니다.</p>
+        </div>
+
+        <h2 id="first">첫 소리 내기</h2>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">Beep.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUZZER = 7;
+
+void setup() {
+  pinMode(BUZZER, OUTPUT);
+}
+
+void loop() {
+  tone(BUZZER, 440);   // 440Hz = '라' 음을 계속 냄
+  delay(500);          // 0.5초 유지
+  noTone(BUZZER);      // 소리 끔
+  delay(500);          // 0.5초 조용히
+}</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:17rem">명령</th><th>하는 일</th></tr></thead>
+            <tbody>
+              <tr><td><code>tone(핀, 주파수)</code></td><td>그 핀에서 해당 주파수의 소리를 <b>계속</b> 냅니다. <code>noTone()</code>을 부르기 전까지 멈추지 않습니다.</td></tr>
+              <tr><td><code>tone(핀, 주파수, 길이)</code></td><td>정해진 시간(ms) 동안만 소리를 냅니다. 시간이 지나면 자동으로 멈춥니다.</td></tr>
+              <tr><td><code>noTone(핀)</code></td><td>그 핀의 소리를 끕니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t"><code>tone()</code>의 세 번째 인자는 <code>delay()</code>가 아닙니다</span>
+          <p><code>tone(7, 440, 500)</code>은 “500ms 동안 소리를 내라”고 <b>예약만 하고 바로 다음 줄로 넘어갑니다.</b> 소리가 끝날 때까지 기다리려면 <code>delay(500)</code>을 따로 써 줘야 합니다. 이걸 빼먹으면 음이 순식간에 지나가 버립니다.</p>
+        </div>
+
+        <h2 id="pitch">주파수와 음높이</h2>
+
+        <p>
+          소리는 공기의 떨림입니다. <b>1초에 몇 번 떠느냐</b>가 주파수(Hz)이고,
+          이 숫자가 클수록 높은 소리가 납니다. 부저는 아두이노가 핀을 아주 빠르게 껐다 켜면서
+          그 떨림을 만들어 냅니다. <b>LED를 초당 440번 깜빡이는 것과 원리가 똑같습니다</b> —
+          다만 너무 빨라서 눈에는 안 보이고 귀에는 들리는 것뿐입니다.
+        </p>
+
+        <div class="note note--tip">
+          <span class="note__t">직접 눌러 보세요</span>
+          <p>아래 건반을 누르면 실제로 소리가 나고, 그 음에 해당하는 <code>tone()</code> 명령이 표시됩니다. <b>소리가 나니 볼륨을 확인하세요.</b></p>
+        </div>
+
+        <div class="sim" id="buzzer-sim">
+          <div class="keys">
+            <button class="key" type="button" data-note="262" data-label="도 (C4)"><b>도</b><span>262</span></button>
+            <button class="key" type="button" data-note="294" data-label="레 (D4)"><b>레</b><span>294</span></button>
+            <button class="key" type="button" data-note="330" data-label="미 (E4)"><b>미</b><span>330</span></button>
+            <button class="key" type="button" data-note="349" data-label="파 (F4)"><b>파</b><span>349</span></button>
+            <button class="key" type="button" data-note="392" data-label="솔 (G4)"><b>솔</b><span>392</span></button>
+            <button class="key" type="button" data-note="440" data-label="라 (A4)"><b>라</b><span>440</span></button>
+            <button class="key" type="button" data-note="494" data-label="시 (B4)"><b>시</b><span>494</span></button>
+            <button class="key" type="button" data-note="523" data-label="높은 도 (C5)"><b>도'</b><span>523</span></button>
+          </div>
+          <div class="sim__ctl">
+            <button class="btn btn--quiet" type="button" data-melody>학교종 연주</button>
+          </div>
+          <div class="sim__state" data-buzz-out></div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:6rem">계이름</th><th style="width:6rem">음이름</th><th style="width:7rem">주파수</th><th>비고</th></tr></thead>
+            <tbody>
+              <tr><td>도</td><td>C4</td><td><code>262</code> Hz</td><td>가운데 도</td></tr>
+              <tr><td>레</td><td>D4</td><td><code>294</code> Hz</td><td></td></tr>
+              <tr><td>미</td><td>E4</td><td><code>330</code> Hz</td><td></td></tr>
+              <tr><td>파</td><td>F4</td><td><code>349</code> Hz</td><td></td></tr>
+              <tr><td>솔</td><td>G4</td><td><code>392</code> Hz</td><td></td></tr>
+              <tr><td>라</td><td>A4</td><td><code>440</code> Hz</td><td>악기 조율의 기준음</td></tr>
+              <tr><td>시</td><td>B4</td><td><code>494</code> Hz</td><td></td></tr>
+              <tr><td>도′</td><td>C5</td><td><code>523</code> Hz</td><td><b>한 옥타브 위 = 주파수 2배</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="muted small">
+          도(262)와 높은 도(523)를 비교해 보세요. 정확히 <b>두 배</b>입니다.
+          옥타브가 하나 올라갈 때마다 주파수는 두 배가 됩니다. 이건 음악의 규칙이 아니라 물리 법칙입니다.
+        </p>
+
+        <h2 id="scale">음계 연주하기</h2>
+
+        <p>배열에 음을 넣고 반복문으로 하나씩 꺼내 연주합니다. 3강에서 본 <code>for</code>문이 그대로 쓰입니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">Scale.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUZZER = 7;
+
+// 도 레 미 파 솔 라 시 도'
+const int scale[8] = {262, 294, 330, 349, 392, 440, 494, 523};
+
+void setup() {
+  pinMode(BUZZER, OUTPUT);
+}
+
+void loop() {
+  for (int i = 0; i &lt; 8; i++) {
+    tone(BUZZER, scale[i]);   // i번째 음을 냄
+    delay(350);               // 소리를 유지할 시간
+  }
+  noTone(BUZZER);
+  delay(1500);                // 한 바퀴 돌고 잠시 쉼
+}</code></pre>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">여기서 배열이 왜 좋은가</span>
+          <p>배열을 안 쓰면 <code>tone(BUZZER, 262); delay(350);</code> 를 <b>8번</b> 써야 합니다. 배열을 쓰면 음을 추가하고 싶을 때 <b>중괄호 안에 숫자만 하나 더</b> 넣으면 됩니다. (배열 크기 <code>[8]</code>도 함께 고쳐야 합니다.)</p>
+        </div>
+
+        <h2 id="melody">멜로디 연주하기</h2>
+
+        <p>
+          실제 곡을 연주하려면 <b>음 높이</b>뿐 아니라 <b>음의 길이</b>도 필요합니다.
+          배열 두 개를 나란히 쓰면 됩니다. 이 구조는 6강 신호등에서 “핀 배열 + 시간 배열”로 다시 나옵니다.
+        </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">Melody.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUZZER = 7;
+
+// 학교종이 땡땡땡 — 솔솔라라 솔솔미 솔솔미미레
+const int NOTE_COUNT = 14;
+
+const int melody[NOTE_COUNT] = {
+  392, 392, 440, 440, 392, 392, 330,
+  392, 392, 330, 330, 294, 294, 0     // 0 = 쉼표
+};
+
+const int beats[NOTE_COUNT] = {
+  4, 4, 4, 4, 4, 4, 8,
+  4, 4, 4, 4, 4, 4, 8
+};
+
+const int TEMPO = 90;   // 한 박자의 길이(ms). 작을수록 빨라집니다
+
+void setup() {
+  pinMode(BUZZER, OUTPUT);
+}
+
+void playMelody() {
+  for (int i = 0; i &lt; NOTE_COUNT; i++) {
+    int duration = beats[i] * TEMPO;
+
+    if (melody[i] == 0) {
+      noTone(BUZZER);          // 쉼표는 소리를 끄고 기다리기만
+    } else {
+      tone(BUZZER, melody[i]);
+    }
+
+    delay(duration);
+    noTone(BUZZER);
+    delay(30);                 // 음 사이를 살짝 띄워야 또렷하게 들립니다
+  }
+}
+
+void loop() {
+  playMelody();
+  delay(2000);
+}</code></pre>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">음이 뭉개져서 들린다면</span>
+          <p>음과 음 사이에 <code>noTone()</code> + 짧은 <code>delay(30)</code>을 넣어 <b>끊어 주는 것</b>이 핵심입니다. 이게 없으면 같은 음이 두 번 연달아 나올 때 하나로 이어져 들립니다.</p>
+        </div>
+
+        <h2 id="caution">알아둘 제약</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:13rem">제약</th><th>내용</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>한 번에 한 핀만</b></td>
+                <td><code>tone()</code>은 동시에 <b>하나의 핀</b>에서만 동작합니다. 부저 두 개로 화음을 내는 것은 불가능합니다.</td>
+              </tr>
+              <tr>
+                <td><b>3번·11번 핀 PWM 충돌</b></td>
+                <td><code>tone()</code>을 쓰는 동안 <b>3번과 11번 핀의 <code>analogWrite()</code>가 동작하지 않습니다.</b> 같은 내부 타이머를 쓰기 때문입니다. LED 밝기 조절과 소리를 함께 쓴다면 5·6·9·10번 핀을 쓰세요.</td>
+              </tr>
+              <tr>
+                <td><b><code>delay()</code>와 같은 한계</b></td>
+                <td>멜로디를 연주하는 동안 <code>delay()</code>가 계속 실행되므로 <b>버튼을 눌러도 반응하지 않습니다.</b> 6강의 <code>millis()</code>에서 이 문제를 다룹니다.</td>
+              </tr>
+              <tr>
+                <td><b>낼 수 있는 범위</b></td>
+                <td>약 <code>31</code> ~ <code>65535</code> Hz. 다만 사람이 듣는 범위는 대략 20 ~ 20,000Hz이고, 작은 부저는 <b>1000 ~ 4000Hz</b>에서 가장 크게 울립니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="quest">도전과제</h2>
+
+        <div class="quest">
+          <p class="quest__t">① 사이렌 만들기</p>
+          <p class="small">주파수를 400에서 1200까지 올렸다가 다시 내리는 것을 반복해 구급차 소리를 만들어 보세요.</p>
+          <details><summary>답 보기</summary>
+            <div class="code" style="margin:.5rem 0 0">
+              <div class="code__bar"><span class="code__name">Siren.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+              <pre><code>void loop() {
+  for (int f = 400; f &lt;= 1200; f += 10) {
+    tone(BUZZER, f);
+    delay(5);
+  }
+  for (int f = 1200; f >= 400; f -= 10) {
+    tone(BUZZER, f);
+    delay(5);
+  }
+}</code></pre>
+            </div>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">② LED와 함께 쓰기</p>
+          <p class="small" style="margin-bottom:0">음이 바뀔 때마다 LED도 함께 깜빡이게 만들어 보세요. <b>3강의 LED 회로를 그대로 두고</b> 부저만 추가하면 됩니다. 출력을 두 개 동시에 다루는 첫 연습입니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">③ 내가 아는 곡 옮기기</p>
+          <p class="small" style="margin-bottom:0">위 <code>melody[]</code>와 <code>beats[]</code>를 고쳐서 아는 곡을 연주해 보세요. 계이름만 알면 위의 주파수 표를 보고 숫자로 바꿀 수 있습니다. <span class="muted">(반짝반짝 작은별: 도도솔솔라라솔)</span></p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">④ 경고음 함수 만들기</p>
+          <p class="small">“삐 삐 삐” 세 번 울리는 <code>alarm()</code> 함수를 만들어 보세요. 6강 신호등에서 실제로 쓰게 됩니다.</p>
+          <details><summary>답 보기</summary>
+            <div class="code" style="margin:.5rem 0 0">
+              <div class="code__bar"><span class="code__name">alarm()</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+              <pre><code>void alarm(int times) {
+  for (int i = 0; i &lt; times; i++) {
+    tone(BUZZER, 1200);
+    delay(120);
+    noTone(BUZZER);
+    delay(120);
+  }
+}
+
+// 사용: alarm(3);</code></pre>
+            </div>
+          </details>
+        </div>
+
+        <h2 id="checklist">마무리 체크리스트</h2>
+        <ul class="checks">
+          <li><label><input type="checkbox" id="c4b-1"><span>내 부저가 능동인지 수동인지 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c4b-2"><span>부저를 7번 핀과 GND에 연결했다</span></label></li>
+          <li><label><input type="checkbox" id="c4b-3"><span><code>tone()</code>과 <code>noTone()</code>으로 소리를 내고 껐다</span></label></li>
+          <li><label><input type="checkbox" id="c4b-4"><span>주파수를 바꿔 음이 높아지고 낮아지는 것을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c4b-5"><span>배열로 음계를 연주했다</span></label></li>
+          <li><label><input type="checkbox" id="c4b-6"><span>멜로디를 하나 연주해 봤다</span></label></li>
+        </ul>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="03-led.html"><span>이전</span><b>03 · LED 제어</b></a>
+          <a class="next" href="05-button.html"><span>다음</span><b>05 · 버튼 입력</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

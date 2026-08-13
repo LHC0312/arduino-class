@@ -44,14 +44,14 @@
 
 <div class="shell">
   <section class="hero">
-    <p class="hero__eyebrow">중·고등 / 입문자 대상 · 4차시</p>
+    <p class="hero__eyebrow">중·고등 / 입문자 대상 · 7차시</p>
     <h1>아두이노 기초</h1>
     <p class="hero__lede">
       전자 회로를 한 번도 다뤄본 적 없어도 괜찮습니다. 아두이노가 무엇인지 이해하는 것에서
-      출발해, 마지막에는 직접 배선하고 코드를 올린 신호등이 책상 위에서 실제로 동작합니다.
+      출발해, 마지막에는 <b>센서로 읽고 판단해서 반응하는 장치</b>가 책상 위에서 실제로 동작합니다.
     </p>
     <div class="hero__meta">
-      <div><b>4차시</b>차시당 45~60분</div>
+      <div><b>7차시</b>차시당 45~60분</div>
       <div><b>Arduino Uno R3</b>호환 보드 가능</div>
       <div><b>Arduino IDE 2.x</b>무료 · 윈도우/맥</div>
     </div>
@@ -74,7 +74,16 @@
           <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
         </li>
         <li class="rail__item" data-lesson-id="4">
-          <a href="04-traffic.html"><span class="rail__num">04</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+          <a href="04-buzzer.html"><span class="rail__num">04</span><span>버저 출력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="5">
+          <a href="05-button.html"><span class="rail__num">05</span><span>버튼 입력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="6">
+          <a href="06-traffic.html"><span class="rail__num">06</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="7">
+          <a href="07-project.html"><span class="rail__num">07</span><span>프로젝트와 연계하기<span class="rail__done" data-done-badge></span></span></a>
         </li>
       </ol>
     </aside>
@@ -82,7 +91,30 @@
     <main>
       <div class="prose">
 
-        <h2 id="curriculum" style="margin-top:0">강의 목록</h2>
+        <h2 id="structure" style="margin-top:0">아두이노는 이 세 가지를 합니다</h2>
+        <p style="margin-top:-.3rem">
+          부품이 아무리 많아도 하는 일은 늘 같습니다. <b>바깥 상태를 읽고(입력), 판단하고(연산), 무언가를 움직입니다(출력).</b>
+          이 수업은 이 세 칸을 하나씩 채워 나가는 순서로 짜여 있습니다.
+        </p>
+
+        <div class="flow">
+          <div class="flow__step" data-kind="in">
+            <span class="flow__label">입력</span><b>버튼 · 센서</b>
+            <p>눌렸는가, 얼마나 밝은가, 자기장이 얼마나 센가</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="cpu">
+            <span class="flow__label">연산</span><b>코드의 판단</b>
+            <p>읽은 값을 비교하고 계산해 무엇을 할지 정합니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="out">
+            <span class="flow__label">출력</span><b>LED · 부저</b>
+            <p>빛을 켜고, 소리를 내고, 화면에 값을 보냅니다</p>
+          </div>
+        </div>
+
+        <h2 id="curriculum">강의 목록</h2>
         <p class="muted small" style="margin-top:-.5rem">순서대로 따라가도록 구성했습니다. 각 강의는 개념 설명 → 회로 → 코드 → 도전과제로 이어집니다.</p>
 
         <ul class="lessons">
@@ -92,7 +124,7 @@
               <span>
                 <span class="lesson-row__title">아두이노란?</span>
                 <p class="lesson-row__desc">아두이노가 어떤 물건인지, 보드 위의 핀들이 각각 무슨 역할을 하는지 살펴봅니다. 디지털과 아날로그, HIGH와 LOW 같은 기본 용어를 정리합니다.</p>
-                <span class="lesson-row__tags"><span class="tag">개념</span><span class="tag">보드 구조</span><span class="tag">용어</span></span>
+                <span class="lesson-row__tags"><span class="kind kind--cpu">개념</span><span class="tag">보드 구조</span><span class="tag">용어</span></span>
               </span>
               <span class="lesson-row__go">읽기 →</span>
             </a>
@@ -103,7 +135,7 @@
               <span>
                 <span class="lesson-row__title">IDE 설치와 첫 업로드</span>
                 <p class="lesson-row__desc">Arduino IDE를 내려받아 설치하고, 보드를 연결해 예제 Blink를 올려봅니다. 업로드가 안 될 때 확인할 것들도 함께 다룹니다.</p>
-                <span class="lesson-row__tags"><span class="tag">설치</span><span class="tag">포트 설정</span><span class="tag">문제 해결</span></span>
+                <span class="lesson-row__tags"><span class="kind kind--cpu">환경</span><span class="tag">포트 설정</span><span class="tag">문제 해결</span></span>
               </span>
               <span class="lesson-row__go">읽기 →</span>
             </a>
@@ -114,18 +146,51 @@
               <span>
                 <span class="lesson-row__title">LED 제어</span>
                 <p class="lesson-row__desc">브레드보드에 LED와 저항을 꽂아 회로를 만들고, 코드로 켜고 끕니다. 저항이 왜 필요한지 옴의 법칙으로 계산해 봅니다.</p>
-                <span class="lesson-row__tags"><span class="tag">브레드보드</span><span class="tag">저항 계산</span><span class="tag">PWM</span></span>
+                <span class="lesson-row__tags"><span class="kind kind--out">출력</span><span class="tag">브레드보드</span><span class="tag">저항 계산</span><span class="tag">PWM</span></span>
               </span>
               <span class="lesson-row__go">읽기 →</span>
             </a>
           </li>
           <li>
-            <a class="lesson-row" href="04-traffic.html">
+            <a class="lesson-row" href="04-buzzer.html">
               <span class="lesson-row__num">04</span>
               <span>
+                <span class="lesson-row__title">버저 출력</span>
+                <p class="lesson-row__desc">부저로 소리를 냅니다. 능동·수동 부저의 차이를 알고, <code>tone()</code>으로 주파수를 바꿔 음계와 멜로디를 연주합니다.</p>
+                <span class="lesson-row__tags"><span class="kind kind--out">출력</span><span class="tag">tone()</span><span class="tag">주파수</span><span class="tag">배열</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="05-button.html">
+              <span class="lesson-row__num">05</span>
+              <span>
+                <span class="lesson-row__title">버튼 입력</span>
+                <p class="lesson-row__desc">버튼을 눌러 불을 켭니다. 택트 스위치의 구조, 저항이 없으면 값이 흔들리는 이유, 누를 때마다 켜고 꺼지는 토글까지 다룹니다.</p>
+                <span class="lesson-row__tags"><span class="kind kind--in">입력</span><span class="tag">digitalRead</span><span class="tag">풀다운·풀업</span><span class="tag">디바운스</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="06-traffic.html">
+              <span class="lesson-row__num">06</span>
+              <span>
                 <span class="lesson-row__title">신호등 만들기</span>
-                <p class="lesson-row__desc">LED 세 개로 실제 신호등의 동작을 재현합니다. 반복되는 코드를 배열과 함수로 정리하고, <code>millis()</code>로 개선하는 것까지 해봅니다.</p>
-                <span class="lesson-row__tags"><span class="tag">종합 실습</span><span class="tag">배열·함수</span><span class="tag">millis()</span></span>
+                <p class="lesson-row__desc">LED 세 개로 신호등을 만들고, 코드를 함수·배열·<code>millis()</code>로 다듬습니다. 마지막에는 버튼과 부저를 붙여 <b>보행자 신호등</b>을 완성합니다.</p>
+                <span class="lesson-row__tags"><span class="kind kind--cpu">종합</span><span class="tag">함수·배열</span><span class="tag">millis()</span><span class="tag">상태 기계</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="07-project.html">
+              <span class="lesson-row__num">07</span>
+              <span>
+                <span class="lesson-row__title">프로젝트와 연계하기</span>
+                <p class="lesson-row__desc">자기장 센서를 아날로그 입력으로 읽어 X·Y·Z 세 축을 시리얼로 출력합니다. 시리얼 플로터로 파형을 보고, 세기를 계산해 LED·부저로 연결합니다.</p>
+                <span class="lesson-row__tags"><span class="kind kind--in">입력</span><span class="tag">analogRead</span><span class="tag">시리얼 플로터</span><span class="tag">보정·필터</span></span>
               </span>
               <span class="lesson-row__go">읽기 →</span>
             </a>
@@ -142,8 +207,16 @@
           <li><b>점퍼선</b><span>10개 이상 · 수-수</span></li>
           <li><b>LED</b><span>빨강·노랑·초록 각 1개</span></li>
           <li><b>저항 220Ω</b><span>3개 이상</span></li>
+          <li><b>저항 10kΩ</b><span>1개 · 5강</span></li>
+          <li><b>부저</b><span>1개 · 수동(패시브) 권장</span></li>
+          <li><b>택트 스위치</b><span>1개 이상 · 4핀</span></li>
           <li><b>노트북</b><span>1대 · USB-A 포트 권장</span></li>
         </ul>
+
+        <p class="muted small" style="margin-top:-.6rem">
+          <b>7강(프로젝트)</b>에서는 여기에 <b>3축 자기장 센서 모듈</b>과 실험용 <b>네오디뮴 자석</b>이 추가로 필요합니다.
+          센서 없이도 강의 내용은 그대로 읽고 이해할 수 있습니다.
+        </p>
 
         <div class="note note--tip">
           <span class="note__t">USB-C만 있는 노트북이라면</span>

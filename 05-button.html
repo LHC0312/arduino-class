@@ -1,0 +1,676 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>05 · 버튼 입력 — 아두이노 기초</title>
+<meta name="description" content="버튼을 눌러 입력을 받고 LED를 켭니다. 택트 스위치 구조, 플로팅 문제와 풀다운·풀업 저항, digitalRead, 토글과 디바운스까지.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="5">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-buzzer.html"><span class="rail__num">04</span><span>버저 출력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item is-current" data-lesson-id="5">
+          <a href="05-button.html"><span class="rail__num">05</span><span>버튼 입력<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#parts">준비물</a></li>
+            <li><a href="#switch">택트 스위치의 구조</a></li>
+            <li><a href="#floating">플로팅 — 저항이 필요한 이유</a></li>
+            <li><a href="#build">회로 만들기 — 풀다운 방식</a></li>
+            <li><a href="#read">값 읽어보기</a></li>
+            <li><a href="#light">누르면 불 켜기</a></li>
+            <li><a href="#pullup">INPUT_PULLUP으로 바꾸기</a></li>
+            <li><a href="#toggle">누를 때마다 켜고 끄기 — 토글</a></li>
+            <li><a href="#quest">도전과제</a></li>
+            <li><a href="#checklist">마무리 체크리스트</a></li>
+          </ul>
+        </li>
+        <li class="rail__item" data-lesson-id="6">
+          <a href="06-traffic.html"><span class="rail__num">06</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="7">
+          <a href="07-project.html"><span class="rail__num">07</span><span>프로젝트와 연계하기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">05강 · 입력</p>
+          <h1>버튼 입력</h1>
+          <p class="lesson-head__lede">
+            지금까지는 아두이노가 <b>말하기만</b> 했습니다. 이제 <b>듣는 법</b>을 배웁니다.
+            버튼 하나를 붙이는 순간, 정해진 대로만 움직이던 장치가 사람에게 반응하기 시작합니다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">이 강의를 마치면</p>
+            <ul>
+              <li>택트 스위치의 어느 다리끼리 연결되어 있는지 안다</li>
+              <li>플로팅 문제가 무엇이고 왜 저항이 필요한지 설명할 수 있다</li>
+              <li><code>digitalRead()</code>로 버튼 상태를 읽고 <code>if</code>로 판단할 수 있다</li>
+              <li>누를 때마다 켜지고 꺼지는 <b>토글</b>을 만들 수 있다</li>
+            </ul>
+          </div>
+        </header>
+
+        <div class="flow">
+          <div class="flow__step" data-kind="in">
+            <span class="flow__label">입력</span><b>버튼</b>
+            <p><code>digitalRead()</code>로 눌림 여부를 읽습니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="cpu">
+            <span class="flow__label">연산</span><b>if 판단</b>
+            <p>눌렸으면 켜고, 아니면 끕니다</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="out">
+            <span class="flow__label">출력</span><b>LED · 부저</b>
+            <p>결과를 빛이나 소리로 내보냅니다</p>
+          </div>
+        </div>
+
+        <p>
+          이 세 칸이 아두이노가 하는 일의 전부입니다. 3·4강에서는 오른쪽 칸만 다뤘고,
+          이번 강의에서 <b>왼쪽 칸이 채워집니다.</b> 6강 신호등에서 셋을 하나로 합칩니다.
+        </p>
+
+        <h2 id="parts">준비물</h2>
+        <ul class="parts">
+          <li><b>아두이노 우노</b><span>USB 케이블 포함</span></li>
+          <li><b>브레드보드</b><span>1개</span></li>
+          <li><b>택트 스위치</b><span>1개 · 다리 4개</span></li>
+          <li><b>저항 10kΩ</b><span>1개 · 갈검주금</span></li>
+          <li><b>LED + 220Ω</b><span>각 1개</span></li>
+          <li><b>점퍼선</b><span>수-수 4개 이상</span></li>
+        </ul>
+
+        <h2 id="switch">택트 스위치의 구조</h2>
+
+        <p>
+          키트에 들어 있는 작은 네모 버튼을 <b>택트 스위치</b>라고 합니다.
+          다리가 <b>4개</b>인데, 여기에 함정이 하나 있습니다.
+          <b>4개가 모두 따로가 아니라, 2개씩 짝지어 안에서 이미 연결되어 있습니다.</b>
+        </p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 660 300" role="img" aria-label="택트 스위치의 네 다리 중 마주보는 두 쌍이 내부적으로 연결되어 있고, 누르면 두 쌍이 이어지는 구조" style="color:var(--ink-2)">
+            <!-- 안 눌린 상태 -->
+            <g>
+              <text x="150" y="30" font-size="13.5" font-weight="600" fill="currentColor" text-anchor="middle">누르지 않았을 때</text>
+              <rect x="86" y="60" width="128" height="128" rx="6" fill="#33322c" stroke="#22211d" stroke-width="1.5"/>
+              <circle cx="150" cy="124" r="26" fill="#c9c5b8" stroke="#a5a196" stroke-width="1.5"/>
+              <!-- 다리 -->
+              <g stroke="#9c9689" stroke-width="5" stroke-linecap="round">
+                <path d="M96 188v34M204 188v34M96 60V26M204 60V26"/>
+              </g>
+              <!-- 내부 연결 (좌우 쌍) -->
+              <g stroke="#3c6ea8" stroke-width="3.4" fill="none" stroke-linecap="round">
+                <path d="M96 78v92"/><path d="M204 78v92"/>
+              </g>
+              <text x="72" y="128" font-size="11.5" fill="#3c6ea8" text-anchor="end">항상</text>
+              <text x="72" y="144" font-size="11.5" fill="#3c6ea8" text-anchor="end">연결</text>
+              <text x="228" y="128" font-size="11.5" fill="#3c6ea8">항상</text>
+              <text x="228" y="144" font-size="11.5" fill="#3c6ea8">연결</text>
+              <!-- 끊긴 표시 -->
+              <g stroke="#b03a2e" stroke-width="2.6" stroke-linecap="round">
+                <path d="M134 124h-10M166 124h10"/>
+                <path d="M142 116l16 16M158 116l-16 16"/>
+              </g>
+              <text x="150" y="216" font-size="12" fill="#b03a2e" text-anchor="middle" font-family="system-ui">좌우는 끊겨 있음</text>
+              <text x="150" y="252" font-size="12.5" fill="currentColor" text-anchor="middle" opacity=".7">→ 전기가 지나가지 못합니다</text>
+            </g>
+
+            <line x1="330" y1="40" x2="330" y2="264" stroke="currentColor" stroke-width="1" opacity=".2"/>
+
+            <!-- 눌린 상태 -->
+            <g>
+              <text x="510" y="30" font-size="13.5" font-weight="600" fill="currentColor" text-anchor="middle">눌렀을 때</text>
+              <rect x="446" y="60" width="128" height="128" rx="6" fill="#33322c" stroke="#22211d" stroke-width="1.5"/>
+              <circle cx="510" cy="124" r="22" fill="#a5a196" stroke="#8b877d" stroke-width="1.5"/>
+              <g stroke="#9c9689" stroke-width="5" stroke-linecap="round">
+                <path d="M456 188v34M564 188v34M456 60V26M564 60V26"/>
+              </g>
+              <g stroke="#3c6ea8" stroke-width="3.4" fill="none" stroke-linecap="round">
+                <path d="M456 78v92"/><path d="M564 78v92"/>
+              </g>
+              <!-- 이어진 표시 -->
+              <path d="M456 124h108" stroke="#4c8f45" stroke-width="4" stroke-linecap="round"/>
+              <circle cx="510" cy="124" r="9" fill="#4c8f45"/>
+              <text x="510" y="216" font-size="12" fill="#4c8f45" text-anchor="middle" font-family="system-ui">좌우가 이어짐</text>
+              <text x="510" y="252" font-size="12.5" fill="currentColor" text-anchor="middle" opacity=".7">→ 전기가 흐릅니다</text>
+            </g>
+
+            <text x="330" y="288" font-size="11.5" fill="currentColor" opacity=".6" text-anchor="middle" font-family="system-ui">파란 선 = 안에서 이미 연결된 부분 · 누르는 동안에만 좌우가 이어집니다</text>
+          </svg>
+          <figcaption>택트 스위치의 내부 구조. 세로로 마주 본 다리끼리는 항상 연결되어 있고, 버튼을 누르는 동안에만 좌우가 이어집니다.</figcaption>
+        </figure>
+
+        <div class="note note--warn">
+          <span class="note__t">가장 흔한 실수</span>
+          <p>이미 연결되어 있는 <b>같은 쪽 두 다리</b>에 선을 연결하면, 버튼을 누르든 말든 <b>항상 이어진 상태</b>가 됩니다. 이걸 피하려면 <b>대각선으로 마주 보는 두 다리</b>를 쓰세요. 어느 쌍이 어느 쌍인지 몰라도 대각선은 반드시 다른 쌍입니다.</p>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">브레드보드에 꽂는 방향</span>
+          <p>택트 스위치는 <b>가운데 홈을 걸치도록</b> 꽂아야 합니다. 그래야 왼쪽 두 다리와 오른쪽 두 다리가 서로 다른 세로줄에 들어갑니다. 한쪽에만 꽂으면 다리가 같은 줄에 몰려 합선됩니다. 잘 안 들어가면 방향을 <b>90도 돌려</b> 보세요.</p>
+        </div>
+
+        <h2 id="floating">플로팅 — 저항이 필요한 이유</h2>
+
+        <p>
+          버튼을 그냥 “핀 ↔ 5V”로만 연결하면 어떻게 될까요?
+          <b>누르면 5V가 들어와 HIGH</b>가 되는 건 맞습니다. 그런데 <b>누르지 않았을 때가 문제</b>입니다.
+          그 핀은 아무 데도 연결되지 않은 채 공중에 떠 있게 됩니다. 이걸 <b>플로팅(floating)</b>이라고 합니다.
+        </p>
+
+        <p>
+          플로팅 상태의 핀은 주변 전자기 노이즈를 안테나처럼 주워 담아
+          <b>HIGH와 LOW를 제멋대로 오갑니다.</b> 손을 가까이 대기만 해도 값이 바뀝니다.
+          그래서 버튼이 눌리지 않았을 때 <b>확실히 한쪽 값이 되도록 붙잡아 주는 저항</b>이 필요합니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:10rem">방법</th><th style="width:9rem">안 눌렀을 때</th><th style="width:8rem">눌렀을 때</th><th>특징</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>풀다운 저항</b><br><span class="muted small">10kΩ → GND</span></td>
+                <td><code>LOW</code></td>
+                <td><code>HIGH</code></td>
+                <td>“누르면 HIGH”라 직관적입니다. 저항을 하나 더 써야 합니다.</td>
+              </tr>
+              <tr>
+                <td><b>풀업 저항</b><br><span class="muted small">10kΩ → 5V</span></td>
+                <td><code>HIGH</code></td>
+                <td><code>LOW</code></td>
+                <td>값이 거꾸로라 헷갈리지만, 노이즈에 더 강합니다.</td>
+              </tr>
+              <tr>
+                <td><b><code>INPUT_PULLUP</code></b><br><span class="muted small">보드 내장 저항</span></td>
+                <td><code>HIGH</code></td>
+                <td><code>LOW</code></td>
+                <td><b>저항이 필요 없습니다.</b> 코드 한 단어로 켜집니다. 실무에서 가장 많이 씁니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">수업에서는 이렇게</span>
+          <p>먼저 <b>풀다운 저항</b>으로 “누르면 HIGH”를 직접 만들어 원리를 이해하고, 그다음 <b><code>INPUT_PULLUP</code></b>으로 바꿔 부품 없이 같은 일을 하는 것을 확인합니다. 아래 시뮬레이터로 두 방식의 값 차이를 먼저 비교해 보세요.</p>
+        </div>
+
+        <div class="sim" id="button-sim">
+          <div class="sim__ctl">
+            <span class="small muted">연결 방식</span>
+            <span class="seg">
+              <label data-mode="pulldown"><input type="radio" name="btnmode" checked>풀다운 저항</label>
+              <label data-mode="pullup"><input type="radio" name="btnmode">INPUT_PULLUP</label>
+            </span>
+          </div>
+          <div class="sim__row">
+            <div class="sim__stage">
+              <button class="pushbtn" type="button" data-push aria-label="버튼 누르기">
+                <span class="pushbtn__cap">누르기</span>
+                <span class="pushbtn__hint">누르고 있는 동안</span>
+              </button>
+            </div>
+            <div class="sim__stage">
+              <svg width="88" height="130" viewBox="0 0 88 130" aria-hidden="true">
+                <circle data-glow cx="44" cy="42" r="34" fill="#e0483a" opacity="0" style="transition:opacity .1s"/>
+                <path data-lamp="btn-led" d="M30 62V40a14 14 0 0128 0v22z" fill="#5a3d38" stroke="#3f2a26" stroke-width="1.2" style="transition:fill .1s"/>
+                <rect x="26" y="62" width="36" height="8" rx="3" fill="#5a3d38" stroke="#3f2a26" stroke-width="1.2"/>
+                <path d="M36 70v46M52 70v32" stroke="#a5a196" stroke-width="3.6" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="sim__side">
+              <div class="sim__state" data-btn-state></div>
+            </div>
+          </div>
+        </div>
+
+        <p class="muted small">
+          같은 동작인데 <b>읽히는 값이 정반대</b>인 것에 주목하세요.
+          그래서 <code>INPUT_PULLUP</code>을 쓸 때는 조건문이 <code>== LOW</code>가 됩니다.
+          이걸 놓치면 “버튼을 안 눌렀는데 LED가 켜져 있어요”가 됩니다.
+        </p>
+
+        <h2 id="build">회로 만들기 — 풀다운 방식</h2>
+
+        <div class="note note--warn">
+          <span class="note__t">시작 전</span>
+          <p><b>USB 케이블을 뽑으세요.</b> 배선이 끝난 뒤에 다시 꽂습니다.</p>
+        </div>
+
+        <figure class="figure">
+          <svg viewBox="0 0 860 360" role="img" aria-label="버튼 한쪽을 5V에, 다른 쪽을 2번 핀과 10k옴 풀다운 저항에 연결하고 LED를 13번 핀에 연결한 배선도" style="color:var(--ink-2)">
+            <defs>
+              <pattern id="bt" width="16" height="12" patternUnits="userSpaceOnUse">
+                <circle cx="8" cy="6" r="2.1" fill="#bcb8ab"/>
+              </pattern>
+            </defs>
+
+            <!-- 아두이노 -->
+            <rect x="30" y="60" width="250" height="215" rx="9" fill="#35777a" stroke="#28595c" stroke-width="2"/>
+            <g fill="none" stroke="#a8d3d4" stroke-width="2.2" stroke-linecap="round" opacity=".6" transform="translate(58,150) scale(.8)">
+              <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+              <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+            </g>
+            <text x="58" y="188" font-size="10.5" fill="#a8d3d4" opacity=".6" font-family="system-ui">ARDUINO UNO</text>
+
+            <rect x="248" y="86" width="20" height="76" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841"><circle cx="258" cy="98" r="3.6"/><circle cx="258" cy="122" r="3.6"/><circle cx="258" cy="146" r="3.6"/></g>
+            <g fill="#cfe6e6" font-family="system-ui" font-size="11" text-anchor="end">
+              <text x="242" y="102">13</text><text x="242" y="126">3</text><text x="242" y="150">2</text>
+            </g>
+
+            <!-- 전원 헤더 -->
+            <rect x="120" y="257" width="110" height="18" rx="2.5" fill="#24231f"/>
+            <circle cx="146" cy="266" r="3.6" fill="#4a4841"/>
+            <circle cx="200" cy="266" r="3.6" fill="#4a4841"/>
+            <g fill="#cfe6e6" font-family="system-ui" font-size="11" text-anchor="middle">
+              <text x="146" y="250">5V</text><text x="200" y="250">GND</text>
+            </g>
+
+            <!-- 브레드보드 -->
+            <rect x="330" y="46" width="510" height="250" rx="7" fill="#efece2" stroke="#d3cfc2" stroke-width="1.5"/>
+            <rect x="348" y="82" width="480" height="60" fill="url(#bt)"/>
+            <rect x="330" y="142" width="510" height="20" fill="#e4e0d3"/>
+            <line x1="330" y1="142" x2="840" y2="142" stroke="#d3cfc2"/>
+            <line x1="330" y1="162" x2="840" y2="162" stroke="#d3cfc2"/>
+            <rect x="348" y="166" width="480" height="60" fill="url(#bt)"/>
+            <line x1="348" y1="240" x2="828" y2="240" stroke="#c0503c" stroke-width="1.5"/>
+            <rect x="348" y="246" width="480" height="24" fill="url(#bt)"/>
+            <line x1="348" y1="276" x2="828" y2="276" stroke="#3c6ea8" stroke-width="1.5"/>
+            <text x="340" y="256" font-size="11" fill="#c0503c" text-anchor="end">+</text>
+            <text x="340" y="268" font-size="12" fill="#3c6ea8" text-anchor="end">−</text>
+
+            <!-- 택트 스위치 (가운데 홈을 걸침) -->
+            <rect x="404" y="120" width="80" height="64" rx="5" fill="#33322c" stroke="#22211d" stroke-width="1.4"/>
+            <circle cx="444" cy="152" r="15" fill="#c9c5b8" stroke="#a5a196" stroke-width="1.2"/>
+            <g stroke="#9c9689" stroke-width="3.4" stroke-linecap="round">
+              <path d="M412 120v-12M476 120v-12M412 184v12M476 184v12"/>
+            </g>
+
+            <!-- 저항 10k: 2번 핀 열 → GND 레일 -->
+            <path d="M412 196v56" stroke="#9c9689" stroke-width="2.4"/>
+            <rect x="403" y="206" width="18" height="34" rx="6" fill="#d9c9a6" stroke="#b5a37c"/>
+            <rect x="403" y="211" width="18" height="3" fill="#6e4b2a"/>
+            <rect x="403" y="218" width="18" height="3" fill="#26251f"/>
+            <rect x="403" y="225" width="18" height="3" fill="#b03a2e"/>
+            <rect x="403" y="233" width="18" height="3" fill="#c9a227"/>
+
+            <!-- LED 회로 -->
+            <path d="M628 96h48" stroke="#9c9689" stroke-width="2.4"/>
+            <rect x="638" y="87" width="28" height="18" rx="6" fill="#d9c9a6" stroke="#b5a37c"/>
+            <rect x="642" y="87" width="3" height="18" fill="#b03a2e"/><rect x="648" y="87" width="3" height="18" fill="#b03a2e"/>
+            <rect x="654" y="87" width="3" height="18" fill="#6e4b2a"/><rect x="660" y="87" width="3" height="18" fill="#c9a227"/>
+            <path d="M676 112h14M710 112h14" stroke="#9c9689" stroke-width="2.4"/>
+            <circle cx="700" cy="106" r="13" fill="#e0483a" stroke="#a8291f" stroke-width="1.3"/>
+            <rect x="685" y="106" width="30" height="7" rx="3" fill="#e0483a" stroke="#a8291f" stroke-width="1.1"/>
+            <line x1="715" y1="106" x2="715" y2="113" stroke="#6d1a13" stroke-width="2.2"/>
+            <path d="M724 126v126" stroke="#3a3833" stroke-width="3" stroke-linecap="round"/>
+
+            <!-- 배선 -->
+            <g fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+              <!-- 5V → 버튼 위쪽 -->
+              <path d="M146 275V320H364V60H476V96" stroke="#c0503c"/>
+              <!-- 2번 핀 → 버튼 아래쪽(저항과 같은 열) -->
+              <path d="M268 146H300V212H412V220" stroke="#d9a021"/>
+              <!-- 13번 → LED 저항 열 -->
+              <path d="M268 98H316V30H628V90" stroke="#c0503c"/>
+              <!-- GND → (−) 레일 -->
+              <path d="M200 275V336H356V268" stroke="#3a3833"/>
+            </g>
+
+            <!-- 저항 아래끝 → GND 레일 강조 -->
+            <rect x="346" y="262" width="484" height="12" rx="6" fill="#3c6ea8" opacity=".14"/>
+
+            <g fill="currentColor" font-family="system-ui, sans-serif">
+              <text x="444" y="102" font-size="12" font-weight="600" text-anchor="middle">택트 스위치</text>
+              <text x="700" y="150" font-size="12" font-weight="600" text-anchor="middle">LED + 220Ω → 13번</text>
+              <text x="396" y="228" font-size="11.5" font-weight="600" text-anchor="end">10kΩ</text>
+              <text x="396" y="244" font-size="10.5" opacity=".65" text-anchor="end">풀다운</text>
+            </g>
+          </svg>
+          <figcaption>풀다운 방식 배선. 버튼 위쪽은 5V, 아래쪽은 2번 핀과 10kΩ 저항이 같은 세로줄에서 만납니다. 저항의 반대편은 GND 레일로 갑니다.</figcaption>
+        </figure>
+
+        <h3>배선표</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:4rem">순서</th><th>연결</th><th style="width:8rem">부품</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>택트 스위치를 브레드보드 <b>가운데 홈에 걸쳐서</b> 꽂기</td><td>택트 스위치</td></tr>
+              <tr><td>2</td><td>아두이노 <code>5V</code> → 버튼 <b>위쪽</b> 다리 줄</td><td>점퍼선 (빨강)</td></tr>
+              <tr><td>3</td><td>아두이노 <code>2</code>번 핀 → 버튼 <b>아래쪽</b> 다리 줄</td><td>점퍼선 (노랑)</td></tr>
+              <tr><td>4</td><td>버튼 <b>아래쪽</b> 다리 줄 → (−) 레일</td><td>저항 10kΩ</td></tr>
+              <tr><td>5</td><td>아두이노 <code>GND</code> → (−) 레일</td><td>점퍼선 (검정)</td></tr>
+              <tr><td>6</td><td>아두이노 <code>13</code>번 → 220Ω → LED(+) → LED(−) → (−) 레일</td><td>LED, 220Ω</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">10kΩ 저항 색띠</span>
+          <p><b>갈색 · 검정 · 주황 · 금색</b>입니다. 갈(1) 검(0) 주(×1000) → <b>10 × 1000 = 10,000Ω = 10kΩ</b>. 220Ω(빨빨갈금)과 헷갈리지 않게 세 번째 띠를 잘 보세요.</p>
+        </div>
+
+        <h2 id="read">값 읽어보기</h2>
+
+        <p>회로가 제대로 됐는지 확인하는 가장 확실한 방법은 <b>값을 눈으로 보는 것</b>입니다. 2강의 시리얼 모니터를 씁니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">ReadButton.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUTTON = 2;
+
+void setup() {
+  pinMode(BUTTON, INPUT);   // 이 핀으로 '읽겠다'고 선언
+  Serial.begin(9600);
+}
+
+void loop() {
+  int state = digitalRead(BUTTON);   // 0 또는 1이 들어옵니다
+  Serial.println(state);
+  delay(100);
+}</code></pre>
+        </div>
+
+        <p>업로드하고 시리얼 모니터를 열면 이렇게 나와야 합니다.</p>
+
+        <div class="serial">
+          <div class="serial__bar">시리얼 모니터 · 9600 baud</div>
+0
+0
+0
+1      ← 버튼을 누르고 있는 동안
+1
+1
+0      ← 손을 뗌
+0</div>
+
+        <div class="note note--warn">
+          <span class="note__t">누르지 않았는데 0과 1이 마구 섞여 나온다면</span>
+          <p>플로팅입니다. <b>10kΩ 저항이 빠졌거나</b>, 저항이 GND가 아닌 다른 곳에 연결되어 있습니다. 위 배선표 4·5번을 다시 확인하세요.</p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:15rem">명령</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>pinMode(핀, INPUT)</code></td><td>그 핀으로 신호를 <b>읽겠다</b>고 선언합니다.</td></tr>
+              <tr><td><code>digitalRead(핀)</code></td><td>그 핀의 상태를 읽어 <code>HIGH</code>(1) 또는 <code>LOW</code>(0)를 돌려줍니다.</td></tr>
+              <tr><td><code>int state = …</code></td><td>읽은 값을 <code>state</code>라는 상자에 담아 둡니다. 나중에 비교할 때 씁니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2 id="light">누르면 불 켜기</h2>
+
+        <p>이제 읽은 값으로 <b>판단</b>해서 LED를 켭니다. 입력 → 연산 → 출력이 한 화면에 모두 들어옵니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">ButtonLed.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUTTON = 2;    // 입력
+const int LED    = 13;   // 출력
+
+void setup() {
+  pinMode(BUTTON, INPUT);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  int state = digitalRead(BUTTON);   // ① 입력: 버튼 읽기
+
+  if (state == HIGH) {               // ② 연산: 눌렸는가?
+    digitalWrite(LED, HIGH);         // ③ 출력: 켜기
+  } else {
+    digitalWrite(LED, LOW);          //    안 눌렸으면 끄기
+  }
+}</code></pre>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t"><code>=</code> 와 <code>==</code> 는 다릅니다</span>
+          <p><code>=</code> 는 <b>넣어라</b>(대입), <code>==</code> 는 <b>같은가?</b>(비교)입니다. <code>if (state = HIGH)</code>라고 쓰면 오류 없이 넘어가지만 <b>항상 참</b>이 되어 LED가 계속 켜져 있습니다. 찾기 아주 어려운 버그이니 조건문에서는 반드시 <code>==</code>를 쓰세요.</p>
+        </div>
+
+        <h3>더 짧게 쓰기</h3>
+        <p><code>digitalRead()</code>의 결과를 그대로 <code>digitalWrite()</code>에 넘길 수도 있습니다. 둘 다 HIGH/LOW를 쓰기 때문입니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">한 줄 버전</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>void loop() {
+  digitalWrite(LED, digitalRead(BUTTON));
+}</code></pre>
+        </div>
+
+        <p class="muted small">동작은 똑같습니다. 다만 “읽어서, 판단하고, 쓴다”는 흐름이 잘 안 보이므로 처음에는 <code>if</code> 버전으로 이해하는 편이 낫습니다.</p>
+
+        <h2 id="pullup">INPUT_PULLUP으로 바꾸기</h2>
+
+        <p>
+          이번엔 <b>10kΩ 저항을 빼고</b> 같은 동작을 만들어 봅시다.
+          아두이노 안에는 이미 풀업 저항이 들어 있어서, 코드로 켜기만 하면 됩니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:8rem">바꿀 것</th><th>내용</th></tr></thead>
+            <tbody>
+              <tr><td><b>회로</b></td><td>10kΩ 저항을 <b>제거</b>합니다. 버튼의 한쪽 다리는 <code>2</code>번 핀, 반대쪽 다리는 <b><code>GND</code></b>로 연결합니다. (5V 선은 필요 없습니다.)</td></tr>
+              <tr><td><b>코드</b></td><td><code>pinMode(BUTTON, INPUT)</code> → <code>pinMode(BUTTON, INPUT_PULLUP)</code></td></tr>
+              <tr><td><b>조건</b></td><td><code>if (state == HIGH)</code> → <code>if (state == LOW)</code> <span class="muted">— 값이 뒤집힙니다</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">ButtonLed_Pullup.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUTTON = 2;
+const int LED    = 13;
+
+void setup() {
+  // 보드 안의 풀업 저항을 켭니다. 외부 저항이 필요 없습니다.
+  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  // 주의: 눌렸을 때가 LOW 입니다 (평소에는 HIGH)
+  if (digitalRead(BUTTON) == LOW) {
+    digitalWrite(LED, HIGH);
+  } else {
+    digitalWrite(LED, LOW);
+  }
+}</code></pre>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">왜 값이 뒤집힐까</span>
+          <p>풀업 저항은 핀을 <b>평소에 5V 쪽으로 끌어올려 둡니다.</b> 그래서 아무것도 안 하면 HIGH입니다. 버튼을 누르면 핀이 GND와 직접 이어지면서 0V, 즉 <b>LOW로 끌어내려집니다.</b> 저항보다 직접 연결이 훨씬 “센” 길이기 때문입니다.</p>
+        </div>
+
+        <h2 id="toggle">누를 때마다 켜고 끄기 — 토글</h2>
+
+        <p>
+          지금 코드는 <b>누르고 있는 동안만</b> 켜집니다. 방 전등처럼 <b>한 번 누르면 켜지고, 다시 누르면 꺼지게</b> 하려면
+          두 가지가 더 필요합니다.
+        </p>
+
+        <ol class="steps">
+          <li><b>지금 켜져 있는지 기억하기</b><p>변수 하나에 상태를 저장해 둡니다. <code>loop()</code> 밖에 선언해야 값이 유지됩니다.</p></li>
+          <li><b>“눌린 순간”만 잡아내기</b><p><code>loop()</code>는 1초에 수만 번 돌기 때문에, 한 번 눌러도 “눌림”이 수천 번 감지됩니다. <b>직전 값과 지금 값이 달라진 순간</b>만 잡아야 합니다.</p></li>
+        </ol>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">Toggle.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>const int BUTTON = 2;
+const int LED    = 13;
+
+bool ledOn = false;        // 지금 LED가 켜져 있는가
+int  lastState = HIGH;     // 직전에 읽은 버튼 값
+unsigned long lastChange = 0;
+
+void setup() {
+  pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(LED, OUTPUT);
+}
+
+void loop() {
+  int state = digitalRead(BUTTON);
+
+  // 값이 방금 바뀌었고, 마지막 변화로부터 50ms가 지났을 때만 인정
+  if (state != lastState && millis() - lastChange > 50) {
+    lastChange = millis();
+
+    if (state == LOW) {          // HIGH → LOW, 즉 '눌린 순간'
+      ledOn = !ledOn;            // 켜져 있으면 끄고, 꺼져 있으면 켜기
+      digitalWrite(LED, ledOn ? HIGH : LOW);
+    }
+    lastState = state;
+  }
+}</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:12rem">문법</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>bool</code></td><td>참(<code>true</code>) 또는 거짓(<code>false</code>) 둘 중 하나만 담는 그릇입니다.</td></tr>
+              <tr><td><code>!ledOn</code></td><td><b>반대로 뒤집기.</b> <code>true</code>면 <code>false</code>가, <code>false</code>면 <code>true</code>가 됩니다.</td></tr>
+              <tr><td><code>state != lastState</code></td><td><code>!=</code> 는 “같지 않다”. <b>값이 방금 바뀌었다</b>는 뜻입니다.</td></tr>
+              <tr><td><code>ledOn ? HIGH : LOW</code></td><td><code>ledOn</code>이 참이면 HIGH, 거짓이면 LOW. <code>if/else</code>를 한 줄로 줄인 것입니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>채터링 — 왜 50ms를 기다릴까</h3>
+        <p>
+          버튼은 금속 조각 두 개가 부딪히는 기계 장치입니다. 누르는 순간 접점이 <b>수 밀리초 동안 미세하게 튕기면서</b>
+          붙었다 떨어졌다를 여러 번 반복합니다. 이것을 <b>채터링(bouncing)</b>이라고 합니다.
+          사람은 한 번 눌렀지만 아두이노는 <b>대여섯 번 눌린 것으로 읽습니다.</b>
+          그래서 토글이 제멋대로 동작하죠.
+        </p>
+        <p>
+          위 코드의 <code>millis() - lastChange > 50</code>이 이걸 막아 줍니다.
+          <b>한 번 변화를 인정하면 50ms 동안은 더 이상 받아들이지 않는 것</b>입니다.
+          이 처리를 <b>디바운스(debounce)</b>라고 합니다.
+        </p>
+
+        <div class="note note--tip">
+          <span class="note__t">직접 확인해 보기</span>
+          <p><code>&amp;&amp; millis() - lastChange > 50</code> 부분을 지우고 업로드해 보세요. 버튼을 눌렀을 때 LED가 <b>제멋대로 켜지거나 꺼지는</b> 것을 볼 수 있습니다. 이게 채터링입니다.</p>
+        </div>
+
+        <h2 id="quest">도전과제</h2>
+
+        <div class="quest">
+          <p class="quest__t">① 버튼 + 부저</p>
+          <p class="small" style="margin-bottom:0">4강의 부저를 7번 핀에 함께 연결하고, 버튼을 누르는 동안 소리가 나게 만들어 보세요. 입력 하나로 출력 두 개(LED, 부저)를 동시에 제어하는 연습입니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">② 누른 횟수 세기</p>
+          <p class="small">버튼을 누를 때마다 숫자를 1씩 늘려 시리얼 모니터에 출력해 보세요.</p>
+          <details><summary>힌트 보기</summary>
+            <p class="small" style="margin:.5rem 0 0">토글 코드에서 <code>ledOn = !ledOn;</code> 자리에 <code>count++; Serial.println(count);</code> 를 넣으면 됩니다. <code>count</code>는 <code>loop()</code> <b>밖에</b> <code>int count = 0;</code>으로 선언해야 값이 유지됩니다.</p>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">③ 버튼 두 개로 밝기 조절</p>
+          <p class="small" style="margin-bottom:0">버튼을 하나 더 달아, 한쪽은 밝기를 올리고 다른 쪽은 내리게 만들어 보세요. 3강의 <code>analogWrite()</code>와 <b>9번 핀</b>을 씁니다. 값이 0 아래나 255 위로 넘어가지 않도록 <code>constrain(값, 0, 255)</code>를 쓰면 편합니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">④ 길게 누르기 구분하기 (심화)</p>
+          <p class="small" style="margin-bottom:0">짧게 누르면 LED를 토글하고, <b>1초 이상 길게</b> 누르면 부저가 울리게 만들어 보세요. 눌린 <b>시각</b>을 <code>millis()</code>로 기억해 두었다가, 뗄 때 지금 시각과의 차이를 계산하면 됩니다.</p>
+        </div>
+
+        <h2 id="checklist">마무리 체크리스트</h2>
+        <ul class="checks">
+          <li><label><input type="checkbox" id="c5-1"><span>택트 스위치를 가운데 홈에 걸쳐 대각선 다리로 연결했다</span></label></li>
+          <li><label><input type="checkbox" id="c5-2"><span>풀다운 저항을 넣고 시리얼 모니터에서 0과 1이 또렷하게 나오는 것을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c5-3"><span>버튼을 누르는 동안 LED가 켜지게 만들었다</span></label></li>
+          <li><label><input type="checkbox" id="c5-4"><span><code>INPUT_PULLUP</code>으로 바꿔 저항 없이 같은 동작을 만들었다</span></label></li>
+          <li><label><input type="checkbox" id="c5-5"><span>값이 뒤집히는 이유를 설명할 수 있다</span></label></li>
+          <li><label><input type="checkbox" id="c5-6"><span>누를 때마다 켜고 꺼지는 토글을 만들었다</span></label></li>
+          <li><label><input type="checkbox" id="c5-7"><span>디바운스를 지웠을 때 채터링이 일어나는 것을 직접 확인했다</span></label></li>
+        </ul>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="04-buzzer.html"><span>이전</span><b>04 · 버저 출력</b></a>
+          <a class="next" href="06-traffic.html"><span>다음</span><b>06 · 신호등 만들기</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
