@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>01 · 아두이노란? — 아두이노 기초</title>
+<meta name="description" content="아두이노가 어떤 물건인지, 보드 위의 핀이 각각 무슨 역할을 하는지, 디지털과 아날로그의 차이는 무엇인지 정리합니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="1">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item is-current" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#what">아두이노란 무엇인가</a></li>
+            <li><a href="#why">왜 아두이노로 시작할까</a></li>
+            <li><a href="#board">보드 살펴보기</a></li>
+            <li><a href="#pins">핀 종류와 역할</a></li>
+            <li><a href="#terms">꼭 알아야 할 용어</a></li>
+            <li><a href="#sketch">스케치의 구조</a></li>
+            <li><a href="#quiz">확인 문제</a></li>
+          </ul>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-traffic.html"><span class="rail__num">04</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">01강 · 개념</p>
+          <h1>아두이노란?</h1>
+          <p class="lesson-head__lede">
+            아두이노를 “작은 컴퓨터”라고만 설명하면 감이 잘 안 옵니다.
+            무엇을 할 수 있고, 보드 위의 저 구멍들이 왜 저기에 있는지부터 봅시다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">이 강의를 마치면</p>
+            <ul>
+              <li>아두이노가 무엇이고 어디에 쓰이는지 설명할 수 있다</li>
+              <li>우노 보드에서 디지털 핀·아날로그 핀·전원 핀을 찾을 수 있다</li>
+              <li>디지털과 아날로그, HIGH와 LOW의 차이를 안다</li>
+              <li><code>setup()</code>과 <code>loop()</code>가 각각 언제 실행되는지 안다</li>
+            </ul>
+          </div>
+        </header>
+
+        <h2 id="what">아두이노란 무엇인가</h2>
+
+        <p>
+          아두이노는 <b>센서로 무언가를 감지해서, 판단하고, 부품을 움직이게 하는</b> 작은 장치입니다.
+          정확히는 두 가지를 함께 부르는 이름입니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">구분</th><th>내용</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>보드</b><br><span class="muted small">하드웨어</span></td>
+                <td>손바닥만 한 초록색 기판. 가운데 칩이 프로그램을 실행하고, 가장자리 구멍(핀)에 부품을 연결합니다. 우리 수업에서는 <b>Arduino Uno R3</b>를 씁니다.</td>
+              </tr>
+              <tr>
+                <td><b>IDE</b><br><span class="muted small">소프트웨어</span></td>
+                <td>컴퓨터에 설치하는 무료 프로그램. 여기에 코드를 쓰고 USB로 보드에 올립니다. 아두이노에서는 이 코드를 <b>스케치(sketch)</b>라고 부릅니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          핵심은 <b>“입력 → 처리 → 출력”</b> 흐름입니다. 버튼이 눌렸는지, 방이 어두운지, 온도가 몇 도인지를
+          <b>입력</b>받아, 코드로 <b>판단</b>하고, LED·모터·스피커를 <b>출력</b>으로 움직입니다.
+          자동문, 엘리베이터 버튼, 스마트 화분 물주기 장치 모두 같은 구조입니다.
+        </p>
+
+        <div class="note note--tip">
+          <span class="note__t">한 줄 정리</span>
+          <p>아두이노 = <b>내가 원하는 조건대로 전기를 켜고 끄는 일을 자동화해 주는 부품.</b> 사람이 스위치를 누르는 대신, 코드가 누릅니다.</p>
+        </div>
+
+        <h2 id="why">왜 아두이노로 시작할까</h2>
+
+        <ul>
+          <li><b>실패해도 부담이 없습니다.</b> 보드 가격이 저렴하고, 5V로 동작해서 감전 위험이 사실상 없습니다.</li>
+          <li><b>결과가 눈에 보입니다.</b> 코드 한 줄을 고치면 LED가 실제로 다르게 깜빡입니다. 화면 속 숫자가 아니라 손에 잡히는 결과입니다.</li>
+          <li><b>오픈소스라 자료가 많습니다.</b> 회로도와 설계가 공개되어 있어 호환 보드가 많고, 막혔을 때 검색하면 대부분 답이 나옵니다.</li>
+          <li><b>다음 단계로 이어집니다.</b> 여기서 배운 개념은 라즈베리파이, ESP32, 로봇 제어로 거의 그대로 넘어갑니다.</li>
+        </ul>
+
+        <h2 id="board">보드 살펴보기</h2>
+
+        <p>USB 케이블을 꽂기 전에, 보드에서 다섯 군데만 눈으로 찾아봅시다.</p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 860 430" role="img" aria-label="아두이노 우노 보드의 주요 부품 위치를 표시한 그림" style="color:var(--ink-2)">
+            <!-- 기판 -->
+            <rect x="190" y="110" width="480" height="210" rx="10" fill="#35777a" stroke="#28595c" stroke-width="2"/>
+            <rect x="198" y="118" width="464" height="194" rx="7" fill="none" stroke="#2c6467" stroke-width="1"/>
+
+            <!-- 아두이노 마크 -->
+            <g fill="none" stroke="#a8d3d4" stroke-width="2.4" stroke-linecap="round" opacity=".8" transform="translate(228,196) scale(.9)">
+              <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+              <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+            </g>
+            <text x="228" y="242" font-size="11" fill="#a8d3d4" opacity=".75" font-family="system-ui">UNO</text>
+
+            <!-- USB -->
+            <rect x="164" y="132" width="68" height="48" rx="3" fill="#b9b6ac" stroke="#8e8b82" stroke-width="1.5"/>
+            <rect x="172" y="140" width="52" height="32" rx="2" fill="#8e8b82"/>
+
+            <!-- DC 잭 -->
+            <rect x="166" y="256" width="62" height="46" rx="6" fill="#24231f" stroke="#141310" stroke-width="1.5"/>
+            <circle cx="176" cy="279" r="9" fill="#3c3a34"/>
+
+            <!-- 리셋 버튼 -->
+            <rect x="252" y="130" width="26" height="26" rx="3" fill="#3c3a34" stroke="#24231f"/>
+            <circle cx="265" cy="143" r="7" fill="#c9c5b8"/>
+
+            <!-- 내장 LED / 전원 LED -->
+            <rect x="560" y="152" width="13" height="8" rx="1.5" fill="#e8b42c"/>
+            <rect x="582" y="152" width="13" height="8" rx="1.5" fill="#7bbf6a"/>
+
+            <!-- 디지털 헤더 -->
+            <rect x="300" y="116" width="300" height="19" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841">
+              <circle cx="312" cy="125.5" r="3.4"/><circle cx="330" cy="125.5" r="3.4"/><circle cx="348" cy="125.5" r="3.4"/>
+              <circle cx="366" cy="125.5" r="3.4"/><circle cx="384" cy="125.5" r="3.4"/><circle cx="402" cy="125.5" r="3.4"/>
+              <circle cx="420" cy="125.5" r="3.4"/><circle cx="438" cy="125.5" r="3.4"/><circle cx="456" cy="125.5" r="3.4"/>
+              <circle cx="474" cy="125.5" r="3.4"/><circle cx="492" cy="125.5" r="3.4"/><circle cx="510" cy="125.5" r="3.4"/>
+              <circle cx="528" cy="125.5" r="3.4"/><circle cx="546" cy="125.5" r="3.4"/><circle cx="564" cy="125.5" r="3.4"/>
+              <circle cx="582" cy="125.5" r="3.4"/>
+            </g>
+
+            <!-- 마이크로컨트롤러 -->
+            <rect x="400" y="200" width="132" height="54" rx="3" fill="#24231f" stroke="#141310"/>
+            <circle cx="412" cy="212" r="3.6" fill="#4a4841"/>
+            <text x="466" y="232" font-size="11.5" fill="#a3a097" text-anchor="middle" font-family="system-ui">ATmega328P</text>
+
+            <!-- 전원 헤더 -->
+            <rect x="232" y="301" width="140" height="19" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841">
+              <circle cx="244" cy="310.5" r="3.4"/><circle cx="262" cy="310.5" r="3.4"/><circle cx="280" cy="310.5" r="3.4"/>
+              <circle cx="298" cy="310.5" r="3.4"/><circle cx="316" cy="310.5" r="3.4"/><circle cx="334" cy="310.5" r="3.4"/>
+              <circle cx="352" cy="310.5" r="3.4"/>
+            </g>
+
+            <!-- 아날로그 헤더 -->
+            <rect x="392" y="301" width="122" height="19" rx="2.5" fill="#24231f"/>
+            <g fill="#4a4841">
+              <circle cx="404" cy="310.5" r="3.4"/><circle cx="422" cy="310.5" r="3.4"/><circle cx="440" cy="310.5" r="3.4"/>
+              <circle cx="458" cy="310.5" r="3.4"/><circle cx="476" cy="310.5" r="3.4"/><circle cx="494" cy="310.5" r="3.4"/>
+            </g>
+
+            <!-- 지시선 -->
+            <g stroke="currentColor" stroke-width="1" opacity=".4" fill="none">
+              <path d="M450 78v34"/>
+              <path d="M198 156h-36"/>
+              <path d="M198 279h-30"/>
+              <path d="M302 342v-20"/>
+              <path d="M452 358v-38"/>
+              <path d="M466 226h214"/>
+              <path d="M278 143h56M334 143v-52h68"/>
+              <path d="M596 156h84"/>
+            </g>
+            <g fill="currentColor" opacity=".55">
+              <circle cx="450" cy="112" r="2.4"/><circle cx="196" cy="156" r="2.4"/><circle cx="196" cy="279" r="2.4"/>
+              <circle cx="302" cy="322" r="2.4"/><circle cx="452" cy="320" r="2.4"/><circle cx="466" cy="226" r="2.4"/>
+              <circle cx="278" cy="143" r="2.4"/><circle cx="596" cy="156" r="2.4"/>
+            </g>
+
+            <!-- 라벨 -->
+            <g fill="currentColor" font-family="system-ui, sans-serif">
+              <text x="450" y="50" font-size="14.5" font-weight="600" text-anchor="middle">디지털 핀 0 ~ 13</text>
+              <text x="450" y="68" font-size="11.5" opacity=".65" text-anchor="middle">켜고 끄는 신호. ~ 표시 핀은 밝기 조절도 가능</text>
+
+              <text x="152" y="150" font-size="14.5" font-weight="600" text-anchor="end">USB-B 포트</text>
+              <text x="152" y="168" font-size="11.5" opacity=".65" text-anchor="end">전원 + 코드 업로드</text>
+
+              <text x="158" y="274" font-size="14.5" font-weight="600" text-anchor="end">DC 전원잭</text>
+              <text x="158" y="292" font-size="11.5" opacity=".65" text-anchor="end">7~12V · 어댑터용</text>
+
+              <text x="302" y="360" font-size="14.5" font-weight="600" text-anchor="middle">전원 핀</text>
+              <text x="302" y="378" font-size="11.5" opacity=".65" text-anchor="middle">5V · 3.3V · GND</text>
+
+              <text x="452" y="376" font-size="14.5" font-weight="600" text-anchor="middle">아날로그 입력</text>
+              <text x="452" y="394" font-size="11.5" opacity=".65" text-anchor="middle">A0 ~ A5</text>
+
+              <text x="690" y="222" font-size="14.5" font-weight="600">ATmega328P</text>
+              <text x="690" y="240" font-size="11.5" opacity=".65">코드가 저장되고 실행되는 칩</text>
+
+              <text x="690" y="152" font-size="14.5" font-weight="600">내장 LED</text>
+              <text x="690" y="170" font-size="11.5" opacity=".65">13번 핀에 연결됨 · L 표시</text>
+
+              <text x="344" y="86" font-size="13" font-weight="600" text-anchor="end" transform="translate(58,0)">RESET</text>
+              <text x="402" y="86" font-size="11.5" opacity=".65">처음부터 다시 실행</text>
+            </g>
+          </svg>
+          <figcaption>Arduino Uno R3의 주요 부분. 실제 보드는 부품 위치가 조금씩 다를 수 있지만, 핀 배치와 이름은 같습니다.</figcaption>
+        </figure>
+
+        <div class="note note--tip">
+          <span class="note__t">가장 많이 헷갈리는 것</span>
+          <p><b>13번 핀에는 이미 LED가 하나 붙어 있습니다.</b> 보드에 <code>L</code>이라고 쓰인 작은 LED입니다. 그래서 아무것도 연결하지 않고도 13번 핀만으로 깜빡임 실습이 가능합니다.</p>
+        </div>
+
+        <h2 id="pins">핀 종류와 역할</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:8.5rem">핀</th><th style="width:5rem">방향</th><th>설명</th></tr></thead>
+            <tbody>
+              <tr><td><code>0</code> ~ <code>13</code></td><td>입출력</td><td>디지털 핀. 켬(5V)과 끔(0V) 두 가지 상태만 다룹니다. LED, 버튼, 부저에 사용합니다.</td></tr>
+              <tr><td><code>3 5 6 9 10 11</code></td><td>출력</td><td>위 디지털 핀 중 <code>~</code> 표시가 있는 것들. <b>PWM</b>으로 밝기·속도를 0~255 단계로 조절할 수 있습니다.</td></tr>
+              <tr><td><code>A0</code> ~ <code>A5</code></td><td>입력</td><td>아날로그 핀. 0~5V 사이의 값을 <b>0~1023</b> 숫자로 읽습니다. 조도·온도 센서, 가변저항에 사용합니다.</td></tr>
+              <tr><td><code>5V</code></td><td>출력</td><td>부품에 5V 전기를 공급합니다. 회로의 (+)입니다.</td></tr>
+              <tr><td><code>3.3V</code></td><td>출력</td><td>3.3V로 동작하는 부품용. 이번 수업에서는 쓰지 않습니다.</td></tr>
+              <tr><td><code>GND</code></td><td>—</td><td>접지, 회로의 (−). 세 개가 있지만 모두 안에서 연결되어 있어 아무거나 써도 됩니다.</td></tr>
+              <tr><td><code>0</code>, <code>1</code></td><td colspan="2">USB 통신에도 함께 쓰입니다. <b>가급적 사용하지 마세요.</b> 여기에 부품을 꽂으면 업로드가 실패할 수 있습니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">전류 한계</span>
+          <p>디지털 핀 하나가 감당할 수 있는 전류는 <b>최대 20mA</b>(절대 한계 40mA), 보드 전체로는 <b>200mA</b> 정도입니다. LED는 약 15~20mA를 쓰므로 몇 개는 괜찮지만, 모터나 전구는 절대 핀에 직접 연결하면 안 됩니다.</p>
+        </div>
+
+        <h2 id="terms">꼭 알아야 할 용어</h2>
+
+        <dl class="terms">
+          <dt>디지털 (Digital)</dt>
+          <dd>중간이 없는 신호. 켜짐 아니면 꺼짐, 둘 중 하나입니다. 형광등 스위치를 생각하면 됩니다.</dd>
+
+          <dt>아날로그 (Analog)</dt>
+          <dd>연속적으로 변하는 신호. 0%부터 100%까지 모든 값이 가능합니다. 조명 밝기 조절 다이얼을 생각하면 됩니다.</dd>
+
+          <dt>HIGH / LOW</dt>
+          <dd>디지털 핀의 두 상태를 부르는 이름입니다. <b>HIGH = 5V(켬)</b>, <b>LOW = 0V(끔)</b>. 코드에서는 <code>digitalWrite(13, HIGH)</code>처럼 씁니다.</dd>
+
+          <dt>입력 (INPUT) / 출력 (OUTPUT)</dt>
+          <dd>핀이 <b>신호를 읽을지(입력)</b>, <b>신호를 내보낼지(출력)</b>를 정하는 것. LED는 출력, 버튼은 입력입니다. <code>pinMode()</code>로 지정합니다.</dd>
+
+          <dt>스케치 (Sketch)</dt>
+          <dd>아두이노에서 부르는 프로그램의 이름. 확장자는 <code>.ino</code>입니다.</dd>
+
+          <dt>업로드 (Upload)</dt>
+          <dd>컴퓨터에서 작성한 스케치를 USB를 통해 보드의 칩에 옮겨 넣는 것. 한 번 업로드하면 USB를 빼도 <b>전원만 있으면 계속 실행</b>됩니다.</dd>
+
+          <dt>GND (그라운드)</dt>
+          <dd>회로의 기준점이자 (−)극. 전기는 5V에서 나와 부품을 거쳐 GND로 돌아옵니다. <b>이 길이 끊기면 아무것도 동작하지 않습니다.</b></dd>
+        </dl>
+
+        <h2 id="sketch">스케치의 구조</h2>
+
+        <p>모든 아두이노 스케치에는 함수 두 개가 반드시 있습니다. 이름도, 역할도 정해져 있습니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">sketch.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>void setup() {
+  // 전원이 켜질 때 딱 한 번만 실행됩니다.
+  // 준비 작업을 여기에 씁니다. (핀 설정 등)
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  // setup() 이 끝나면, 전원이 꺼질 때까지 무한 반복됩니다.
+  digitalWrite(13, HIGH);   // 13번 핀에 5V를 내보낸다 → LED 켜짐
+  delay(1000);              // 1000밀리초(=1초) 동안 그대로 기다린다
+  digitalWrite(13, LOW);    // 13번 핀을 0V로 → LED 꺼짐
+  delay(1000);
+}</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">함수</th><th style="width:8rem">실행 횟수</th><th>여기에 쓰는 것</th></tr></thead>
+            <tbody>
+              <tr><td><code>setup()</code></td><td>딱 1번</td><td>핀 모드 설정, 시리얼 통신 시작 등 준비 작업</td></tr>
+              <tr><td><code>loop()</code></td><td>무한 반복</td><td>실제로 반복해야 하는 동작 — 깜빡이기, 센서 읽기, 판단하기</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          위 코드에서 <code>delay(1000)</code>의 <b>1000</b>은 밀리초(ms)입니다. 1000ms = 1초.
+          즉 이 스케치는 <b>1초 켜고 1초 끄기</b>를 영원히 반복합니다.
+          이 숫자를 <code>100</code>으로 바꾸면 훨씬 빠르게 깜빡입니다.
+        </p>
+
+        <div class="note note--check">
+          <span class="note__t">문법에서 자주 틀리는 것</span>
+          <ul style="margin-bottom:0">
+            <li>모든 명령 끝에 <b>세미콜론 <code>;</code></b> 을 붙입니다. 이걸 빼먹는 게 오류 1위입니다.</li>
+            <li>대소문자를 구분합니다. <code>digitalWrite</code>는 되지만 <code>digitalwrite</code>는 안 됩니다.</li>
+            <li>여는 중괄호 <code>{</code> 와 닫는 중괄호 <code>}</code> 는 항상 짝이 맞아야 합니다.</li>
+            <li><code>//</code> 뒤는 주석입니다. 사람이 읽는 메모이고, 보드는 무시합니다.</li>
+          </ul>
+        </div>
+
+        <h2 id="quiz">확인 문제</h2>
+
+        <div class="quest">
+          <p class="quest__t">1. LED를 켜려면 핀을 어떤 상태로 만들어야 할까요?</p>
+          <details><summary>답 보기</summary>
+            <p class="small" style="margin:.5rem 0 0"><b>HIGH</b>입니다. HIGH는 그 핀에 5V가 나온다는 뜻이고, 전기가 흘러 LED가 켜집니다. LOW는 0V라 전기가 흐르지 않습니다.</p>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">2. 버튼이 눌렸는지 확인하려면 그 핀은 입력일까요, 출력일까요?</p>
+          <details><summary>답 보기</summary>
+            <p class="small" style="margin:.5rem 0 0"><b>입력(INPUT)</b>입니다. 아두이노가 신호를 <b>읽어야</b> 하기 때문입니다. 반대로 LED는 아두이노가 신호를 <b>내보내야</b> 하므로 출력입니다.</p>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">3. <code>delay(500)</code>은 몇 초를 기다릴까요?</p>
+          <details><summary>답 보기</summary>
+            <p class="small" style="margin:.5rem 0 0"><b>0.5초</b>입니다. 단위가 밀리초라서 1000으로 나누면 초가 됩니다.</p>
+          </details>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">4. 온도 센서 값처럼 “23.5도”같이 연속적인 값을 읽으려면 어느 핀에 꽂아야 할까요?</p>
+          <details><summary>답 보기</summary>
+            <p class="small" style="margin:.5rem 0 0"><b>아날로그 입력 핀(A0~A5)</b>입니다. 디지털 핀은 켜짐/꺼짐만 구분하므로 중간 값을 읽을 수 없습니다.</p>
+          </details>
+        </div>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="index.html"><span>이전</span><b>강의 목록</b></a>
+          <a class="next" href="02-ide.html"><span>다음</span><b>02 · IDE 설치와 첫 업로드</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

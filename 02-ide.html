@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>02 · IDE 설치와 첫 업로드 — 아두이노 기초</title>
+<meta name="description" content="Arduino IDE 2.x를 윈도우와 맥에 설치하고, 보드를 연결해 예제 Blink를 업로드합니다. 업로드가 안 될 때 확인할 목록도 함께 다룹니다.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="2">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item is-current" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#download">다운로드</a></li>
+            <li><a href="#install">설치하기</a></li>
+            <li><a href="#tour">IDE 화면 익히기</a></li>
+            <li><a href="#connect">보드 연결과 포트 설정</a></li>
+            <li><a href="#blink">첫 업로드 — Blink</a></li>
+            <li><a href="#trouble">업로드가 안 될 때</a></li>
+            <li><a href="#serial">시리얼 모니터</a></li>
+            <li><a href="#checklist">마무리 체크리스트</a></li>
+          </ul>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-traffic.html"><span class="rail__num">04</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">02강 · 환경 설정</p>
+          <h1>IDE 설치와 첫 업로드</h1>
+          <p class="lesson-head__lede">
+            코드를 보드에 올리려면 프로그램 하나가 필요합니다. 설치하고, 보드를 연결하고,
+            내장 LED를 깜빡이게 만드는 데까지 15분이면 충분합니다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">이 강의를 마치면</p>
+            <ul>
+              <li>Arduino IDE를 설치하고 실행할 수 있다</li>
+              <li>보드 종류와 포트를 올바르게 선택할 수 있다</li>
+              <li>예제 스케치를 업로드해 내장 LED를 깜빡이게 할 수 있다</li>
+              <li>업로드 오류가 났을 때 스스로 원인을 찾아볼 수 있다</li>
+            </ul>
+          </div>
+        </header>
+
+        <h2 id="download">다운로드</h2>
+
+        <p>
+          공식 사이트 <a href="https://www.arduino.cc/en/software" target="_blank" rel="noopener">arduino.cc/en/software</a> 에 접속합니다.
+          여러 버전이 보이는데, <b>Arduino IDE 2.x</b> 를 받으면 됩니다. 무료입니다.
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:11rem">내 컴퓨터</th><th>받을 파일</th></tr></thead>
+            <tbody>
+              <tr><td>윈도우</td><td><b>Windows Win 10 and newer, 64 bits</b> — 설치 파일(.exe)</td></tr>
+              <tr><td>맥 (M1/M2/M3/M4)</td><td><b>macOS Apple Silicon</b> — .dmg</td></tr>
+              <tr><td>맥 (인텔)</td><td><b>macOS Intel</b> — .dmg</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">기부 요청 화면이 뜨면</span>
+          <p>다운로드 버튼을 누르면 후원을 부탁하는 페이지가 나옵니다. <b>JUST DOWNLOAD</b>를 누르면 결제 없이 바로 받을 수 있습니다.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">내 맥이 어느 쪽인지 모르겠다면</span>
+          <p>왼쪽 위 사과 메뉴 → <b>이 Mac에 관하여</b>를 열어 <b>칩</b> 항목을 봅니다. “Apple M…”이면 Apple Silicon, “Intel Core…”면 Intel입니다.</p>
+        </div>
+
+        <h2 id="install">설치하기</h2>
+
+        <h3>윈도우</h3>
+        <ol class="steps">
+          <li><b>설치 파일 실행</b><p>받은 <code>arduino-ide_…_Windows_64bit.exe</code>를 더블클릭합니다.</p></li>
+          <li><b>“Windows의 PC 보호” 경고가 뜨면</b><p><b>추가 정보</b> → <b>실행</b>을 누릅니다. 공식 배포 파일이라 안전합니다.</p></li>
+          <li><b>라이선스 동의 후 설치</b><p>경로는 기본값 그대로 두고 <b>Install</b>을 누릅니다.</p></li>
+          <li><b>드라이버 설치 창을 허용</b><p>설치 도중 “이 장치 소프트웨어를 설치하시겠습니까?”가 여러 번 뜹니다. <b>모두 설치</b>를 눌러야 보드가 인식됩니다.</p></li>
+        </ol>
+
+        <h3>맥</h3>
+        <ol class="steps">
+          <li><b>dmg 열기</b><p>받은 <code>.dmg</code> 파일을 더블클릭합니다.</p></li>
+          <li><b>응용 프로그램으로 드래그</b><p>Arduino IDE 아이콘을 옆의 <b>Applications</b> 폴더로 끌어다 놓습니다.</p></li>
+          <li><b>첫 실행 시 경고가 뜨면</b><p>“확인되지 않은 개발자” 경고가 나오면, 아이콘을 <b>우클릭 → 열기</b>로 실행하거나 <b>시스템 설정 → 개인정보 보호 및 보안</b>에서 <b>확인 없이 열기</b>를 누릅니다.</p></li>
+        </ol>
+
+        <div class="note note--warn">
+          <span class="note__t">호환 보드(클론)를 쓴다면 — CH340 드라이버</span>
+          <p>정품이 아닌 저가 우노 보드는 USB 칩이 <b>CH340</b>인 경우가 많습니다. 이 경우 보드를 꽂아도 포트 목록에 아무것도 안 뜹니다.
+          <b>CH340 드라이버</b>를 따로 설치한 뒤 컴퓨터를 재시작하세요. 맥에서는 <code>/dev/cu.wchusbserial…</code> 같은 이름으로 나타납니다.</p>
+        </div>
+
+        <h2 id="tour">IDE 화면 익히기</h2>
+
+        <p>처음 실행하면 아래와 같은 창이 열립니다. 지금은 <b>버튼 두 개</b>와 <b>드롭다운 하나</b>만 알면 됩니다.</p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 860 452" role="img" aria-label="Arduino IDE 창의 각 영역을 설명한 그림" style="color:var(--ink-2)">
+            <!-- 창 -->
+            <rect x="20" y="66" width="820" height="322" rx="8" fill="#2f2e29" stroke="#413f38" stroke-width="1.5"/>
+            <!-- 타이틀바 -->
+            <path d="M20 74a8 8 0 018-8h804a8 8 0 018 8v22H20z" fill="#3a3832"/>
+            <g fill="#6a675e"><circle cx="42" cy="85" r="5"/><circle cx="60" cy="85" r="5"/><circle cx="78" cy="85" r="5"/></g>
+            <text x="430" y="90" font-size="11.5" fill="#98948a" text-anchor="middle" font-family="system-ui">Blink | Arduino IDE 2.x</text>
+
+            <!-- 툴바 -->
+            <rect x="20" y="96" width="820" height="44" fill="#353430"/>
+            <!-- 검증 -->
+            <circle cx="52" cy="118" r="14" fill="#0b8f95"/>
+            <path d="M46 118l4.5 4.5L58.5 114" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 업로드 -->
+            <circle cx="90" cy="118" r="14" fill="#0b8f95"/>
+            <path d="M84 118h11m-4-4.5l4.5 4.5-4.5 4.5" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 보드 선택 드롭다운 -->
+            <rect x="118" y="105" width="230" height="26" rx="13" fill="#46443d"/>
+            <circle cx="133" cy="118" r="4.5" fill="#7fc6ca"/>
+            <text x="146" y="122" font-size="11" fill="#c8c4ba" font-family="system-ui">Arduino Uno · COM3</text>
+            <path d="M334 115l5 5 5-5" fill="none" stroke="#9c988e" stroke-width="1.6" stroke-linecap="round"/>
+            <!-- 우측 아이콘 -->
+            <rect x="800" y="107" width="22" height="22" rx="4" fill="#46443d"/>
+            <path d="M806 118h10M806 113h10M806 123h6" stroke="#a8a49a" stroke-width="1.6" stroke-linecap="round"/>
+
+            <!-- 좌측 사이드바 -->
+            <rect x="20" y="140" width="46" height="248" fill="#2a2925"/>
+            <g stroke="#7b776e" stroke-width="1.7" fill="none" stroke-linecap="round">
+              <path d="M35 160h16M35 165h16M35 170h16"/>
+              <rect x="35" y="192" width="16" height="14" rx="2"/>
+              <path d="M35 226h16M43 218v16"/>
+              <circle cx="42" cy="258" r="7"/><path d="M47 263l5 5"/>
+            </g>
+
+            <!-- 에디터 -->
+            <rect x="66" y="140" width="774" height="180" fill="#2f2e29"/>
+            <g font-family="ui-monospace, monospace" font-size="12">
+              <text x="86" y="164" fill="#5d6b57">// the setup function runs once</text>
+              <text x="86" y="184" fill="#c9899e">void <tspan fill="#82a9c4">setup</tspan><tspan fill="#c8c4ba">() {</tspan></text>
+              <text x="106" y="204" fill="#82a9c4">pinMode<tspan fill="#c8c4ba">(</tspan><tspan fill="#d8b96a">LED_BUILTIN</tspan><tspan fill="#c8c4ba">, </tspan><tspan fill="#d8b96a">OUTPUT</tspan><tspan fill="#c8c4ba">);</tspan></text>
+              <text x="86" y="224" fill="#c8c4ba">}</text>
+              <text x="86" y="252" fill="#c9899e">void <tspan fill="#82a9c4">loop</tspan><tspan fill="#c8c4ba">() {</tspan></text>
+              <text x="106" y="272" fill="#82a9c4">digitalWrite<tspan fill="#c8c4ba">(</tspan><tspan fill="#d8b96a">LED_BUILTIN</tspan><tspan fill="#c8c4ba">, </tspan><tspan fill="#d8b96a">HIGH</tspan><tspan fill="#c8c4ba">);</tspan></text>
+              <text x="106" y="292" fill="#82a9c4">delay<tspan fill="#c8c4ba">(</tspan><tspan fill="#dfa87b">1000</tspan><tspan fill="#c8c4ba">);</tspan></text>
+            </g>
+            <g fill="#5d5b53" font-family="ui-monospace, monospace" font-size="11">
+              <text x="76" y="164">1</text><text x="76" y="184">2</text><text x="76" y="204">3</text>
+              <text x="76" y="224">4</text><text x="76" y="252">6</text><text x="76" y="272">7</text><text x="76" y="292">8</text>
+            </g>
+
+            <!-- 출력 패널 -->
+            <rect x="66" y="320" width="774" height="68" fill="#262521"/>
+            <line x1="66" y1="320" x2="840" y2="320" stroke="#413f38"/>
+            <text x="86" y="341" font-size="10.5" fill="#8f8b81" font-family="system-ui">출력</text>
+            <text x="86" y="362" font-size="11" fill="#7fae72" font-family="ui-monospace, monospace">스케치가 프로그램 저장 공간 924 바이트(2%)를 사용합니다.</text>
+            <text x="86" y="378" font-size="11" fill="#7fae72" font-family="ui-monospace, monospace">전역 변수는 동적 메모리 9바이트(0%)를 사용합니다.</text>
+
+            <!-- 지시선 -->
+            <g stroke="currentColor" stroke-width="1" opacity=".4" fill="none">
+              <path d="M52 100V44h44"/>
+              <path d="M90 100V26h96"/>
+              <path d="M233 100V60h140"/>
+              <path d="M453 388v20H420"/>
+            </g>
+            <g fill="currentColor" opacity=".55">
+              <circle cx="52" cy="102" r="2.4"/><circle cx="90" cy="102" r="2.4"/><circle cx="233" cy="102" r="2.4"/><circle cx="453" cy="386" r="2.4"/>
+            </g>
+            <g fill="currentColor" font-family="system-ui, sans-serif">
+              <text x="102" y="48" font-size="13.5" font-weight="600">검증 — 문법 오류만 확인 (보드 없이도 가능)</text>
+              <text x="192" y="30" font-size="13.5" font-weight="600">업로드 — 보드에 코드를 올린다</text>
+              <text x="379" y="64" font-size="13.5" font-weight="600">보드와 포트 선택 — 여기가 비어 있으면 업로드 실패</text>
+              <text x="412" y="412" font-size="13.5" font-weight="600" text-anchor="end">출력 창 — 오류 메시지는 항상 여기에 나옵니다</text>
+            </g>
+          </svg>
+          <figcaption>Arduino IDE 2.x의 기본 화면. 실제 창의 색상과 언어는 설정에 따라 다를 수 있습니다.</figcaption>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:8rem">버튼</th><th style="width:8rem">단축키</th><th>하는 일</th></tr></thead>
+            <tbody>
+              <tr><td><b>✓ 검증</b></td><td><code>Ctrl/⌘ + R</code></td><td>코드에 문법 오류가 없는지만 확인합니다. 보드가 없어도 됩니다.</td></tr>
+              <tr><td><b>→ 업로드</b></td><td><code>Ctrl/⌘ + U</code></td><td>검증한 뒤 보드에 실제로 올립니다. 보드가 연결되어 있어야 합니다.</td></tr>
+              <tr><td><b>🔍 시리얼 모니터</b></td><td><code>Ctrl/⌘ + Shift + M</code></td><td>보드가 보낸 메시지를 화면에 띄웁니다.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="muted small">
+          한국어로 바꾸려면 <b>File(파일) → Preferences(환경설정) → Language</b>에서 <b>한국어</b>를 선택하고 IDE를 다시 켜면 됩니다.
+        </p>
+
+        <h2 id="connect">보드 연결과 포트 설정</h2>
+
+        <ol class="steps">
+          <li><b>USB 케이블로 보드를 연결합니다</b>
+            <p>보드의 <code>ON</code> LED에 초록 불이 들어오면 전원이 들어온 것입니다. 불이 안 들어오면 케이블이 <b>충전 전용</b>일 가능성이 높습니다.</p>
+          </li>
+          <li><b>보드 종류를 고릅니다</b>
+            <p><b>도구 → 보드 → Arduino AVR Boards → Arduino Uno</b></p>
+          </li>
+          <li><b>포트를 고릅니다</b>
+            <p><b>도구 → 포트</b>에서 나타난 항목을 선택합니다.</p>
+            <ul>
+              <li>윈도우: <code>COM3</code>, <code>COM5</code> 같은 이름 (COM1은 보통 아님)</li>
+              <li>맥: <code>/dev/cu.usbmodem…</code> 또는 <code>/dev/cu.wchusbserial…</code></li>
+            </ul>
+          </li>
+          <li><b>툴바 드롭다운을 확인합니다</b>
+            <p>화면 위 드롭다운에 <b>Arduino Uno</b>와 포트 이름이 함께 보이면 준비 완료입니다.</p>
+          </li>
+        </ol>
+
+        <div class="note note--tip">
+          <span class="note__t">어느 포트인지 모르겠다면</span>
+          <p>USB를 <b>뽑은 상태</b>에서 포트 목록을 확인하고, 다시 <b>꽂은 뒤</b> 목록을 봅니다. <b>새로 생긴 것</b>이 아두이노입니다.</p>
+        </div>
+
+        <h2 id="blink">첫 업로드 — Blink</h2>
+
+        <p>
+          IDE에는 예제가 기본으로 들어 있습니다. <b>파일 → 예제 → 01.Basics → Blink</b> 를 엽니다.
+          아래와 같은 코드가 열립니다. (주석은 우리말로 바꿔 두었습니다.)
+        </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">Blink.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>void setup() {
+  // LED_BUILTIN 은 보드에 내장된 LED, 즉 13번 핀을 뜻합니다.
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH);  // 켬
+  delay(1000);                      // 1초 대기
+  digitalWrite(LED_BUILTIN, LOW);   // 끔
+  delay(1000);                      // 1초 대기
+}</code></pre>
+        </div>
+
+        <p>
+          <b>→ 업로드</b> 버튼을 누릅니다. 아래 출력 창에 흰 글씨가 지나가고,
+          보드의 <code>TX</code>·<code>RX</code> LED가 빠르게 깜빡인 뒤 멈춥니다.
+          그러고 나면 보드의 <code>L</code> LED가 <b>1초 간격으로 깜빡</b>입니다.
+        </p>
+
+        <div class="note note--check">
+          <span class="note__t">성공 신호</span>
+          <p>출력 창에 <code>스케치가 프로그램 저장 공간 …바이트를 사용합니다</code>(영문: <code>Sketch uses … bytes</code>)라는 문장이 보이면 업로드 성공입니다.</p>
+        </div>
+
+        <h3>바꿔보기</h3>
+        <p>
+          <code>delay(1000)</code> 두 곳을 모두 <code>delay(100)</code>으로 바꾸고 다시 업로드해 보세요.
+          훨씬 빠르게 깜빡입니다. <b>코드를 바꿨으면 반드시 다시 업로드</b>해야 반영됩니다. 저장만 해서는 바뀌지 않습니다.
+        </p>
+
+        <div class="quest">
+          <p class="quest__t">도전 — 모스 부호로 SOS</p>
+          <p class="small" style="margin-bottom:0">짧게 3번(0.2초), 길게 3번(0.6초), 짧게 3번 깜빡이게 만들어 보세요. 각 깜빡임 사이에는 0.2초 쉬고, 한 세트가 끝나면 2초 쉽니다.</p>
+          <details><summary>힌트 보기</summary>
+            <p class="small" style="margin:.5rem 0 0"><code>digitalWrite(HIGH) → delay(켤 시간) → digitalWrite(LOW) → delay(0.2초)</code> 를 9번 쓰면 됩니다. 반복되는 부분이 지저분해 보인다면 정상입니다. 4강에서 이걸 <b>함수</b>로 깔끔하게 정리하는 법을 배웁니다.</p>
+          </details>
+        </div>
+
+        <h2 id="trouble">업로드가 안 될 때</h2>
+
+        <p>수업에서 나오는 오류의 90%는 아래 네 가지 중 하나입니다. 위에서부터 순서대로 확인하세요.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:15rem">증상 / 메시지</th><th>원인과 해결</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><b>포트 목록이 비어 있음</b></td>
+                <td>① 케이블이 충전 전용 → 데이터 케이블로 교체 ② 클론 보드인데 <b>CH340 드라이버</b> 미설치 ③ USB 허브 대신 노트북에 직접 연결</td>
+              </tr>
+              <tr>
+                <td><code>Serial port not selected</code><br><code>포트가 선택되지 않았습니다</code></td>
+                <td><b>도구 → 포트</b>에서 포트를 고르지 않았습니다. 위 <a href="#connect">보드 연결</a> 3번을 다시 하세요.</td>
+              </tr>
+              <tr>
+                <td><code>programmer is not responding</code><br><code>stk500_recv(): programmer is not responding</code></td>
+                <td>보드가 응답하지 않습니다. ① <b>0번·1번 핀에 꽂힌 선을 모두 빼고</b> 다시 시도 ② 다른 포트를 선택 ③ USB를 뽑았다 꽂기 ④ 보드의 RESET 버튼을 누른 직후 업로드</td>
+              </tr>
+              <tr>
+                <td><code>expected ';' before …</code></td>
+                <td>문법 오류입니다. 오류 줄 <b>바로 위 줄</b>에 세미콜론이 빠졌을 가능성이 큽니다. IDE가 빨간 줄로 위치를 알려 줍니다.</td>
+              </tr>
+              <tr>
+                <td><code>'xxx' was not declared in this scope</code></td>
+                <td>변수나 함수 이름의 <b>철자·대소문자</b>가 틀렸습니다. <code>digitalwrite</code> ✗ → <code>digitalWrite</code> ✓</td>
+              </tr>
+              <tr>
+                <td><code>Access is denied</code> / <code>Port busy</code></td>
+                <td>시리얼 모니터나 다른 프로그램이 포트를 잡고 있습니다. 시리얼 모니터 창을 닫고 다시 업로드하세요.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">그래도 안 되면</span>
+          <p>USB를 뽑고, IDE를 완전히 종료했다가 다시 켠 뒤, USB를 꽂고 <b>보드 → 포트</b>를 다시 선택해 보세요. 이 순서로 대부분 해결됩니다.</p>
+        </div>
+
+        <h2 id="serial">시리얼 모니터</h2>
+
+        <p>
+          보드에는 화면이 없습니다. 그래서 <b>지금 값이 얼마인지</b> 확인하려면 보드가 컴퓨터로 글자를 보내게 해야 합니다.
+          그게 시리얼 통신이고, 그 글자를 보는 창이 <b>시리얼 모니터</b>입니다. 앞으로 문제를 찾을 때 가장 많이 쓰게 됩니다.
+        </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">SerialHello.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>void setup() {
+  Serial.begin(9600);        // 통신 속도를 9600으로 시작
+  Serial.println("보드 준비 완료!");
+}
+
+int count = 0;
+
+void loop() {
+  count = count + 1;
+  Serial.print("경과 시간(초): ");
+  Serial.println(count);
+  delay(1000);
+}</code></pre>
+        </div>
+
+        <p>
+          업로드한 뒤 <b>도구 → 시리얼 모니터</b>를 엽니다. 창 오른쪽 아래의 속도가 <b>9600 baud</b>인지 확인하세요.
+          <b>코드의 숫자와 모니터의 숫자가 다르면 글자가 깨져서</b> 알아볼 수 없는 기호가 나옵니다.
+        </p>
+
+        <div class="note note--tip">
+          <span class="note__t">print 와 println 의 차이</span>
+          <p><code>Serial.print()</code>는 이어서 쓰고, <code>Serial.println()</code>은 쓰고 나서 <b>줄을 바꿉니다</b>. 위 코드처럼 섞어 쓰면 <code>경과 시간(초): 1</code> 이 한 줄로 예쁘게 나옵니다.</p>
+        </div>
+
+        <h2 id="checklist">마무리 체크리스트</h2>
+        <p class="muted small" style="margin-top:-.4rem">다음 강의로 넘어가기 전에 아래를 모두 확인하세요. 체크 상태는 저장됩니다.</p>
+
+        <ul class="checks">
+          <li><label><input type="checkbox" id="c2-1"><span>Arduino IDE가 설치되어 실행된다</span></label></li>
+          <li><label><input type="checkbox" id="c2-2"><span>보드를 USB로 연결했을 때 <code>ON</code> LED에 불이 들어온다</span></label></li>
+          <li><label><input type="checkbox" id="c2-3"><span><b>도구 → 보드</b>에서 Arduino Uno를 선택했다</span></label></li>
+          <li><label><input type="checkbox" id="c2-4"><span><b>도구 → 포트</b>에서 포트를 선택했다</span></label></li>
+          <li><label><input type="checkbox" id="c2-5"><span>Blink 예제를 업로드해 <code>L</code> LED가 깜빡이는 것을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c2-6"><span><code>delay</code> 값을 바꿔 깜빡임 속도가 달라지는 것을 확인했다</span></label></li>
+          <li><label><input type="checkbox" id="c2-7"><span>시리얼 모니터를 열어 메시지를 확인했다</span></label></li>
+        </ul>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="01-arduino.html"><span>이전</span><b>01 · 아두이노란?</b></a>
+          <a class="next" href="03-led.html"><span>다음</span><b>03 · LED 제어</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

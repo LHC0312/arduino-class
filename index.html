@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>아두이노 기초 — 수업 자료</title>
+<meta name="description" content="아두이노가 무엇인지부터 IDE 설치, LED 제어, 신호등 만들기까지. 처음 배우는 사람을 위한 4차시 실습 수업 자료.">
+<meta property="og:title" content="아두이노 기초 — 수업 자료">
+<meta property="og:description" content="아두이노란 무엇인가부터 신호등 제작까지, 4차시 실습 수업 자료.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <section class="hero">
+    <p class="hero__eyebrow">중·고등 / 입문자 대상 · 4차시</p>
+    <h1>아두이노 기초</h1>
+    <p class="hero__lede">
+      전자 회로를 한 번도 다뤄본 적 없어도 괜찮습니다. 아두이노가 무엇인지 이해하는 것에서
+      출발해, 마지막에는 직접 배선하고 코드를 올린 신호등이 책상 위에서 실제로 동작합니다.
+    </p>
+    <div class="hero__meta">
+      <div><b>4차시</b>차시당 45~60분</div>
+      <div><b>Arduino Uno R3</b>호환 보드 가능</div>
+      <div><b>Arduino IDE 2.x</b>무료 · 윈도우/맥</div>
+    </div>
+  </section>
+</div>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-traffic.html"><span class="rail__num">04</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <h2 id="curriculum" style="margin-top:0">강의 목록</h2>
+        <p class="muted small" style="margin-top:-.5rem">순서대로 따라가도록 구성했습니다. 각 강의는 개념 설명 → 회로 → 코드 → 도전과제로 이어집니다.</p>
+
+        <ul class="lessons">
+          <li>
+            <a class="lesson-row" href="01-arduino.html">
+              <span class="lesson-row__num">01</span>
+              <span>
+                <span class="lesson-row__title">아두이노란?</span>
+                <p class="lesson-row__desc">아두이노가 어떤 물건인지, 보드 위의 핀들이 각각 무슨 역할을 하는지 살펴봅니다. 디지털과 아날로그, HIGH와 LOW 같은 기본 용어를 정리합니다.</p>
+                <span class="lesson-row__tags"><span class="tag">개념</span><span class="tag">보드 구조</span><span class="tag">용어</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="02-ide.html">
+              <span class="lesson-row__num">02</span>
+              <span>
+                <span class="lesson-row__title">IDE 설치와 첫 업로드</span>
+                <p class="lesson-row__desc">Arduino IDE를 내려받아 설치하고, 보드를 연결해 예제 Blink를 올려봅니다. 업로드가 안 될 때 확인할 것들도 함께 다룹니다.</p>
+                <span class="lesson-row__tags"><span class="tag">설치</span><span class="tag">포트 설정</span><span class="tag">문제 해결</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="03-led.html">
+              <span class="lesson-row__num">03</span>
+              <span>
+                <span class="lesson-row__title">LED 제어</span>
+                <p class="lesson-row__desc">브레드보드에 LED와 저항을 꽂아 회로를 만들고, 코드로 켜고 끕니다. 저항이 왜 필요한지 옴의 법칙으로 계산해 봅니다.</p>
+                <span class="lesson-row__tags"><span class="tag">브레드보드</span><span class="tag">저항 계산</span><span class="tag">PWM</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+          <li>
+            <a class="lesson-row" href="04-traffic.html">
+              <span class="lesson-row__num">04</span>
+              <span>
+                <span class="lesson-row__title">신호등 만들기</span>
+                <p class="lesson-row__desc">LED 세 개로 실제 신호등의 동작을 재현합니다. 반복되는 코드를 배열과 함수로 정리하고, <code>millis()</code>로 개선하는 것까지 해봅니다.</p>
+                <span class="lesson-row__tags"><span class="tag">종합 실습</span><span class="tag">배열·함수</span><span class="tag">millis()</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
+        </ul>
+
+        <h2 id="parts">수업 준비물</h2>
+        <p>아래는 학생 1인(또는 1조) 기준입니다. 대부분 <b>아두이노 스타터 키트</b>에 모두 들어 있습니다.</p>
+
+        <ul class="parts">
+          <li><b>아두이노 우노 R3</b><span>1개 · 호환보드 가능</span></li>
+          <li><b>USB 케이블</b><span>1개 · A to B</span></li>
+          <li><b>브레드보드</b><span>1개 · 400핀 이상</span></li>
+          <li><b>점퍼선</b><span>10개 이상 · 수-수</span></li>
+          <li><b>LED</b><span>빨강·노랑·초록 각 1개</span></li>
+          <li><b>저항 220Ω</b><span>3개 이상</span></li>
+          <li><b>노트북</b><span>1대 · USB-A 포트 권장</span></li>
+        </ul>
+
+        <div class="note note--tip">
+          <span class="note__t">USB-C만 있는 노트북이라면</span>
+          <p>USB-C ↔ USB-A 젠더나 USB 허브가 필요합니다. 수업 전에 미리 준비해 두세요. 충전 전용 케이블은 데이터 전송이 안 되므로 업로드가 실패합니다.</p>
+        </div>
+
+        <h2 id="how">수업 진행 방식</h2>
+        <ol class="steps">
+          <li><b>읽고 이해하기</b><p>각 강의의 개념 부분을 먼저 읽습니다. 회로 그림은 클릭해서 크게 볼 수 있습니다.</p></li>
+          <li><b>회로 만들기</b><p>배선표를 보면서 브레드보드에 직접 꽂습니다. <b>배선 중에는 USB를 뽑아두세요.</b></p></li>
+          <li><b>코드 올리기</b><p>코드 블록 오른쪽 위 <code>복사</code> 버튼으로 그대로 옮겨 붙여도 되고, 직접 타이핑해도 좋습니다. 타이핑을 권합니다.</p></li>
+          <li><b>바꿔보기</b><p>각 강의 끝의 도전과제를 풀어봅니다. 숫자 하나만 바꿔도 동작이 달라지는 걸 확인하는 게 핵심입니다.</p></li>
+        </ol>
+
+        <div class="note note--check">
+          <span class="note__t">진도 저장</span>
+          <p>강의를 다 읽고 <b>학습 완료로 표시</b>를 누르면 왼쪽 목차에 체크가 남습니다. 체크리스트 상태도 함께 저장됩니다. 저장 위치는 이 브라우저이므로, 다른 컴퓨터에서는 다시 시작됩니다.</p>
+        </div>
+
+        <h2 id="safety">안전 수칙</h2>
+        <p>아두이노는 5V로 동작해 감전 위험은 사실상 없지만, <b>보드가 망가지는 것</b>은 순식간입니다. 아래 네 가지만 지키면 대부분의 사고를 막을 수 있습니다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>하지 말 것</th><th>이유</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>USB가 꽂힌 채로 배선 바꾸기</td>
+                <td>실수로 5V와 GND가 닿으면 합선됩니다. 배선은 항상 전원을 뺀 상태에서.</td>
+              </tr>
+              <tr>
+                <td>LED를 저항 없이 연결</td>
+                <td>과전류로 LED가 타거나 핀이 손상됩니다. 반드시 220Ω을 직렬로.</td>
+              </tr>
+              <tr>
+                <td><code>5V</code>와 <code>GND</code>를 직접 연결</td>
+                <td>완전 합선. 보드의 보호 회로가 동작하며 최악의 경우 USB 포트까지 나갑니다.</td>
+              </tr>
+              <tr>
+                <td>모터·전구를 핀에 바로 연결</td>
+                <td>디지털 핀 1개의 한계는 <b>20mA</b>입니다. 큰 부하는 별도 전원과 드라이버가 필요합니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">타는 냄새가 나거나 보드가 뜨거우면</span>
+          <p>바로 USB를 뽑고 선생님을 부르세요. 다시 꽂아보는 것으로 확인하려 하지 마세요.</p>
+        </div>
+
+        <div class="pager">
+          <a class="only-next next" href="01-arduino.html">
+            <span>다음</span>
+            <b>01 · 아두이노란?</b>
+          </a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
