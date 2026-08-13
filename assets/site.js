@@ -66,15 +66,18 @@
 
   /* ---------- 구문 강조 ---------- */
 
-  var KEYWORDS = ('void int long float double char bool boolean byte unsigned const static'
+  var KEYWORDS = ('uint16_t uint32_t uint8_t int16_t int32_t int8_t'
+    + ' void int long float double char bool boolean byte unsigned const static'
     + ' if else for while do switch case break continue return true false define'
     + ' struct sizeof volatile String').split(' ');
 
   var FUNCS = ('setup loop pinMode digitalWrite digitalRead analogWrite analogRead delay'
     + ' delayMicroseconds millis micros Serial begin print println map constrain random'
-    + ' tone noTone attachInterrupt pulseIn').split(' ');
+    + ' tone noTone attachInterrupt pulseIn sqrt abs min max atan2'
+    + ' beginTransmission endTransmission requestFrom available write read').split(' ');
 
-  var CONSTS = ('HIGH LOW INPUT OUTPUT INPUT_PULLUP LED_BUILTIN A0 A1 A2 A3 A4 A5 NULL').split(' ');
+  var CONSTS = ('HIGH LOW INPUT OUTPUT INPUT_PULLUP LED_BUILTIN A0 A1 A2 A3 A4 A5 NULL'
+    + ' HEX DEC BIN PI').split(' ');
 
   var SYNTAX = new RegExp([
     '(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)',           // 1 주석
@@ -83,7 +86,7 @@
     '\\b(' + KEYWORDS.join('|') + ')\\b',               // 4 키워드
     '\\b(' + FUNCS.join('|') + ')\\b(?=\\s*\\()',       // 5 함수
     '\\b(' + CONSTS.join('|') + ')\\b',                 // 6 상수
-    '\\b(\\d+\\.?\\d*)\\b'                              // 7 숫자
+    '\\b(0[xX][0-9a-fA-F]+|\\d+\\.?\\d*)\\b'            // 7 숫자 (16진수 포함)
   ].join('|'), 'gm');
 
   var CLASSES = [null, 't-cm', 't-st', 't-pp', 't-kw', 't-fn', 't-cn', 't-nu'];

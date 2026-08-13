@@ -601,11 +601,228 @@ void loop() {
           </table>
         </div>
 
-        <p class="muted small">
-          <b>스케치 → 라이브러리 포함하기 → 라이브러리 관리</b>에서 모듈 이름(예: <code>HMC5883L</code>, <code>QMC5883L</code>)으로 검색해 설치한 뒤,
-          그 라이브러리의 예제를 열어 <code>x</code>, <code>y</code>, <code>z</code>를 얻는 부분만 위 코드에 옮겨 넣으면 됩니다.
-          <b>A4·A5를 I2C로 쓰게 되므로 그 두 핀은 아날로그 입력으로 쓸 수 없습니다.</b>
+        <div class="note note--warn">
+          <span class="note__t">A4·A5는 이제 못 씁니다</span>
+          <p>I2C는 <code>A4</code>(SDA)와 <code>A5</code>(SCL)를 <b>독점해서</b> 씁니다. 이 두 핀은 더 이상 아날로그 입력으로 쓸 수 없습니다. 다른 아날로그 센서가 있다면 <code>A0</code>~<code>A3</code>에 꽂으세요.</p>
+        </div>
+
+        <h3>먼저 · 내 센서가 어느 칩인지 확인하기</h3>
+
+        <p>
+          이게 가장 중요합니다. <b>기판에 <code>HMC5883L</code>이라고 인쇄되어 있어도 실제 칩은 <code>QMC5883L</code>인 경우가 아주 많습니다.</b>
+          (GY-271 모듈이 대표적입니다.) 둘은 <b>레지스터 구조가 완전히 다르므로</b> 잘못 짚으면 값이 전혀 나오지 않습니다.
+          겉으로는 구분이 안 되니, <b>I2C 주소를 직접 물어보는 것</b>이 확실합니다.
         </p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">I2CScanner.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>#include &lt;Wire.h&gt;
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  while (!Serial) { }          // 시리얼이 준비될 때까지 대기
+
+  Serial.println("I2C 주소를 찾는 중...");
+
+  int found = 0;
+  for (byte addr = 1; addr &lt; 127; addr++) {
+    Wire.beginTransmission(addr);
+    if (Wire.endTransmission() == 0) {   // 0 = 응답이 왔다는 뜻
+      Serial.print("  찾음 → 0x");
+      if (addr &lt; 16) Serial.print("0");
+      Serial.println(addr, HEX);
+      found++;
+    }
+  }
+
+  if (found == 0) {
+    Serial.println("아무것도 못 찾았습니다. 배선을 확인하세요.");
+  }
+}
+
+void loop() { }</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">시리얼 모니터 · 9600 baud</div>
+I2C 주소를 찾는 중...
+  찾음 → 0x0D</div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:7rem">나온 주소</th><th style="width:10rem">실제 칩</th><th>다음에 쓸 코드</th></tr></thead>
+            <tbody>
+              <tr><td><code>0x0D</code></td><td><b>QMC5883L</b></td><td>아래 <b>A안</b> — GY-271 모듈 대부분이 여기</td></tr>
+              <tr><td><code>0x1E</code></td><td><b>HMC5883L</b></td><td>아래 <b>B안</b> — 정품 Honeywell</td></tr>
+              <tr><td><code>0x0C</code></td><td>MLX90393</td><td>전용 라이브러리 필요</td></tr>
+              <tr><td><code>0x30</code></td><td>MMC5883MA</td><td>전용 라이브러리 필요</td></tr>
+              <tr><td colspan="3" class="muted">아무것도 안 나오면 → VCC·GND 확인, SDA와 SCL이 바뀌지 않았는지 확인, 3.3V 전용 모듈에 5V를 물리지 않았는지 확인</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>A안 · QMC5883L (주소 <code>0x0D</code>)</h3>
+
+        <p>라이브러리 없이 <code>Wire</code>만으로 읽습니다. 설치할 것이 없어 수업에서 막힐 일이 없습니다.</p>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">QMC5883L_Read.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>#include &lt;Wire.h&gt;
+
+const byte QMC = 0x0D;      // QMC5883L의 I2C 주소
+
+void writeReg(byte reg, byte value) {
+  Wire.beginTransmission(QMC);
+  Wire.write(reg);
+  Wire.write(value);
+  Wire.endTransmission();
+}
+
+// 두 바이트를 붙여 부호 있는 16비트 값으로 (QMC는 하위 바이트가 먼저)
+int16_t read16LE() {
+  byte lo = Wire.read();
+  byte hi = Wire.read();
+  return (int16_t)(((uint16_t)hi &lt;&lt; 8) | lo);
+}
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  writeReg(0x0B, 0x01);   // SET/RESET 주기 — 반드시 먼저
+  writeReg(0x09, 0x1D);   // 연속 측정 · 200Hz · ±8가우스 · 오버샘플 512
+
+  delay(100);
+}
+
+void loop() {
+  // 데이터가 있는 0x00번지부터 읽겠다고 알림
+  Wire.beginTransmission(QMC);
+  Wire.write(0x00);
+  Wire.endTransmission();
+
+  Wire.requestFrom((uint8_t)QMC, (uint8_t)6);   // 6바이트 요청 (2바이트 × 3축)
+
+  if (Wire.available() &gt;= 6) {
+    int16_t x = read16LE();
+    int16_t y = read16LE();
+    int16_t z = read16LE();
+
+    Serial.print("X:");   Serial.print(x);
+    Serial.print(",Y:");  Serial.print(y);
+    Serial.print(",Z:");  Serial.println(z);
+  }
+
+  delay(50);
+}</code></pre>
+        </div>
+
+        <h3>B안 · HMC5883L (주소 <code>0x1E</code>)</h3>
+
+        <div class="code">
+          <div class="code__bar"><span class="code__name">HMC5883L_Read.ino</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>#include &lt;Wire.h&gt;
+
+const byte HMC = 0x1E;      // HMC5883L의 I2C 주소
+
+void writeReg(byte reg, byte value) {
+  Wire.beginTransmission(HMC);
+  Wire.write(reg);
+  Wire.write(value);
+  Wire.endTransmission();
+}
+
+// HMC는 상위 바이트가 먼저 옵니다 (QMC와 반대!)
+int16_t read16BE() {
+  byte hi = Wire.read();
+  byte lo = Wire.read();
+  return (int16_t)(((uint16_t)hi &lt;&lt; 8) | lo);
+}
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+
+  writeReg(0x00, 0x70);   // 설정 A: 8회 평균 · 15Hz · 일반 측정
+  writeReg(0x01, 0x20);   // 설정 B: 감도 ±1.3가우스
+  writeReg(0x02, 0x00);   // 모드: 연속 측정
+
+  delay(100);
+}
+
+void loop() {
+  Wire.beginTransmission(HMC);
+  Wire.write(0x03);       // 데이터는 0x03번지부터 시작
+  Wire.endTransmission();
+
+  Wire.requestFrom((uint8_t)HMC, (uint8_t)6);
+
+  if (Wire.available() &gt;= 6) {
+    // 주의! 나오는 순서가 X → Z → Y 입니다. Y와 Z가 아닙니다.
+    int16_t x = read16BE();
+    int16_t z = read16BE();
+    int16_t y = read16BE();
+
+    Serial.print("X:");   Serial.print(x);
+    Serial.print(",Y:");  Serial.print(y);
+    Serial.print(",Z:");  Serial.println(z);
+  }
+
+  delay(50);
+}</code></pre>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">HMC5883L의 함정 — 축 순서가 X, Z, Y</span>
+          <p>데이터시트상 출력 순서가 <b>X → Z → Y</b>입니다. 무심코 X, Y, Z 순으로 받으면 <b>Y와 Z 값이 서로 바뀐 채</b> 나옵니다. 값이 나오긴 나오는데 방향이 이상하다면 십중팔구 이것입니다.</p>
+        </div>
+
+        <h3>값의 범위가 달라집니다</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem"></th><th>아날로그 방식</th><th>I2C 방식</th></tr></thead>
+            <tbody>
+              <tr><td>읽는 함수</td><td><code>analogRead(A0)</code></td><td><code>Wire.read()</code> 두 번을 붙여서</td></tr>
+              <tr><td>값의 범위</td><td><code>0 ~ 1023</code></td><td><code>-32768 ~ 32767</code></td></tr>
+              <tr><td>자기장 0일 때</td><td><b>512 근처</b> (전원의 절반)</td><td><b>0 근처</b> (이미 부호가 있음)</td></tr>
+              <tr><td>변수 형</td><td><code>int</code></td><td><code>int16_t</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">앞의 코드에 그대로 이어 붙이는 법</span>
+          <p>
+            <b>x·y·z를 얻는 부분만 위 코드로 바꾸면 나머지는 전부 그대로입니다.</b>
+            <a href="#calibrate">기준값 보정</a>, <a href="#strength">세기 계산</a>, 임계값 판단, LED·부저 출력이 똑같이 동작합니다.
+            <b>다만 값의 범위가 훨씬 넓어졌으므로 <code>THRESHOLD</code>는 반드시 다시 정해야 합니다.</b>
+            시리얼 플로터로 실제 <code>S</code> 값을 보면서 새로 잡으세요. 40이 아니라 수백~수천이 될 수 있습니다.
+          </p>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">보정 함수도 바꿔야 합니다</span>
+          <p>
+            <code>readAverage()</code>는 <code>analogRead()</code>를 부르고 있으므로 I2C에서는 쓸 수 없습니다.
+            대신 <b><code>loop()</code>에서 읽은 x·y·z를 처음 50번만 더해 평균을 내어</b> <code>baseX/Y/Z</code>에 넣는 방식으로 바꾸세요.
+            읽는 방법이 하나뿐이라 오히려 더 간단합니다.
+          </p>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:15rem">증상</th><th>확인할 것</th></tr></thead>
+            <tbody>
+              <tr><td><b>스캐너에 아무 주소도 안 뜸</b></td><td>SDA와 SCL이 <b>바뀌어</b> 꽂혔거나, VCC·GND가 빠졌습니다. SDA=<code>A4</code>, SCL=<code>A5</code>입니다.</td></tr>
+              <tr><td><b>0x0D가 떴는데 B안을 씀</b></td><td>칩이 다릅니다. <b>A안</b>으로 바꾸세요. 반대도 마찬가지입니다.</td></tr>
+              <tr><td><b>세 값이 모두 0</b></td><td>초기화 레지스터를 안 썼거나 순서가 틀렸습니다. QMC는 <code>0x0B</code>를 <b>먼저</b> 쓴 뒤 <code>0x09</code>를 써야 합니다.</td></tr>
+              <tr><td><b>−1 또는 −4096만 계속 나옴</b></td><td>측정 범위를 넘겼습니다. 자석을 <b>멀리</b> 떼거나, QMC는 <code>0x09</code>의 감도를 <code>0x1D</code>(±8G)로 두세요.</td></tr>
+              <tr><td><b>값이 가끔 튀거나 멈춤</b></td><td>점퍼선이 길거나 접촉이 나쁩니다. I2C는 배선 길이에 민감합니다. 짧고 단단히 꽂으세요.</td></tr>
+            </tbody>
+          </table>
+        </div>
 
         <h2 id="noise">값이 이상할 때</h2>
 
