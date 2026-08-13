@@ -771,6 +771,42 @@ td code { white-space: nowrap; }
 .quest summary::before { content: "›"; font-size: 1.1em; transition: transform .15s; display: inline-block; }
 .quest details[open] summary::before { transform: rotate(90deg); }
 
+/* --- 접히는 보조 내용 ---------------------------------------------------- */
+
+.fold {
+  margin: 1.7rem 0 2rem;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+  padding: .85rem 1.15rem;
+}
+.fold > summary {
+  cursor: pointer;
+  font-weight: 650;
+  font-size: .93rem;
+  color: var(--ink-2);
+  list-style: none;
+  display: flex;
+  align-items: baseline;
+  gap: .45rem;
+}
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before {
+  content: "›";
+  font-size: 1.15em;
+  color: var(--ink-4);
+  display: inline-block;
+  transition: transform .15s;
+}
+.fold[open] > summary::before { transform: rotate(90deg); }
+.fold[open] > summary {
+  margin-bottom: .7rem;
+  padding-bottom: .7rem;
+  border-bottom: 1px solid var(--line);
+}
+.fold__hint { font-weight: 400; color: var(--ink-4); font-size: .84rem; }
+.fold > :last-child { margin-bottom: 0; }
+
 /* --- 용어 정의 리스트 ---------------------------------------------------- */
 
 .terms { margin: 1.5rem 0 2rem; }
