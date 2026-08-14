@@ -79,36 +79,54 @@
   var CONSTS = ('HIGH LOW INPUT OUTPUT INPUT_PULLUP LED_BUILTIN A0 A1 A2 A3 A4 A5 NULL'
     + ' HEX DEC BIN PI').split(' ');
 
-  var SYNTAX = new RegExp([
-    '(\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/)',           // 1 주석
-    '("(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\')', // 2 문자열
-    '(^[ \\t]*#[ \\t]*\\w+)',                           // 3 전처리기
-    '\\b(' + KEYWORDS.join('|') + ')\\b',               // 4 키워드
-    '\\b(' + FUNCS.join('|') + ')\\b(?=\\s*\\()',       // 5 함수
-    '\\b(' + CONSTS.join('|') + ')\\b',                 // 6 상수
-    '\\b(0[xX][0-9a-fA-F]+|\\d+\\.?\\d*)\\b'            // 7 숫자 (16진수 포함)
-  ].join('|'), 'gm');
+  var PY_KEYWORDS = ('import from as def class return if elif else for while in is not and or'
+    + ' with lambda pass break continue global try except finally raise yield assert del').split(' ');
 
-  var CLASSES = [null, 't-cm', 't-st', 't-pp', 't-kw', 't-fn', 't-cn', 't-nu'];
+  // [클래스, 패턴] 목록으로 렉서를 만듭니다.
+  function makeLexer(specs) {
+    var re = new RegExp(specs.map(function (s) { return '(' + s[1] + ')'; }).join('|'), 'gm');
+    return { re: re, cls: [null].concat(specs.map(function (s) { return s[0]; })) };
+  }
+
+  var LEX_C = makeLexer([
+    ['t-cm', '\\/\\/[^\\n]*|\\/\\*[\\s\\S]*?\\*\\/'],
+    ['t-st', '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\''],
+    ['t-pp', '^[ \\t]*#[ \\t]*\\w+'],
+    ['t-kw', '\\b(?:' + KEYWORDS.join('|') + ')\\b'],
+    ['t-fn', '\\b(?:' + FUNCS.join('|') + ')\\b(?=\\s*\\()'],
+    ['t-cn', '\\b(?:' + CONSTS.join('|') + ')\\b'],
+    ['t-nu', '\\b(?:0[xX][0-9a-fA-F]+|\\d+\\.?\\d*)\\b']
+  ]);
+
+  var LEX_PY = makeLexer([
+    ['t-pp', '^[ \\t]*[!%][^\\n]*'],                      // 코랩 셸 명령 (!pip …)
+    ['t-cm', '#[^\\n]*'],
+    ['t-st', '[fFrRbB]?"""[\\s\\S]*?"""|[fFrRbB]?\'\'\'[\\s\\S]*?\'\'\''
+           + '|[fFrRbB]?"(?:\\\\.|[^"\\\\])*"|[fFrRbB]?\'(?:\\\\.|[^\'\\\\])*\''],
+    ['t-cn', '\\b(?:True|False|None)\\b'],
+    ['t-kw', '\\b(?:' + PY_KEYWORDS.join('|') + ')\\b'],
+    ['t-fn', '\\b[A-Za-z_]\\w*(?=\\s*\\()'],              // 호출되는 이름
+    ['t-nu', '\\b(?:\\d+\\.?\\d*)\\b']
+  ]);
 
   function esc(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
-  function highlight(src) {
+  function highlight(src, lex) {
     var out = '';
     var last = 0;
     var m;
-    SYNTAX.lastIndex = 0;
-    while ((m = SYNTAX.exec(src)) !== null) {
+    lex.re.lastIndex = 0;
+    while ((m = lex.re.exec(src)) !== null) {
       out += esc(src.slice(last, m.index));
       var cls = null;
-      for (var g = 1; g < CLASSES.length; g++) {
-        if (m[g] !== undefined) { cls = CLASSES[g]; break; }
+      for (var g = 1; g < lex.cls.length; g++) {
+        if (m[g] !== undefined) { cls = lex.cls[g]; break; }
       }
       out += cls ? '<span class="' + cls + '">' + esc(m[0]) + '</span>' : esc(m[0]);
       last = m.index + m[0].length;
-      if (m[0].length === 0) SYNTAX.lastIndex++;
+      if (m[0].length === 0) lex.re.lastIndex++;
     }
     out += esc(src.slice(last));
     return out;
@@ -122,7 +140,7 @@
       var raw = code.textContent.replace(/^\n/, '').replace(/\s+$/, '');
       code.dataset.raw = raw;
       if (!block.hasAttribute('data-plain')) {
-        code.innerHTML = highlight(raw);
+        code.innerHTML = highlight(raw, block.dataset.lang === 'py' ? LEX_PY : LEX_C);
       } else {
         code.textContent = raw;
       }
@@ -677,6 +695,103 @@
     tick();
   }
 
+  /* ---------- 최소제곱 직선 맞추기 시뮬레이터 ---------- */
+
+  function initFitSim() {
+    var sim = document.getElementById('fit-sim');
+    if (!sim) return;
+
+    // 08강 실습에 쓰는 것과 같은 데이터
+    var RAW  = [111, 124, 132, 145, 152, 165, 173, 186];
+    var TEMP = [5, 10, 15, 20, 25, 30, 35, 40];
+
+    // 최소제곱 해를 데이터에서 직접 구합니다 (페이지의 실습 결과와 같은 값)
+    var BEST_A, BEST_B, BEST_SSE;
+    (function () {
+      var n = RAW.length, sx = 0, sy = 0, i;
+      for (i = 0; i < n; i++) { sx += RAW[i]; sy += TEMP[i]; }
+      var mx = sx / n, my = sy / n, sxy = 0, sxx = 0;
+      for (i = 0; i < n; i++) {
+        sxy += (RAW[i] - mx) * (TEMP[i] - my);
+        sxx += (RAW[i] - mx) * (RAW[i] - mx);
+      }
+      BEST_A = sxy / sxx;
+      BEST_B = my - BEST_A * mx;
+      BEST_SSE = 0;
+      for (i = 0; i < n; i++) {
+        var e = TEMP[i] - (BEST_A * RAW[i] + BEST_B);
+        BEST_SSE += e * e;
+      }
+    })();
+
+    var slA = sim.querySelector('[data-fit-a]');
+    var slB = sim.querySelector('[data-fit-b]');
+    var outA = sim.querySelector('[data-fit-a-out]');
+    var outB = sim.querySelector('[data-fit-b-out]');
+    var line = sim.querySelector('[data-fit-line]');
+    var res  = sim.querySelector('[data-fit-res]');
+    var info = sim.querySelector('[data-fit-info]');
+    var best = sim.querySelector('[data-fit-best]');
+
+    // 데이터 좌표 → 그림 좌표
+    var X0 = 100, X1 = 200, Y0 = 0, Y1 = 45;
+    var PX0 = 60, PX1 = 490, PY0 = 30, PY1 = 270;
+    function px(x) { return PX0 + (x - X0) / (X1 - X0) * (PX1 - PX0); }
+    function py(y) { return PY1 - (y - Y0) / (Y1 - Y0) * (PY1 - PY0); }
+
+    // 점 찍기
+    var dots = '';
+    for (var i = 0; i < RAW.length; i++) {
+      dots += '<circle cx="' + px(RAW[i]).toFixed(1) + '" cy="' + py(TEMP[i]).toFixed(1)
+            + '" r="5" fill="#d97757" stroke="#26251f" stroke-width="1"/>';
+    }
+    var dotG = sim.querySelector('[data-fit-dots]');
+    if (dotG) dotG.innerHTML = dots;
+
+    function paint() {
+      var a = Number(slA.value), b = Number(slB.value);
+      outA.textContent = a.toFixed(3);
+      outB.textContent = b.toFixed(2);
+
+      line.setAttribute('x1', px(X0).toFixed(1));
+      line.setAttribute('y1', py(a * X0 + b).toFixed(1));
+      line.setAttribute('x2', px(X1).toFixed(1));
+      line.setAttribute('y2', py(a * X1 + b).toFixed(1));
+
+      var sse = 0, d = '';
+      for (var i = 0; i < RAW.length; i++) {
+        var pred = a * RAW[i] + b;
+        var e = TEMP[i] - pred;
+        sse += e * e;
+        d += 'M' + px(RAW[i]).toFixed(1) + ' ' + py(TEMP[i]).toFixed(1)
+           + 'L' + px(RAW[i]).toFixed(1) + ' ' + py(pred).toFixed(1);
+      }
+      res.setAttribute('d', d);
+
+      var close = sse < BEST_SSE * 1.5;
+      info.innerHTML =
+        '온도 = <b>' + a.toFixed(3) + '</b> × raw + <b>' + b.toFixed(2) + '</b><br>'
+        + '오차 제곱합 SSE = <b style="color:' + (close ? 'var(--ok)' : 'var(--accent)') + '">'
+        + sse.toFixed(2) + '</b><br>'
+        + '<span style="color:var(--ink-4)">// '
+        + (close ? '거의 최적입니다' : '가장 작은 값은 ' + BEST_SSE.toFixed(2) + ' 입니다')
+        + '</span>';
+    }
+
+    slA.addEventListener('input', paint);
+    slB.addEventListener('input', paint);
+
+    if (best) {
+      best.addEventListener('click', function () {
+        slA.value = BEST_A;
+        slB.value = BEST_B;
+        paint();
+      });
+    }
+
+    paint();
+  }
+
   /* ---------- 부팅 ---------- */
 
   function boot() {
@@ -692,6 +807,7 @@
     initButtonSim();
     initCrossSim();
     initPlotSim();
+    initFitSim();
   }
 
   if (document.readyState === 'loading') {
