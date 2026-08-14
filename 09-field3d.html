@@ -79,7 +79,8 @@
             <li><a href="#quiver">3D 화살표 그리기</a></li>
             <li><a href="#strength">세기로 보기</a></li>
             <li><a href="#distance">거리에 따른 변화</a></li>
-            <li><a href="#knn">패턴 맞히기 · sklearn</a></li>
+            <li><a href="#knn">A · 분류로 고르기</a></li>
+            <li><a href="#regression">B · 회귀로 계산</a></li>
             <li><a href="#quest">도전과제</a></li>
             <li><a href="#checklist">마무리 체크리스트</a></li>
           </ul>
@@ -104,7 +105,8 @@
               <li>코랩에서 <code>quiver</code>로 3차원 벡터를 그릴 수 있다</li>
               <li>세기를 계산해 히트맵으로 분포를 볼 수 있다</li>
               <li>거리에 따라 자기장이 얼마나 빠르게 약해지는지 확인할 수 있다</li>
-              <li><b>sklearn 세 줄</b>로 자기장 패턴을 맞히는 프로그램을 만들 수 있다</li>
+              <li><b>분류</b>와 <b>회귀</b>를 구분하고, 문제에 맞는 쪽을 고를 수 있다</li>
+              <li>곡선 관계에 <b>로그를 씌워</b> 선형회귀로 다룰 수 있다</li>
             </ul>
           </div>
         </header>
@@ -116,8 +118,8 @@
           </div>
           <div class="flow__arrow">→</div>
           <div class="flow__step" data-kind="cpu">
-            <span class="flow__label">연산</span><b>시각화 · 패턴 비교</b>
-            <p>그림으로 보고, 가장 비슷한 것을 찾습니다</p>
+            <span class="flow__label">연산</span><b>시각화 · 분류 · 회귀</b>
+            <p>그림으로 보고, 후보를 고르거나 값을 계산합니다</p>
           </div>
           <div class="flow__arrow">→</div>
           <div class="flow__step" data-kind="out">
@@ -492,11 +494,12 @@ plt.show()</code></pre>
           <p>6cm 자료의 <b>M3를 보세요.</b> <code>(-0.54, 0.00, 0.24)</code> — 주변 지점은 수십에서 백 단위인데 이 지점만 거의 0입니다. 센서가 제대로 안 놓였거나 측정이 빠졌을 가능성이 큽니다. <b>이런 지점을 찾아내는 것도 시각화의 목적</b>입니다. 그래프를 그리면 표에서는 안 보이던 게 튀어나옵니다.</p>
         </div>
 
-        <h2 id="knn">패턴 맞히기 · sklearn</h2>
+        <h2 id="knn">방법 A · 후보 중에서 고르기 (분류)</h2>
 
         <p>
           이제 거꾸로 해봅시다. <b>자기장 패턴만 보고, 자석이 얼마나 떨어져 있었는지 알아맞히는</b> 프로그램입니다.
-          방법은 간단합니다. <b>이미 알고 있는 4개의 패턴과 하나씩 비교해서, 가장 비슷한 것을 고르면 됩니다.</b>
+          방법은 두 가지가 있습니다. 먼저 <b>쉬운 쪽</b>부터 해봅니다.
+          <b>이미 알고 있는 4개의 패턴과 하나씩 비교해서, 가장 비슷한 것을 고르는</b> 방법입니다.
         </p>
 
         <p>
@@ -574,6 +577,180 @@ print("추정 거리:", answer[0], "cm")</code></pre>
           </p>
         </div>
 
+        <div class="note note--warn">
+          <span class="note__t">이 방법의 한계 — 후보에 없는 답은 못 냅니다</span>
+          <p>
+            <code>KNeighborsClassifier</code>는 <b>분류기</b>입니다. “알고 있는 것 중 가장 비슷한 것을 골라 그 이름표를 붙이는” 일만 합니다.
+            그래서 자석이 <b>7cm</b>에 있어도 이 프로그램은 <b>6 또는 8이라고밖에 대답할 수 없습니다.</b>
+            <code>y = [10, 8, 6, 4]</code> 를 <b>숫자가 아니라 이름표 4개</b>로 취급하기 때문입니다.
+          </p>
+          <p style="margin-bottom:0">
+            자석 위치 <code>P1</code>~<code>P9</code>처럼 <b>후보가 애초에 정해져 있는 문제</b>라면 이게 맞는 방법입니다.
+            하지만 <b>거리는 원래 연속적인 양</b>입니다. 그래서 다음 방법이 필요합니다.
+          </p>
+        </div>
+
+        <h2 id="regression">방법 B · 연속적인 값 예측하기 (회귀)</h2>
+
+        <p>
+          거리는 4cm와 6cm 사이에 5cm도 있고 5.3cm도 있습니다.
+          <b>후보 중에서 고르는 것이 아니라, 숫자 자체를 계산해 내야 합니다.</b>
+          이럴 때 쓰는 것이 <b>회귀</b>입니다. 8강에서 배운 그것입니다.
+        </p>
+
+        <h3>물리가 식의 모양을 알려줍니다</h3>
+
+        <p>
+          앞에서 확인했듯이 자석의 자기장은 <b>거리의 세제곱에 반비례</b>합니다.
+          그런데 이건 직선이 아니라 곡선이라, 선형회귀를 바로 쓸 수 없습니다.
+          <b>양변에 로그를 씌우면 직선이 됩니다.</b>
+        </p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">곡선을 직선으로 바꾸기</span></div>
+          <pre><code>세기 = 상수 ÷ 거리³          ← 곡선. 이대로는 직선 맞추기가 안 됨
+
+  양변에 log 를 씌우면
+
+log(세기) = −3 × log(거리) + log(상수)
+   ↑              ↑                ↑
+   y     =   a  ×  x        +      b     ← 직선!</code></pre>
+        </div>
+
+        <p>
+          즉 <b>가로축을 <code>log(거리)</code>, 세로축을 <code>log(세기)</code>로 그리면 점들이 직선 위에 놓입니다.</b>
+          그 직선의 <b>기울기가 곧 지수</b>이고, 이론대로라면 <b>−3</b>이 나와야 합니다.
+        </p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 8 · 로그를 씌우고 직선 맞추기</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code># 지점 하나가 튀는 것을 줄이려고 9개 지점의 '평균' 세기를 씁니다
+strengths = np.array([np.linalg.norm(fields[d], axis=1).mean()
+                      for d in distances])
+
+log_r = np.log(distances)      # 가로축
+log_B = np.log(strengths)      # 세로축
+
+a, b = np.polyfit(log_r, log_B, 1)     # 8강에서 쓴 그 함수 그대로
+
+pred = a * log_r + b
+r2 = 1 - np.sum((log_B - pred) ** 2) / np.sum((log_B - log_B.mean()) ** 2)
+
+print(f"기울기 a = {a:.2f}      (이론값 -3)")
+print(f"절편   b = {b:.2f}")
+print(f"R²       = {r2:.4f}")
+print()
+print(f"→ 세기 ∝ 거리^{a:.2f}")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+기울기 a = -2.72      (이론값 -3)
+절편   b = 9.49
+R²       = 0.9865
+
+→ 세기 ∝ 거리^-2.72</div>
+
+        <p>
+          <b>R²가 0.987</b>입니다. 로그를 씌우니 정말 직선이 되었습니다.
+          그리고 기울기 <b>−2.72</b>는 이론값 −3에 꽤 가깝습니다.
+          <b>“거리의 세제곱에 반비례한다”는 물리 법칙을, 우리가 잰 값으로 직접 확인한 것</b>입니다.
+        </p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 9 · 그래프로 확인</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>plt.figure(figsize=(6, 4))
+plt.scatter(log_r, log_B, color='#c0503c', s=60, zorder=3, label='measured')
+plt.plot(log_r, pred, color='#3c6ea8', label=f'slope = {a:.2f}')
+
+plt.xlabel('log(distance)')
+plt.ylabel('log(strength)')
+plt.legend()
+plt.grid(alpha=0.3)
+plt.show()</code></pre>
+        </div>
+
+        <h3>이제 연속적인 값을 낼 수 있습니다</h3>
+
+        <p>식을 거꾸로 풀면 <b>세기를 넣어 거리를 얻을 수 있습니다.</b></p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 10 · 거리 추정</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code># log(B) = a·log(r) + b  를  r 에 대해 풀면
+#   log(r) = (log(B) - b) / a
+#        r = exp( (log(B) - b) / a )
+
+def estimate_distance(pattern):
+    B = np.linalg.norm(pattern, axis=1).mean()
+    return np.exp((np.log(B) - b) / a)
+
+for d in distances:
+    print(f"실제 {d:2d} cm → 추정 {estimate_distance(fields[d]):.2f} cm")
+
+print()
+print(f"측정하지 않은 7 cm 의 예상 세기: {np.exp(a * np.log(7) + b):.1f}")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+실제 10 cm → 추정 9.61 cm
+실제  8 cm → 추정 8.16 cm
+실제  6 cm → 추정 6.34 cm
+실제  4 cm → 추정 3.86 cm
+
+측정하지 않은 7 cm 의 예상 세기: 66.3</div>
+
+        <p>
+          오차가 <b>0.4cm 안쪽</b>입니다. 그리고 분류로는 절대 못 하던 일 —
+          <b>측정하지 않은 7cm를 다룰 수 있게 되었습니다.</b>
+          <code>9.61</code>, <code>6.34</code> 처럼 <b>소수점이 있는 답</b>이 나오는 것이 회귀의 특징입니다.
+        </p>
+
+        <h3>둘 중 무엇을 쓸까</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:7rem"></th><th>분류 (방법 A)</th><th>회귀 (방법 B)</th></tr></thead>
+            <tbody>
+              <tr><td><b>쓰는 도구</b></td><td><code>KNeighborsClassifier</code></td><td><code>np.polyfit</code> · <code>LinearRegression</code></td></tr>
+              <tr><td><b>답의 형태</b></td><td>후보 중 하나 <span class="muted">(10 / 8 / 6 / 4)</span></td><td>연속적인 숫자 <span class="muted">(6.34)</span></td></tr>
+              <tr><td><b>7cm 를 물으면</b></td><td>“6” 또는 “8” <b>(불가능)</b></td><td>“6.98” <b>(가능)</b></td></tr>
+              <tr><td><b>필요한 것</b></td><td>후보별 기준 자료</td><td><b>식의 모양</b>(직선인지, 세제곱인지)</td></tr>
+              <tr><td><b>이 문제에서</b></td><td><b>자석 위치</b> P1~P9<br><span class="muted small">후보가 9개로 정해져 있음</span></td><td><b>자석까지의 거리</b><br><span class="muted small">원래 연속적인 양</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">정리</span>
+          <p>
+            <b>답이 “이름표”면 분류, 답이 “숫자”면 회귀</b>입니다.
+            자석이 P1에 있냐 P5에 있냐는 이름표를 고르는 문제이고,
+            자석이 몇 cm 떨어져 있냐는 숫자를 구하는 문제입니다.
+            <b>같은 자기장 데이터라도 무엇을 묻느냐에 따라 도구가 달라집니다.</b>
+          </p>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">식의 모양을 모를 때는</span>
+          <p>
+            회귀를 쓰려면 <b>어떤 식으로 맞출지</b>를 먼저 알아야 합니다. 여기서는 물리가 “세제곱 반비례”라고 알려줬죠.
+            모양을 모른다면 <code>KNeighborsRegressor</code>를 쓸 수 있습니다.
+            <b>가까운 자료 몇 개의 평균</b>을 답으로 내놓기 때문에 식을 몰라도 되지만,
+            <b>측정한 범위 밖은 예측하지 못합니다.</b>
+          </p>
+          <div class="code" data-lang="py" style="margin:.7rem 0 0">
+            <div class="code__bar"><span class="code__name">식을 모를 때</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+            <pre><code>from sklearn.neighbors import KNeighborsRegressor
+
+model2 = KNeighborsRegressor(n_neighbors=2, weights='distance')
+model2.fit(X, y)      # 앞에서 만든 X(4, 27), y[10, 8, 6, 4] 를 그대로
+
+# 이제 답이 숫자로 나옵니다 (이름표가 아니라)
+print(model2.predict(unknown.flatten().reshape(1, -1)))</code></pre>
+          </div>
+        </div>
+
         <h2 id="quest">도전과제</h2>
 
         <div class="quest">
@@ -615,6 +792,15 @@ for noise in [0.05, 0.1, 0.2, 0.4, 0.8]:
           </p>
         </div>
 
+        <div class="quest">
+          <p class="quest__t">⑤ 4cm를 빼고 회귀하기</p>
+          <p class="small" style="margin-bottom:0">
+            4cm 자료는 값이 튀는 것으로 보였습니다. <code>distances</code>에서 4cm를 빼고 셀 8을 다시 돌려보세요.
+            기울기가 어떻게 달라지나요? <b>이상해 보이는 자료를 빼는 것이 항상 옳은 선택일까요?</b>
+            <span class="muted">빼는 이유를 설명할 수 있을 때만 빼야 합니다. 결과가 예뻐진다는 건 이유가 아닙니다.</span>
+          </p>
+        </div>
+
         <h2 id="checklist">마무리 체크리스트</h2>
         <ul class="checks">
           <li><label><input type="checkbox" id="c9-1"><span>지점의 위치(x, y)와 자기장(x, y, z)을 구분해서 설명할 수 있다</span></label></li>
@@ -623,8 +809,10 @@ for noise in [0.05, 0.1, 0.2, 0.4, 0.8]:
           <li><label><input type="checkbox" id="c9-4"><span>세기를 계산하고 히트맵으로 분포를 봤다</span></label></li>
           <li><label><input type="checkbox" id="c9-5"><span>거리별 세기를 이론값과 비교하고, 왜 어긋나는지 설명할 수 있다</span></label></li>
           <li><label><input type="checkbox" id="c9-6"><span>그래프에서 이상한 측정값을 찾아냈다</span></label></li>
-          <li><label><input type="checkbox" id="c9-7"><span>sklearn으로 패턴을 맞히는 프로그램을 만들었다</span></label></li>
+          <li><label><input type="checkbox" id="c9-7"><span>분류(<code>KNeighborsClassifier</code>)로 후보 중 하나를 골라봤다</span></label></li>
           <li><label><input type="checkbox" id="c9-8"><span>평균제곱오차와 1-최근접이웃이 같은 계산임을 안다</span></label></li>
+          <li><label><input type="checkbox" id="c9-9"><span>로그를 씌워 곡선 관계를 직선으로 바꾸고 회귀했다</span></label></li>
+          <li><label><input type="checkbox" id="c9-10"><span>“답이 이름표면 분류, 숫자면 회귀”를 설명할 수 있다</span></label></li>
         </ul>
 
         <div class="note note--check">
