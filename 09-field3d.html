@@ -82,6 +82,7 @@
             <li><a href="#knn">A · 분류</a></li>
             <li><a href="#regression">B · 회귀</a></li>
             <li><a href="#improve">더 정확하게</a></li>
+            <li><a href="#compare">방법들 비교</a></li>
             <li><a href="#quest">도전과제</a></li>
             <li><a href="#checklist">마무리 체크리스트</a></li>
           </ul>
@@ -729,6 +730,126 @@ pos_z
     8 cm 를 빼고 학습 → 8.80 cm
    10 cm 를 빼고 학습 → 8.85 cm</div>
 
+        <h2 id="compare">다른 방법들과 비교</h2>
+
+        <h3>19단계 · 기준을 숫자 하나로</h3>
+
+        <p>
+          예측값을 눈으로 훑는 대신 <b>평균 오차 하나로 줄이면</b> 방법끼리 바로 비교할 수 있습니다.
+          이 값이 <b>모델을 고르는 기준</b>입니다.
+        </p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 20</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>for deg in [1, 2]:
+    errs = []
+    for held in compare.index:
+        train = compare.drop(held)
+        c = np.polyfit(train["log_B"], train["log_r"], deg)
+        pred = np.exp(np.polyval(c, compare.loc[held, "log_B"]))
+        errs.append(abs(pred - held))
+
+    print(f"차수 {deg}  평균 오차 {np.mean(errs):.3f} cm")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+차수 1  평균 오차 0.592 cm
+차수 2  평균 오차 0.078 cm</div>
+
+        <h3>20단계 · sklearn으로 여러 방법 한꺼번에</h3>
+
+        <p>
+          sklearn의 <code>cross_val_score</code>를 쓰면 <b>어떤 모델이든 같은 기준으로</b> 점수를 매길 수 있습니다.
+          <code>cv=LeaveOneOut()</code>이 앞에서 손으로 짠 LOOCV이고,
+          <code>scoring="neg_mean_absolute_error"</code>가 평균 오차입니다. (부호가 뒤집혀 나와서 앞에 <code>-</code>를 붙입니다.)
+        </p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 21</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+from sklearn.compose import TransformedTargetRegressor
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.model_selection import LeaveOneOut, cross_val_score
+
+
+def log_poly(deg):
+    """log 를 씌워 다항식을 맞추고 exp 로 되돌리는 모델"""
+    return TransformedTargetRegressor(
+        regressor=make_pipeline(PolynomialFeatures(deg), LinearRegression()),
+        func=np.log, inverse_func=np.exp)
+
+
+models = {
+    "로그 1차": log_poly(1),
+    "로그 2차": log_poly(2),
+    "KNN k=1": KNeighborsRegressor(n_neighbors=1),
+    "결정트리": DecisionTreeRegressor(random_state=0),
+}
+
+X = compare[["log_B"]]
+y = compare.index.to_numpy()
+
+for name, model in models.items():
+    score = cross_val_score(model, X, y,
+                            cv=LeaveOneOut(),
+                            scoring="neg_mean_absolute_error")
+    print(f"{name:8s} {-score.mean():.3f} cm")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+로그 1차   0.592 cm
+로그 2차   0.078 cm
+KNN k=1  2.000 cm
+결정트리     2.000 cm</div>
+
+        <p class="muted small">
+          <code>models</code> 딕셔너리에 줄을 더하면 다른 모델도 같은 기준으로 비교됩니다.
+          <code>RandomForestRegressor</code>, <code>SVR</code>, <code>MLPRegressor</code> 등을 직접 추가해 보세요.
+        </p>
+
+        <h3>21단계 · 트리와 KNN이 낼 수 있는 값</h3>
+
+        <p>
+          <b>KNN과 결정트리는 학습에 쓴 목표값을 고르거나 평균 내는 방식</b>으로 답을 만듭니다.
+          그래서 <b>학습에 없던 범위의 값은 낼 수 없습니다.</b> 각 검증에서 무엇이 남는지 확인해 봅니다.
+        </p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 22</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>for held in compare.index:
+    train = compare.drop(held)
+    print(f"{held:2d} cm 를 빼면  학습에 남는 거리 {sorted(train.index)}")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+ 4 cm 를 빼면  학습에 남는 거리 [6, 8, 10]
+ 6 cm 를 빼면  학습에 남는 거리 [4, 8, 10]
+ 8 cm 를 빼면  학습에 남는 거리 [4, 6, 10]
+10 cm 를 빼면  학습에 남는 거리 [4, 6, 8]</div>
+
+        <div class="note note--warn">
+          <span class="note__t">모델이 낼 수 있는 답의 범위</span>
+          <div class="table-wrap" style="margin:.6rem 0 .6rem">
+            <table>
+              <thead><tr><th style="width:12rem">종류</th><th>낼 수 있는 값</th></tr></thead>
+              <tbody>
+                <tr><td>KNN · 결정트리 · 랜덤포레스트</td><td>학습에 쓴 목표값 <b>사이</b>만. 밖으로는 못 나갑니다.</td></tr>
+                <tr><td>회귀식 (<code>polyfit</code> 등)</td><td>식을 따라 <b>범위 밖도</b> 계산합니다.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-bottom:0">
+            <code>4</code>나 <code>10</code>처럼 <b>양 끝을 빼는 검증</b>에서는 앞쪽 방법들이 구조적으로 불리합니다.
+            <b>어떤 값을 예측해야 하는 문제인지</b>가 모델 선택의 기준이 됩니다.
+          </p>
+        </div>
+
         <div class="note note--check">
           <span class="note__t">정리</span>
           <div class="table-wrap" style="margin:.6rem 0 0">
@@ -793,6 +914,15 @@ for noise in [0.05, 0.1, 0.2, 0.4, 0.8]:
           </p>
         </div>
 
+        <div class="quest">
+          <p class="quest__t">⑥ 평균 대신 개별 측정값으로</p>
+          <p class="small" style="margin-bottom:0">
+            지금은 층마다 <b>9개 지점의 평균</b>을 한 점으로 썼습니다.
+            평균을 내지 않고 <b>36줄을 그대로</b> 써서 같은 비교를 해보세요.
+            <span class="muted">이때는 같은 층이 학습과 검증에 나눠 들어가지 않도록 층 단위로 나눠야 합니다 — <code>GroupKFold(n_splits=4)</code>에 <code>groups=df["pos_z"]</code>를 주면 됩니다.</span>
+          </p>
+        </div>
+
         <h2 id="checklist">마무리 체크리스트</h2>
         <ul class="checks">
           <li><label><input type="checkbox" id="c9-1"><span>지점의 위치(x, y)와 자기장(x, y, z)을 구분해서 설명할 수 있다</span></label></li>
@@ -805,6 +935,8 @@ for noise in [0.05, 0.1, 0.2, 0.4, 0.8]:
           <li><label><input type="checkbox" id="c9-8"><span>평균제곱오차와 1-최근접이웃이 같은 계산임을 안다</span></label></li>
           <li><label><input type="checkbox" id="c9-9"><span>로그를 씌워 곡선을 직선으로 바꾸고 <code>polyfit</code>으로 회귀했다</span></label></li>
           <li><label><input type="checkbox" id="c9-10"><span>“답이 이름표면 분류, 숫자면 회귀”를 설명할 수 있다</span></label></li>
+          <li><label><input type="checkbox" id="c9-11"><span>모델을 고르는 <b>기준</b>이 LOOCV 평균 오차라는 것을 안다</span></label></li>
+          <li><label><input type="checkbox" id="c9-12"><span>KNN·트리가 학습 범위 밖을 예측하지 못하는 이유를 안다</span></label></li>
         </ul>
 
         <div class="note note--check">
