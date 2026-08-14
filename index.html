@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>아두이노 기초 — 수업 자료</title>
-<meta name="description" content="아두이노가 무엇인지부터 IDE 설치, LED·부저 출력, 버튼 입력, 신호등, 자기장 센서, 코랩 선형회귀까지. 처음 배우는 사람을 위한 8차시 실습 수업 자료.">
+<meta name="description" content="아두이노가 무엇인지부터 IDE 설치, LED·부저 출력, 버튼 입력, 신호등, 자기장 센서, 코랩 데이터 분석까지. 처음 배우는 사람을 위한 9차시 실습 수업 자료.">
 <meta property="og:title" content="아두이노 기초 — 수업 자료">
-<meta property="og:description" content="입력 → 연산 → 출력 구조로 배우는 8차시 아두이노 실습 수업 자료.">
+<meta property="og:description" content="입력 → 연산 → 출력 구조로 배우는 9차시 아두이노 실습 수업 자료.">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,7 +44,7 @@
 
 <div class="shell">
   <section class="hero">
-    <p class="hero__eyebrow">중·고등 / 입문자 대상 · 8차시</p>
+    <p class="hero__eyebrow">중·고등 / 입문자 대상 · 9차시</p>
     <h1>아두이노 기초</h1>
     <p class="hero__lede">
       전자 회로를 한 번도 다뤄본 적 없어도 괜찮습니다. 아두이노가 무엇인지 이해하는 것에서
@@ -52,7 +52,7 @@
       그 센서가 무슨 뜻인지 <b>데이터로 직접 알아냅니다.</b>
     </p>
     <div class="hero__meta">
-      <div><b>8차시</b>차시당 45~60분</div>
+      <div><b>9차시</b>차시당 45~60분</div>
       <div><b>Arduino Uno R3</b>호환 보드 가능</div>
       <div><b>Arduino IDE 2.x</b>무료 · 윈도우/맥</div>
     </div>
@@ -88,6 +88,9 @@
         </li>
         <li class="rail__item" data-lesson-id="8">
           <a href="08-colab.html"><span class="rail__num">08</span><span>코랩으로 선형회귀<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="9">
+          <a href="09-field3d.html"><span class="rail__num">09</span><span>3차원 자기장 시각화<span class="rail__done" data-done-badge></span></span></a>
         </li>
       </ol>
     </aside>
@@ -210,6 +213,17 @@
               <span class="lesson-row__go">읽기 →</span>
             </a>
           </li>
+          <li>
+            <a class="lesson-row" href="09-field3d.html">
+              <span class="lesson-row__num">09</span>
+              <span>
+                <span class="lesson-row__title">3차원 자기장 시각화</span>
+                <p class="lesson-row__desc">여러 지점에서 잰 3축 자기장을 코랩에서 3차원 화살표로 그립니다. 세기 분포와 거리 변화를 확인하고, sklearn 세 줄로 자기장 패턴을 맞혀 봅니다.</p>
+                <span class="lesson-row__tags"><span class="kind kind--cpu">연산</span><span class="tag">quiver 3D</span><span class="tag">히트맵</span><span class="tag">최근접이웃</span></span>
+              </span>
+              <span class="lesson-row__go">읽기 →</span>
+            </a>
+          </li>
         </ul>
 
         <h2 id="parts">수업 준비물</h2>
@@ -230,8 +244,8 @@
 
         <p class="muted small" style="margin-top:-.6rem">
           <b>7강(프로젝트)</b>에서는 여기에 <b>3축 자기장 센서 모듈</b>과 실험용 <b>네오디뮴 자석</b>이 추가로 필요합니다.
-          <b>8강(코랩)</b>은 부품이 필요 없고 <b>구글 계정과 인터넷</b>만 있으면 됩니다.
-          센서가 없어도 두 강의 모두 예제 데이터로 그대로 따라올 수 있습니다.
+          <b>8·9강(코랩)</b>은 부품이 필요 없고 <b>구글 계정과 인터넷</b>만 있으면 됩니다.
+          센서가 없어도 세 강의 모두 실제 측정 데이터가 들어 있어 그대로 따라올 수 있습니다.
         </p>
 
         <div class="note note--tip">

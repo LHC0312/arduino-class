@@ -792,6 +792,142 @@
     paint();
   }
 
+  /* ---------- 3차원 자기장 벡터 시각화 ---------- */
+
+  // 측정 지점 M1~M9 의 좌표 (cm)
+  var MPOS = [[-4, 4], [0, 4], [4, 4],
+              [-4, 0], [0, 0], [4, 0],
+              [-4, -4], [0, -4], [4, -4]];
+
+  // 자석이 가운데(P5)에 있을 때, 거리별로 M1~M9 에서 측정한 (x, y, z)
+  var FIELD = {
+    '10': [[20.47, -3.77, 5.65], [20.62, -19.46, -0.89], [8.92, -16.96, -13.40],
+           [13.05, -7.91, 25.48], [9.40, -32.76, 18.48], [-0.58, -28.42, -6.96],
+           [-6.99, -0.66, 21.99], [-14.10, -21.66, 19.91], [-16.21, -19.00, -3.78]],
+    '8':  [[33.68, -10.23, 14.70], [38.89, -37.51, -3.58], [8.25, -19.54, -8.63],
+           [22.21, 15.84, 37.52], [-3.83, -46.18, -16.21], [-4.49, -42.56, -4.43],
+           [-10.42, 6.72, 35.60], [-31.24, -37.93, 43.98], [-24.67, -25.30, -1.42]],
+    '6':  [[56.48, 10.55, 6.23], [84.86, -51.08, -12.55], [-0.54, 0.00, 0.24],
+           [62.64, 8.16, 95.19], [59.50, -58.76, 101.05], [-7.73, -90.37, -23.90],
+           [-20.24, 23.84, 74.53], [-69.09, -60.49, 92.38], [-54.70, -45.09, -2.25]],
+    '4':  [[171.08, -11.21, -78.90], [17.11, -35.39, -62.40], [26.14, -37.26, -72.24],
+           [69.77, 33.12, 98.56], [-60.64, -218.85, 90.10], [-109.34, -13.85, 468.50],
+           [-179.10, 296.35, 472.61], [-715.49, -151.38, 473.42], [-344.59, -94.12, 7.54]]
+  };
+
+  function initFieldSim() {
+    var sim = document.getElementById('field-sim');
+    if (!sim) return;
+
+    var gGrid = sim.querySelector('[data-field-grid]');
+    var gArrow = sim.querySelector('[data-field-arrows]');
+    var info = sim.querySelector('[data-field-info]');
+    var labels = Array.prototype.slice.call(sim.querySelectorAll('.seg label'));
+
+    var S = 11, CX = 240, CY = 118;   // 축척과 원점 (등각투영)
+    var COS30 = 0.8660254, SIN30 = 0.5;
+
+    function proj(x, y, z) {
+      return [CX + (x - y) * COS30 * S, CY + (x + y) * SIN30 * S - z * S];
+    }
+    function P(p) { return p[0].toFixed(1) + ' ' + p[1].toFixed(1); }
+
+    // --- 격자판 (한 번만 그림) ---
+    (function () {
+      var s = '';
+      var c = [proj(-6, -6, 0), proj(6, -6, 0), proj(6, 6, 0), proj(-6, 6, 0)];
+      s += '<path d="M' + P(c[0]) + 'L' + P(c[1]) + 'L' + P(c[2]) + 'L' + P(c[3]) + 'Z" '
+         + 'fill="currentColor" fill-opacity=".05" stroke="currentColor" stroke-opacity=".3"/>';
+      [-4, 0, 4].forEach(function (v) {
+        var a = proj(v, -6, 0), b = proj(v, 6, 0);
+        s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1)
+           + '" y2="' + b[1].toFixed(1) + '" stroke="currentColor" stroke-opacity=".16"/>';
+        var d = proj(-6, v, 0), e = proj(6, v, 0);
+        s += '<line x1="' + d[0].toFixed(1) + '" y1="' + d[1].toFixed(1) + '" x2="' + e[0].toFixed(1)
+           + '" y2="' + e[1].toFixed(1) + '" stroke="currentColor" stroke-opacity=".16"/>';
+      });
+      gGrid.innerHTML = s;
+    })();
+
+    function draw(dist) {
+      var f = FIELD[dist];
+      var mags = f.map(function (v) {
+        return Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+      });
+      var maxMag = Math.max.apply(null, mags);
+      var maxIdx = mags.indexOf(maxMag);
+      var u = 3.2 / maxMag;              // 가장 긴 화살표를 3.2 cm 로 맞춤
+
+      // 뒤쪽(화면 위)부터 그려야 앞뒤가 자연스럽습니다
+      var order = MPOS.map(function (_, i) { return i; })
+        .sort(function (a, b) { return proj(MPOS[a][0], MPOS[a][1], 0)[1]
+                                    - proj(MPOS[b][0], MPOS[b][1], 0)[1]; });
+
+      var s = '';
+
+      // 자석 위치와 높이 안내선
+      var mag0 = proj(0, 0, 0), magD = proj(0, 0, -Number(dist));
+      s += '<line x1="' + mag0[0].toFixed(1) + '" y1="' + mag0[1].toFixed(1) + '" x2="'
+         + magD[0].toFixed(1) + '" y2="' + magD[1].toFixed(1)
+         + '" stroke="currentColor" stroke-opacity=".3" stroke-dasharray="4 4"/>';
+      s += '<rect x="' + (magD[0] - 13).toFixed(1) + '" y="' + (magD[1] - 6).toFixed(1)
+         + '" width="26" height="12" rx="2" fill="#33322c"/>';
+      s += '<rect x="' + (magD[0] - 13).toFixed(1) + '" y="' + (magD[1] - 6).toFixed(1)
+         + '" width="13" height="12" rx="2" fill="#c0503c"/>';
+      s += '<text x="' + magD[0].toFixed(1) + '" y="' + (magD[1] + 24).toFixed(1)
+         + '" font-size="11" fill="currentColor" fill-opacity=".7" text-anchor="middle"'
+         + ' font-family="system-ui">자석 (P5) · ' + dist + ' cm 아래</text>';
+
+      order.forEach(function (i) {
+        var p = MPOS[i], v = f[i];
+        var a = proj(p[0], p[1], 0);
+        var b = proj(p[0] + v[0] * u, p[1] + v[1] * u, v[2] * u);
+
+        var dx = b[0] - a[0], dy = b[1] - a[1];
+        var len = Math.sqrt(dx * dx + dy * dy) || 1;
+        var ux = dx / len, uy = dy / len;
+        var hl = Math.min(9, len * 0.35);                 // 화살촉 길이
+        var tip = [b[0], b[1]];
+        var base = [b[0] - ux * hl, b[1] - uy * hl];
+        var strong = i === maxIdx;
+
+        s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1)
+           + '" x2="' + base[0].toFixed(1) + '" y2="' + base[1].toFixed(1)
+           + '" stroke="' + (strong ? '#c0503c' : '#d97757') + '" stroke-width="'
+           + (strong ? 2.6 : 1.9) + '" stroke-linecap="round"/>';
+        s += '<path d="M' + tip[0].toFixed(1) + ' ' + tip[1].toFixed(1)
+           + 'L' + (base[0] - uy * hl * 0.4).toFixed(1) + ' ' + (base[1] + ux * hl * 0.4).toFixed(1)
+           + 'L' + (base[0] + uy * hl * 0.4).toFixed(1) + ' ' + (base[1] - ux * hl * 0.4).toFixed(1)
+           + 'Z" fill="' + (strong ? '#c0503c' : '#d97757') + '"/>';
+        s += '<circle cx="' + a[0].toFixed(1) + '" cy="' + a[1].toFixed(1)
+           + '" r="3.6" fill="#3c6ea8"/>';
+        s += '<text x="' + (a[0] - 9).toFixed(1) + '" y="' + (a[1] + 4).toFixed(1)
+           + '" font-size="10" fill="currentColor" fill-opacity=".55" text-anchor="end"'
+           + ' font-family="ui-monospace, monospace">M' + (i + 1) + '</text>';
+      });
+
+      gArrow.innerHTML = s;
+
+      var v5 = f[4];
+      info.innerHTML =
+        '가장 센 지점 <b>M' + (maxIdx + 1) + '</b> · 세기 <b>' + maxMag.toFixed(1) + '</b><br>'
+        + 'M5 = (' + v5[0].toFixed(1) + ', ' + v5[1].toFixed(1) + ', ' + v5[2].toFixed(1) + ')<br>'
+        + '<span style="color:var(--ink-4)">// 화살표 길이는 거리마다 다시 맞춥니다. '
+        + '길이가 아니라 세기 숫자를 비교하세요</span>';
+    }
+
+    labels.forEach(function (lab) {
+      lab.addEventListener('click', function () {
+        labels.forEach(function (l) { l.classList.toggle('is-sel', l === lab); });
+        var r = lab.querySelector('input');
+        if (r) r.checked = true;
+        draw(lab.dataset.d);
+      });
+    });
+    labels[0].classList.add('is-sel');
+    draw(labels[0].dataset.d);
+  }
+
   /* ---------- 부팅 ---------- */
 
   function boot() {
@@ -808,6 +944,7 @@
     initCrossSim();
     initPlotSim();
     initFitSim();
+    initFieldSim();
   }
 
   if (document.readyState === 'loading') {
