@@ -114,7 +114,7 @@
 
         <h2 id="today">오늘의 흐름</h2>
 
-        <p>네 단계입니다. 하나씩 천천히 갑니다.</p>
+        
 
         <div class="flow">
           <div class="flow__step" data-kind="in">
@@ -140,7 +140,7 @@
 
         <h2 id="grid">먼저 · 좌표를 약속합니다</h2>
 
-        <p>센서를 아무 데나 놓으면 나중에 비교를 못 합니다. <b>미리 정한 9칸</b>에서만 잽니다.</p>
+        <p><b>미리 정한 9칸</b>에서만 잽니다.</p>
 
         <figure class="figure">
           <svg viewBox="0 0 660 300" role="img" aria-label="3x3 격자의 아홉 칸과 좌표" style="color:var(--ink-2)">
@@ -187,26 +187,21 @@
 
         <div class="note note--check">
           <span class="note__t">칸 번호와 좌표</span>
-          <p>MagProbe 화면에는 번호 대신 <b>좌표</b>가 적혀 있습니다. <code>-40,40</code> 이 1번, <code>0,0</code> 이 5번, <code>40,-40</code> 이 9번입니다. 헷갈리면 위 그림을 보세요.</p>
+          <p>MagProbe 화면에는 번호 대신 <b>좌표</b>가 적혀 있습니다. <code>-40,40</code>=1번, <code>0,0</code>=5번, <code>40,-40</code>=9번.</p>
         </div>
 
         <h2 id="magprobe">MagProbe 사용법</h2>
 
-        <p>
-          브라우저에서 바로 씁니다. <b>크롬</b>으로 여세요.
-          <a href="https://lhc0312.github.io/magprobe/" target="_blank" rel="noopener">lhc0312.github.io/magprobe</a>
-        </p>
-
-        <p>처음 열면 이런 화면입니다.</p>
+        <p><b>크롬</b>으로 <a href="https://lhc0312.github.io/magprobe/" target="_blank" rel="noopener">lhc0312.github.io/magprobe</a> 를 여세요.</p>
 
         <figure class="shot">
           <img src="assets/img/mp_full.png" alt="MagProbe 첫 화면 — 왼쪽에 3D 보기, 가운데 실시간 값, 오른쪽에 측정 패널">
-          <figcaption>왼쪽은 <b>3D 보기</b>, 가운데는 <b>실시간 값</b>, 오른쪽이 <b>측정 패널</b>입니다. 오른쪽만 쓰면 됩니다.</figcaption>
+          <figcaption>오른쪽 <b>측정 패널</b>만 씁니다.</figcaption>
         </figure>
 
         <h3><span class="stepnum">1</span>BLE로 장치를 연결합니다</h3>
 
-        <p>화면 <b>맨 위 줄</b>에 연결 버튼이 있습니다.</p>
+        <p>맨 위 줄에 연결 버튼이 있습니다.</p>
 
         <figure class="shot shot--bar">
           <img src="assets/img/mp_topbar.png" alt="상단 바 — 연결 안 됨 표시, BLE 연결 버튼, 해제, 측정 횟수 10, CSV 내보내기, CSV 가져오기, 초기화">
@@ -229,24 +224,22 @@
 
         <h3><span class="stepnum">2</span>격자를 확인합니다</h3>
 
-        <p>오른쪽 <b>측정</b> 탭 아래에 격자 설정이 있습니다.</p>
+        <p>오른쪽 <b>측정</b> 탭을 엽니다.</p>
 
         <figure class="shot shot--narrow">
           <img src="assets/img/mp_cell_zoom.png" alt="격자 패널 — 3x3 아홉 칸에 각각 좌표가 적혀 있고 위에 +Y, 오른쪽에 +X 표시">
-          <figcaption>아홉 칸에 <b>좌표</b>가 적혀 있습니다. 위쪽이 <b>+Y</b>, 오른쪽이 <b>+X</b>입니다.</figcaption>
+          <figcaption>위쪽이 <b>+Y</b>, 오른쪽이 <b>+X</b>.</figcaption>
         </figure>
 
         <div class="doit">
-          <p><b>확인만</b> — 크기가 <b>3 × 3</b>, 간격이 <b>40</b> 인지 봅니다. 기본값이 그렇습니다.</p>
+          <p><b>확인</b> — 크기 <b>3 × 3</b>, 간격 <b>40</b>.</p>
         </div>
 
         <h3><span class="stepnum">3</span>배경을 지웁니다 <span class="muted">— 오늘 가장 중요한 단계</span></h3>
 
-        <p>센서는 자석만 재는 게 아닙니다. <b>지구 자기장</b>도 같이 잽니다.</p>
+        <p>센서는 <b>지구 자기장</b>도 함께 잽니다. 자석을 치운 상태를 먼저 재서 배경으로 등록해야 합니다.</p>
 
-        <p>그래서 <b>자석을 치운 상태</b>를 먼저 재서 "이게 배경이다"라고 알려줘야 합니다.</p>
-
-        <p>맨 위 <b>설정</b> 탭으로 갑니다.</p>
+        <p>맨 위 <b>설정</b> 탭을 엽니다.</p>
 
         <figure class="shot shot--narrow">
           <img src="assets/img/mp_settings.png" alt="설정 탭 — 자력계 배경(MT) 항목에 하드아이언 값 세 칸과 현재 값을 배경으로 버튼, 배경 초기화 버튼">
@@ -261,24 +254,22 @@
         </div>
 
         <div class="note note--warn">
-          <span class="note__t">이걸 빼먹으면</span>
-          <p>모든 측정값에 지구 자기장 <b>약 50 µT</b>가 섞여 들어갑니다. 나중에 거리 지수가 엉뚱하게 나옵니다. <b>측정을 시작하기 전에 반드시</b> 하세요.</p>
+          <span class="note__t">이 단계를 건너뛰면</span>
+          <p>모든 값에 지구 자기장 <b>약 50 µT</b>가 섞입니다. <b>측정 전에 반드시 누르세요.</b></p>
         </div>
 
         <div class="note note--tip">
           <span class="note__t">언제 다시 해야 하나</span>
-          <p>장치를 <b>옮기거나</b> 노트북 위치를 바꾸면 배경이 달라집니다. 그때는 다시 눌러 주세요. 같은 자리에서 계속 잰다면 한 번이면 됩니다.</p>
+          <p>장치나 노트북 위치를 바꾸면 <b>다시 누르세요.</b> 같은 자리면 한 번으로 충분합니다.</p>
         </div>
 
         <h3><span class="stepnum">4</span>칸을 고르고 측정합니다</h3>
 
-        <p>다시 <b>측정</b> 탭으로 돌아옵니다.</p>
-
-        <p>재고 싶은 칸을 <b>클릭</b>합니다.</p>
+        <p><b>측정</b> 탭으로 돌아와 잴 칸을 클릭합니다.</p>
 
         <figure class="shot shot--narrow">
           <img src="assets/img/mp_picked.png" alt="격자에서 왼쪽 위 -40,40 칸이 파란 테두리로 선택된 상태. 아래에 (0,0) 선택됨 · (-40, 40) mm 라고 표시됨">
-          <figcaption>고른 칸이 <b>파란 테두리</b>로 바뀌고, 아래에 <b>(0,0) 선택됨 · (−40, 40) mm</b> 라고 나옵니다.</figcaption>
+          <figcaption>고른 칸이 <b>파란 테두리</b>로 바뀝니다.</figcaption>
         </figure>
 
         <div class="doit">
@@ -291,28 +282,28 @@
 
         <div class="note note--warn">
           <span class="note__t">측정하는 2초 동안</span>
-          <p><b>손을 떼고 가만히 두세요.</b> 센서를 건드리면 기울기 값이 흔들려서 데이터가 망가집니다. 지난번 자료에서 실제로 이렇게 망가진 칸이 있었습니다.</p>
+          <p><b>손을 떼고 가만히 두세요.</b> 건드리면 기울기 값이 흔들려 데이터가 망가집니다.</p>
         </div>
 
         <h3><span class="stepnum">5</span>아홉 칸을 다 채웁니다</h3>
 
-        <p>센서를 옮기고 → 칸 클릭 → 측정. 이걸 <b>9번</b> 반복합니다.</p>
+        <p>센서 이동 → 칸 클릭 → 측정. <b>9번</b> 반복합니다.</p>
 
         <div class="doit">
           <p><b>순서를 지키세요</b> — 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9</p>
-          <p>순서가 섞여도 데이터에는 좌표가 남지만, 빠뜨린 칸을 찾기 어려워집니다.</p>
+          <p>순서가 섞이면 빠뜨린 칸을 찾기 어렵습니다.</p>
         </div>
 
-        <p>진행 상황은 <b>데이터</b> 탭에서 확인할 수 있습니다.</p>
+        <p>진행 상황은 <b>데이터</b> 탭에서 봅니다.</p>
 
         <figure class="shot shot--narrow">
           <img src="assets/img/mp_data.png" alt="데이터 탭 — 측정된 값들이 표로 나열되어 있는 화면">
-          <figcaption><b>데이터</b> 탭에서 지금까지 잰 값을 표로 볼 수 있습니다. 9칸이 다 찼는지 여기서 확인하세요.</figcaption>
+          <figcaption>9칸이 다 찼는지 여기서 확인하세요.</figcaption>
         </figure>
 
         <h3><span class="stepnum">6</span>CSV로 내보냅니다</h3>
 
-        <p>9칸을 다 채웠으면 맨 위 오른쪽 <b>CSV 내보내기</b>를 누릅니다.</p>
+        <p>맨 위 오른쪽 <b>CSV 내보내기</b>를 누릅니다.</p>
 
         <div class="doit">
           <p><b>할 일</b> — <b>CSV 내보내기</b> 클릭 → 파일이 <b>다운로드 폴더</b>에 저장됩니다.</p>
@@ -320,7 +311,7 @@
 
         <h3><span class="stepnum">7</span>파일 이름을 규칙대로 바꿉니다</h3>
 
-        <p>이게 나중에 코랩에서 자동으로 읽히게 하는 핵심입니다.</p>
+        <p>이름이 곧 측정 조건입니다.</p>
 
         <div class="code" data-plain>
           <div class="code__bar"><span class="code__name">파일 이름 규칙</span></div>
@@ -346,12 +337,12 @@
 
         <div class="note note--warn">
           <span class="note__t">이름을 잘못 붙이면</span>
-          <p>나중에 <b>어느 파일이 어느 조건인지 알 수 없게 됩니다.</b> 측정이 끝나면 바로 이름을 바꾸세요. 나중에 하면 반드시 헷갈립니다.</p>
+          <p>어느 파일이 어느 조건인지 알 수 없게 됩니다. <b>측정 직후 바로 바꾸세요.</b></p>
         </div>
 
         <h2 id="plan">오늘 측정할 것</h2>
 
-        <p>거리 <b>2가지</b> × 자석 위치 <b>5군데</b> = <b>10개 파일</b>입니다.</p>
+        <p>거리 <b>2가지</b> × 자석 위치 <b>5군데</b> = <b>10개 파일</b>.</p>
 
         <div class="table-wrap">
           <table>
@@ -403,7 +394,7 @@
 
         <h3>장치는 이렇게 생겼습니다</h3>
 
-        <p><b>2층 구조</b>입니다. 위가 센서 판, 아래가 자석 판입니다.</p>
+        <p>위가 센서 판, 아래가 자석 판입니다.</p>
 
         <figure class="shot">
           <img src="assets/img/setup.svg" alt="센서 판과 자석 판이 받침대로 떨어져 있는 2층 구조. 왼쪽은 6cm, 오른쪽은 10cm">
@@ -431,30 +422,29 @@
           </p>
         </div>
 
-        <p>열면 이런 화면입니다. <b>왼쪽에 목차, 오른쪽에 코드와 결과</b>가 있습니다.</p>
+        <p>왼쪽에 목차, 오른쪽에 코드와 결과가 있습니다.</p>
 
         <figure class="shot">
           <img src="assets/img/cl_open.png" alt="코랩에서 열린 10강 노트북 — 왼쪽 목차에 1단계부터 15단계까지, 오른쪽에 코드 셀과 실행 결과">
           <figcaption>
-            왼쪽 <b>목차</b>로 원하는 단계에 바로 갈 수 있습니다.
-            코드 아래 회색 부분이 <b>실행 결과</b>입니다. 이미 한 번 돌려둔 결과가 들어 있습니다.
+왼쪽 <b>목차</b>로 단계 이동. 코드 아래 회색 부분이 <b>실행 결과</b>.
           </figcaption>
         </figure>
 
         <div class="doit">
           <p><b>먼저 할 일</b> — 오른쪽 위 <b>로그인</b>으로 구글 계정에 들어간 뒤, 상단 <b>Drive로 복사</b>를 누르세요.</p>
-          <p>내 드라이브에 복사본이 생기고, 그때부터 <b>내가 고치고 실행할 수 있습니다.</b></p>
+          <p>복사본이 생겨야 고치고 실행할 수 있습니다.</p>
         </div>
 
         <div class="note note--warn">
           <span class="note__t">복사하지 않으면</span>
-          <p>읽기 전용이라 <b>실행이 안 됩니다.</b> 코드를 고칠 수도 없습니다. 반드시 <b>Drive로 복사</b>를 먼저 누르세요.</p>
+          <p>읽기 전용이라 실행도 수정도 안 됩니다. <b>Drive로 복사를 먼저 누르세요.</b></p>
         </div>
 
         <div class="note note--tip">
           <span class="note__t">데이터 내려받기</span>
           <p style="margin-bottom:0">
-            노트북은 인터넷에서 바로 읽으므로 내려받지 않아도 됩니다. 파일을 직접 보고 싶으면 —
+            데이터 파일 —
             <a href="data/8cm_막대자석_1_m1.csv" download>m1</a> ·
             <a href="data/8cm_막대자석_1_m3.csv" download>m3</a> ·
             <a href="data/8cm_막대자석_1_m4.csv" download>m4</a> ·
@@ -465,13 +455,10 @@
         </div>
 
         <p class="muted small">
-          아래는 노트북에 들어 있는 내용을 하나씩 설명한 것입니다.
-          <b>코랩에서 직접 실행하면서</b> 따라오세요.
+아래는 노트북 내용입니다. <b>코랩에서 실행하면서</b> 따라오세요.
         </p>
 
         <h3><span class="stepnum">1</span>파일을 불러옵니다</h3>
-
-        <p>합본 파일은 인터넷에서 바로 읽을 수 있습니다. 내려받지 않아도 됩니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 1</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -485,11 +472,11 @@ df = pd.read_csv(url)
 df.head()</code></pre>
         </div>
 
-        <p>코랩에서는 이렇게 <b>표로</b> 나옵니다.</p>
+        <p>표로 출력됩니다.</p>
 
         <figure class="shot">
           <img src="assets/img/cl_load.png" alt="코랩에서 pd.read_csv 를 실행해 데이터프레임이 표로 출력된 화면">
-          <figcaption><code>df.head()</code> 는 <b>앞의 5줄</b>만 보여줍니다. 전체가 다 나오면 화면이 넘칩니다.</figcaption>
+          <figcaption><code>df.head()</code> 는 앞의 5줄만 보여줍니다.</figcaption>
         </figure>
 
         <h3><span class="stepnum">2</span>크기를 확인합니다</h3>
@@ -508,8 +495,7 @@ print("칸 수 :", df.groupby("magnet")[["cell_i","cell_j"]].nunique().iloc[0].t
 칸 수 : {'cell_i': 3, 'cell_j': 3}</div>
 
         <p class="muted small">
-          450줄 = <b>자석 5개 × 칸 9개 × 반복 10번</b>입니다.
-          한 칸을 10번씩 잰 것이니, 이걸 <b>하나로 줄여야</b> 합니다.
+450줄 = <b>자석 5개 × 칸 9개 × 반복 10번</b>. 한 칸당 10줄이므로 하나로 줄입니다.
         </p>
 
         <h3><span class="stepnum">3</span>열이 무엇인지 봅니다</h3>
@@ -531,12 +517,12 @@ print("칸 수 :", df.groupby("magnet")[["cell_i","cell_j"]].nunique().iloc[0].t
 
         <div class="note note--check">
           <span class="note__t">왜 <code>Bb</code>를 쓰나</span>
-          <p><code>B</code>는 기울기를 보정한 값인데, 센서를 건드리면 그 보정이 흔들려서 오히려 값이 튑니다. <code>Bb</code>는 <b>센서가 잰 날것</b>이라 더 안정적입니다.</p>
+          <p><code>B</code>는 기울기 보정을 거쳐 센서를 건드리면 값이 튑니다. <code>Bb</code>가 더 안정적입니다.</p>
         </div>
 
         <h3><span class="stepnum">4</span>10번 잰 걸 하나로 줄입니다</h3>
 
-        <p>같은 칸을 10번 쟀으니 <b>대표값 하나</b>로 만듭니다. 평균 대신 <b>중앙값</b>을 씁니다.</p>
+        <p><b>중앙값</b>으로 대표값 하나를 만듭니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 3</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -563,7 +549,7 @@ cell.head()</code></pre>
 
         <div class="note note--tip">
           <span class="note__t">왜 평균이 아니라 중앙값인가</span>
-          <p>10번 중 <b>한 번만 크게 튀어도</b> 평균은 끌려갑니다. 중앙값은 가운데 값을 고르므로 튄 값 하나에 흔들리지 않습니다. <b>손이 닿아서 한 번 튀는</b> 상황에 강합니다.</p>
+          <p>10번 중 한 번만 크게 튀어도 평균은 끌려갑니다. 중앙값은 흔들리지 않습니다.</p>
         </div>
 
         <h3><span class="stepnum">5</span>자기장 세기를 구합니다</h3>
@@ -577,7 +563,7 @@ cell[["magnet", "x_mm", "y_mm", "B"]].head()</code></pre>
 
         <h3><span class="stepnum">6</span>자석까지의 거리를 구합니다</h3>
 
-        <p>자석 위치를 알아야 거리를 잽니다. 파일 이름의 <code>m1</code>·<code>m3</code>… 이 그 정보입니다.</p>
+        <p>파일 이름의 <code>m1</code>·<code>m3</code>… 이 자석 위치입니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 5</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -606,7 +592,7 @@ print(f"세기 범위 : {cell['B'].min():.0f} ~ {cell['B'].max():.0f} µT")</cod
 
         <div class="note note--check">
           <span class="note__t">거리가 다양한 이유</span>
-          <p>센서가 자석 <b>바로 위</b>에 있으면 80mm(=수직거리)이고, <b>대각선 끝</b>에 있으면 139mm입니다. 한 번 측정에 9칸을 훑으니 <b>거리 9가지</b>가 한꺼번에 생깁니다.</p>
+          <p>자석 바로 위 80mm, 대각선 끝 139mm. 9칸을 훑으므로 거리 9가지가 한 번에 생깁니다.</p>
         </div>
 
         <h3><span class="stepnum">7</span>그림으로 봅니다</h3>
@@ -622,16 +608,16 @@ plt.grid(alpha=0.3)
 plt.show()</code></pre>
         </div>
 
-        <p>실행하면 그림이 코드 바로 아래에 그려집니다.</p>
+        <p>그림이 코드 아래에 그려집니다.</p>
 
         <figure class="shot">
           <img src="assets/img/cl_plot.png" alt="코랩에서 산점도를 그린 결과 — 거리가 멀어질수록 자기장이 급격히 줄어드는 곡선">
-          <figcaption>멀어질수록 <b>급격히</b> 작아집니다. 직선이 아니라 곡선입니다. <b>계산하기 전에 항상 눈으로 먼저</b> 봅니다.</figcaption>
+          <figcaption>멀어질수록 급격히 작아지는 곡선입니다.</figcaption>
         </figure>
 
         <h2 id="ml">잠깐 · 학습과 테스트</h2>
 
-        <p>회귀를 돌리기 전에 용어 세 개만 짚습니다. 머신러닝에서 계속 나옵니다.</p>
+        <p>용어 세 개를 짚습니다.</p>
 
         <figure class="figure">
           <svg viewBox="0 0 660 230" role="img" aria-label="학습 데이터로 모델을 만들고 테스트 데이터로 채점하는 과정" style="color:var(--ink-2)">
@@ -680,12 +666,12 @@ plt.show()</code></pre>
 
         <div class="note note--warn">
           <span class="note__t">규칙 하나</span>
-          <p><b>테스트 데이터는 학습에 쓰면 안 됩니다.</b> 시험 문제를 미리 보고 공부하는 것과 같습니다. 점수는 잘 나오지만 실력은 알 수 없습니다.</p>
+          <p><b>테스트 데이터는 학습에 쓰지 마세요.</b> 시험 문제를 미리 보고 공부하는 것과 같습니다.</p>
         </div>
 
         <h2 id="regress">거리 지수를 찾아봅시다</h2>
 
-        <p>이제 오늘의 질문입니다.</p>
+        
 
         <div class="doit">
           <p><b>자기장은 거리가 멀어질 때 얼마나 빨리 약해질까?</b></p>
@@ -702,11 +688,11 @@ plt.show()</code></pre>
   n = 거리 지수  ← 이걸 찾는 것</code></pre>
         </div>
 
-        <p><b>n을 1부터 5까지 하나씩 넣어 보고</b>, 어느 값이 데이터와 가장 잘 맞는지 봅니다.</p>
+        <p><b>n을 1부터 5까지 넣어 보고</b> 가장 잘 맞는 값을 고릅니다.</p>
 
         <h3><span class="stepnum">1</span>양변에 로그를 씌웁니다</h3>
 
-        <p>곡선은 직선보다 다루기 어렵습니다. 로그를 씌우면 <b>직선</b>이 됩니다.</p>
+        <p>로그를 씌우면 직선이 됩니다.</p>
 
         <div class="code" data-plain>
           <div class="code__bar"><span class="code__name">로그를 씌우면</span></div>
@@ -732,11 +718,11 @@ plt.grid(alpha=0.3)
 plt.show()</code></pre>
         </div>
 
-        <p class="muted small">점들이 <b>직선에 가깝게</b> 늘어서면 <code>k/rⁿ</code> 가정이 맞다는 뜻입니다.</p>
+        <p class="muted small">점들이 직선에 가까우면 <code>k/rⁿ</code> 가정이 맞습니다.</p>
 
         <h3><span class="stepnum">2</span>n = 1~5 를 하나씩 넣어 봅니다</h3>
 
-        <p>n을 고정하고 <b>k만 맞춘 뒤</b>, 얼마나 안 맞는지(잔차) 잽니다.</p>
+        <p>n을 고정하고 k만 맞춘 뒤 잔차를 잽니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 8</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -770,7 +756,7 @@ n = 5   잔차 = 0.3709</div>
 
         <h3><span class="stepnum">3</span>n을 자유롭게 풀어봅니다</h3>
 
-        <p>1~5로 제한하지 말고 <b>소수까지</b> 찾아보면 얼마가 나올까요?</p>
+        <p>소수까지 찾습니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 9</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -787,9 +773,7 @@ print(f"→ n = {-a:.2f}")</code></pre>
 
         <h2 id="why">왜 3일까</h2>
 
-        <p>이 값은 우연이 아닙니다. <b>물리 법칙이 예측한 값</b>입니다.</p>
-
-        <p>자석은 <b>N극과 S극이 한 쌍</b>으로만 존재합니다. N극만 있는 자석은 없습니다.</p>
+        <p>자석은 <b>N극과 S극이 한 쌍</b>으로만 존재합니다.</p>
 
         <figure class="figure">
           <svg viewBox="0 0 660 210" role="img" aria-label="극이 하나면 1/r제곱, 두 극이 상쇄되면 1/r세제곱이 되는 과정" style="color:var(--ink-2)">
@@ -825,7 +809,7 @@ print(f"→ n = {-a:.2f}")</code></pre>
 
         <h3>그런데 2.90이 나왔습니다</h3>
 
-        <p>이론은 3.00인데 측정은 2.90입니다. <b>0.10 차이</b>를 어떻게 볼까요?</p>
+        <p>이론 3.00, 측정 2.90. 차이 0.10.</p>
 
         <div class="table-wrap">
           <table>
@@ -841,7 +825,7 @@ print(f"→ n = {-a:.2f}")</code></pre>
 
         <h3>거리를 잘못 재면 어떻게 되나</h3>
 
-        <p><code>DEPTH</code>를 바꿔가며 n이 어떻게 변하는지 노트북에서 직접 확인할 수 있습니다.</p>
+        <p><code>DEPTH</code>를 바꿔가며 n의 변화를 확인합니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -874,9 +858,7 @@ print(f"→ n = {-a:.2f}")</code></pre>
         <div class="note note--check">
           <span class="note__t">여기서 배울 것</span>
           <p>
-            분석이 아무리 정교해도 <b>자로 잰 숫자가 틀리면 결과가 틀립니다.</b>
-            거리를 <b>10mm</b> 잘못 재면 지수가 <b>0.2</b> 이상 달라집니다.
-            데이터 분석에서 가장 흔한 실수는 계산이 아니라 <b>측정</b>에서 나옵니다.
+거리를 <b>10mm</b> 잘못 재면 지수가 <b>0.2</b> 이상 달라집니다. 가장 흔한 실수는 계산이 아니라 <b>측정</b>에서 나옵니다.
           </p>
         </div>
 
@@ -888,9 +870,9 @@ print(f"→ n = {-a:.2f}")</code></pre>
 
         <h2 id="test">테스트 자석 맞히기</h2>
 
-        <p>마지막입니다. <b>선생님이 몰래 놓은 자석</b>의 위치를 맞혀 봅니다.</p>
+        <p><b>선생님이 몰래 놓은 자석</b>의 위치를 맞힙니다.</p>
 
-        <p>방법은 간단합니다. <b>가장 센 칸이 자석 바로 위</b>입니다.</p>
+        <p><b>가장 센 칸이 자석 바로 위</b>입니다.</p>
 
         <div class="code" data-lang="py">
           <div class="code__bar"><span class="code__name">셀 10</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
@@ -913,7 +895,7 @@ print(f"세기       : {best['B']:.0f} uT")</code></pre>
 
         <div class="note note--tip">
           <span class="note__t">정답 확인</span>
-          <p>추정을 <b>먼저 적어두고</b> 선생님께 정답을 물어보세요. 순서를 바꾸면 안 됩니다. 정답을 보고 나서 맞췄다고 하는 건 채점이 아닙니다.</p>
+          <p>추정을 <b>먼저 적어두고</b> 정답을 물어보세요. 순서를 바꾸지 마세요.</p>
         </div>
 
         <div class="quest">
@@ -940,9 +922,7 @@ print(f"세기       : {best['B']:.0f} uT")</code></pre>
         <div class="note note--check">
           <span class="note__t">오늘의 한 줄</span>
           <p>
-            <b>데이터가 물리 법칙을 다시 알려줬습니다.</b>
-            교과서에서 "자기장은 거리 세제곱에 반비례한다"고 읽는 것과,
-            직접 재서 <code>n = 3</code>을 찾아내는 것은 다릅니다.
+재서 찾은 <code>n = 3</code>은 <b>쌍극자 이론값</b>과 같습니다.
           </p>
         </div>
 
