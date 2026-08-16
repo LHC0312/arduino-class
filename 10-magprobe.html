@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>10 · 측정부터 분석까지 — 아두이노 기초</title>
+<meta name="description" content="MagProbe로 자기장을 측정해 CSV로 내보내고, 코랩에서 읽어 거리 지수를 회귀로 찾아냅니다. 8월 17일 수업 노트북.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23d97757' stroke-width='2.6' stroke-linecap='round'%3E%3Cpath d='M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z'/%3E%3Cpath d='M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=Noto+Serif+KR:wght@500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<script>(function(){try{var t=(JSON.parse(localStorage.getItem('arduino-class:v1')||'{}')||{}).theme;if(t)document.documentElement.dataset.theme=t;}catch(e){}})();</script>
+</head>
+<body data-lesson="10">
+
+<header class="topbar">
+  <div class="topbar__in">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" viewBox="0 0 40 20" aria-hidden="true">
+        <g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+          <path d="M13 3.5a6.5 6.5 0 100 13c4.7 0 7.3-13 14-13a6.5 6.5 0 110 13c-6.7 0-9.3-13-14-13z"/>
+          <path d="M9.8 10h4.4M25.8 10h4.4M28 7.8v4.4"/>
+        </g>
+      </svg>
+      아두이노 기초
+      <span class="brand__sub">수업 자료</span>
+    </a>
+    <div class="topbar__spacer"></div>
+    <button class="ghost-btn rail-toggle" data-rail-toggle aria-expanded="false" aria-controls="rail">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+      목차
+    </button>
+    <button class="ghost-btn" data-theme-toggle>
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="3.2"/><path d="M8 1v1.6M8 13.4V15M15 8h-1.6M2.6 8H1M12.9 3.1l-1.1 1.1M4.2 11.8l-1.1 1.1M12.9 12.9l-1.1-1.1M4.2 4.2L3.1 3.1" stroke-linecap="round"/></svg>
+      <span data-theme-label>다크</span>
+    </button>
+  </div>
+</header>
+
+<div class="shell">
+  <div class="layout">
+
+    <aside class="rail" id="rail">
+      <p class="rail__label">커리큘럼</p>
+      <ol>
+        <li class="rail__item" data-lesson-id="1">
+          <a href="01-arduino.html"><span class="rail__num">01</span><span>아두이노란?<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="2">
+          <a href="02-ide.html"><span class="rail__num">02</span><span>IDE 설치와 첫 업로드<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="3">
+          <a href="03-led.html"><span class="rail__num">03</span><span>LED 제어<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="4">
+          <a href="04-buzzer.html"><span class="rail__num">04</span><span>버저 출력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="5">
+          <a href="05-button.html"><span class="rail__num">05</span><span>버튼 입력<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="6">
+          <a href="06-traffic.html"><span class="rail__num">06</span><span>신호등 만들기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="7">
+          <a href="07-project.html"><span class="rail__num">07</span><span>프로젝트와 연계하기<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="8">
+          <a href="08-colab.html"><span class="rail__num">08</span><span>코랩으로 선형회귀<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item" data-lesson-id="9">
+          <a href="09-field3d.html"><span class="rail__num">09</span><span>3차원 자기장 시각화<span class="rail__done" data-done-badge></span></span></a>
+        </li>
+        <li class="rail__item is-current" data-lesson-id="10">
+          <a href="10-magprobe.html"><span class="rail__num">10</span><span>측정부터 분석까지<span class="rail__done" data-done-badge></span></span></a>
+          <ul class="rail__sub">
+            <li><a href="#today">오늘의 흐름</a></li>
+            <li><a href="#grid">먼저 · 좌표를 약속합니다</a></li>
+            <li><a href="#magprobe">MagProbe 사용법</a></li>
+            <li><a href="#plan">오늘 측정할 것</a></li>
+            <li><a href="#read">코랩에서 읽기</a></li>
+            <li><a href="#ml">학습과 테스트</a></li>
+            <li><a href="#regress">거리 지수 찾기</a></li>
+            <li><a href="#why">왜 3일까</a></li>
+            <li><a href="#test">테스트 자석 맞히기</a></li>
+            <li><a href="#checklist">마무리 체크리스트</a></li>
+          </ul>
+        </li>
+      </ol>
+    </aside>
+
+    <main>
+      <div class="prose">
+
+        <header class="lesson-head">
+          <p class="lesson-head__kicker">10강 · 8월 17일 (월) 수업</p>
+          <h1>측정부터 분석까지</h1>
+          <p class="lesson-head__lede">
+            오늘은 <b>직접 측정한 데이터로 끝까지</b> 가 봅니다.
+            자기장을 재서 CSV로 내보내고, 코랩에서 읽고, 회귀로 물리 법칙을 찾아냅니다.
+          </p>
+          <div class="goals">
+            <p class="goals__label">오늘 할 수 있게 되는 것</p>
+            <ul>
+              <li>MagProbe로 격자 9칸을 재서 CSV로 내보낼 수 있다</li>
+              <li>파일 이름을 규칙대로 붙일 수 있다</li>
+              <li>코랩에서 CSV를 읽고 정리할 수 있다</li>
+              <li><b>학습 데이터</b>와 <b>테스트 데이터</b>를 구분할 수 있다</li>
+              <li>거리 지수를 회귀로 찾고, 그 값이 왜 그런지 설명할 수 있다</li>
+            </ul>
+          </div>
+        </header>
+
+        <h2 id="today">오늘의 흐름</h2>
+
+        <p>네 단계입니다. 하나씩 천천히 갑니다.</p>
+
+        <div class="flow">
+          <div class="flow__step" data-kind="in">
+            <span class="flow__label">1 · 측정</span><b>MagProbe</b>
+            <p>격자 9칸을 재고 CSV로 내보내기</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="cpu">
+            <span class="flow__label">2 · 정리</span><b>파일 이름</b>
+            <p>규칙대로 붙여서 모으기</p>
+          </div>
+          <div class="flow__arrow">→</div>
+          <div class="flow__step" data-kind="out">
+            <span class="flow__label">3 · 분석</span><b>코랩</b>
+            <p>읽고, 회귀 돌리고, 해석하기</p>
+          </div>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">준비물</span>
+          <p>MagProbe 장치 · 노트북(크롬) · 막대자석 1개 · 자 · 받침대(6cm, 10cm) · 구글 계정</p>
+        </div>
+
+        <h2 id="grid">먼저 · 좌표를 약속합니다</h2>
+
+        <p>센서를 아무 데나 놓으면 나중에 비교를 못 합니다. <b>미리 정한 9칸</b>에서만 잽니다.</p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 660 300" role="img" aria-label="3x3 격자의 아홉 칸과 좌표" style="color:var(--ink-2)">
+            <rect x="130" y="30" width="240" height="240" rx="4" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".25"/>
+            <g stroke="currentColor" stroke-opacity=".12">
+              <line x1="170" y1="30" x2="170" y2="270"/><line x1="250" y1="30" x2="250" y2="270"/><line x1="330" y1="30" x2="330" y2="270"/>
+              <line x1="130" y1="70" x2="370" y2="70"/><line x1="130" y1="150" x2="370" y2="150"/><line x1="130" y1="230" x2="370" y2="230"/>
+            </g>
+            <g fill="#3c6ea8">
+              <circle cx="170" cy="70" r="15"/><circle cx="250" cy="70" r="15"/><circle cx="330" cy="70" r="15"/>
+              <circle cx="170" cy="150" r="15"/><circle cx="250" cy="150" r="15"/><circle cx="330" cy="150" r="15"/>
+              <circle cx="170" cy="230" r="15"/><circle cx="250" cy="230" r="15"/><circle cx="330" cy="230" r="15"/>
+            </g>
+            <g fill="#fdfbf7" font-size="13" font-family="ui-monospace,monospace" text-anchor="middle" font-weight="600">
+              <text x="170" y="75">1</text><text x="250" y="75">2</text><text x="330" y="75">3</text>
+              <text x="170" y="155">4</text><text x="250" y="155">5</text><text x="330" y="155">6</text>
+              <text x="170" y="235">7</text><text x="250" y="235">8</text><text x="330" y="235">9</text>
+            </g>
+            <g fill="currentColor" opacity=".55" font-size="10.5" font-family="ui-monospace,monospace" text-anchor="middle">
+              <text x="170" y="52">−40,40</text><text x="250" y="52">0,40</text><text x="330" y="52">40,40</text>
+              <text x="170" y="132">−40,0</text><text x="250" y="132">0,0</text><text x="330" y="132">40,0</text>
+              <text x="170" y="212">−40,−40</text><text x="250" y="212">0,−40</text><text x="330" y="212">40,−40</text>
+            </g>
+            <defs><marker id="ar10" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+            <g stroke="currentColor" stroke-opacity=".5" fill="none" marker-end="url(#ar10)">
+              <path d="M370 285h32"/><path d="M115 270V238"/>
+            </g>
+            <text x="410" y="290" font-size="12" fill="currentColor" font-family="system-ui">+X</text>
+            <text x="108" y="230" font-size="12" fill="currentColor" text-anchor="end" font-family="system-ui">+Y</text>
+            <g stroke="currentColor" stroke-opacity=".45" fill="none">
+              <path d="M170 284h80"/><path d="M170 280v8M250 280v8"/>
+            </g>
+            <text x="210" y="298" font-size="11" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">40 mm</text>
+            <g fill="currentColor" font-family="system-ui">
+              <text x="430" y="80" font-size="13.5" font-weight="600">칸 번호</text>
+              <text x="430" y="102" font-size="12" opacity=".7">왼쪽 위가 1번, 오른쪽 아래가 9번</text>
+              <text x="430" y="140" font-size="13.5" font-weight="600">자석 위치도 같은 번호</text>
+              <text x="430" y="162" font-size="12" opacity=".7">아래 판의 5번에 자석을 놓으면</text>
+              <text x="430" y="180" font-size="12" opacity=".7">그 측정은 <tspan font-family="ui-monospace,monospace">m5</tspan> 입니다</text>
+            </g>
+          </svg>
+          <figcaption>센서를 놓는 9칸. 자석을 놓는 아래 판도 같은 번호를 씁니다.</figcaption>
+        </figure>
+
+        <div class="note note--check">
+          <span class="note__t">칸 번호와 좌표</span>
+          <p>MagProbe 화면에는 번호 대신 <b>좌표</b>가 적혀 있습니다. <code>-40,40</code> 이 1번, <code>0,0</code> 이 5번, <code>40,-40</code> 이 9번입니다. 헷갈리면 위 그림을 보세요.</p>
+        </div>
+
+        <h2 id="magprobe">MagProbe 사용법</h2>
+
+        <p>
+          브라우저에서 바로 씁니다. <b>크롬</b>으로 여세요.
+          <a href="https://lhc0312.github.io/magprobe/" target="_blank" rel="noopener">lhc0312.github.io/magprobe</a>
+        </p>
+
+        <p>처음 열면 이런 화면입니다.</p>
+
+        <figure class="shot">
+          <img src="assets/img/mp_full.png" alt="MagProbe 첫 화면 — 왼쪽에 3D 보기, 가운데 실시간 값, 오른쪽에 측정 패널">
+          <figcaption>왼쪽은 <b>3D 보기</b>, 가운데는 <b>실시간 값</b>, 오른쪽이 <b>측정 패널</b>입니다. 오른쪽만 쓰면 됩니다.</figcaption>
+        </figure>
+
+        <h3><span class="stepnum">1</span>BLE로 장치를 연결합니다</h3>
+
+        <p>화면 <b>맨 위 줄</b>에 연결 버튼이 있습니다.</p>
+
+        <figure class="shot shot--bar">
+          <img src="assets/img/mp_topbar.png" alt="상단 바 — 연결 안 됨 표시, BLE 연결 버튼, 해제, 측정 횟수 10, CSV 내보내기, CSV 가져오기, 초기화">
+          <figcaption>
+            왼쪽부터 <b>연결 안 됨</b>(회색 점) · <b>BLE 연결</b>(파란 버튼) · 해제 ―
+            오른쪽에 <b>측정 횟수</b> · <b>CSV 내보내기</b> · CSV 가져오기 · <b>초기화</b>(빨강)
+          </figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>할 일</b> — 파란 <b>BLE 연결</b> 버튼을 누릅니다.</p>
+          <p>창이 뜨면 목록에서 우리 장치를 고르고 <b>페어링</b>을 누릅니다.</p>
+          <p>왼쪽 점이 <b>초록색</b>으로 바뀌면 성공입니다.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">연결 창이 안 뜨면</span>
+          <p><b>크롬</b>인지 확인하세요. 사파리·파이어폭스는 웹 블루투스를 지원하지 않습니다. 그리고 <b>노트북 블루투스가 켜져 있어야</b> 합니다.</p>
+        </div>
+
+        <h3><span class="stepnum">2</span>격자를 확인합니다</h3>
+
+        <p>오른쪽 <b>측정</b> 탭 아래에 격자 설정이 있습니다.</p>
+
+        <figure class="shot shot--narrow">
+          <img src="assets/img/mp_cell_zoom.png" alt="격자 패널 — 3x3 아홉 칸에 각각 좌표가 적혀 있고 위에 +Y, 오른쪽에 +X 표시">
+          <figcaption>아홉 칸에 <b>좌표</b>가 적혀 있습니다. 위쪽이 <b>+Y</b>, 오른쪽이 <b>+X</b>입니다.</figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>확인만</b> — 크기가 <b>3 × 3</b>, 간격이 <b>40</b> 인지 봅니다. 기본값이 그렇습니다.</p>
+        </div>
+
+        <h3><span class="stepnum">3</span>배경을 지웁니다 <span class="muted">— 오늘 가장 중요한 단계</span></h3>
+
+        <p>센서는 자석만 재는 게 아닙니다. <b>지구 자기장</b>도 같이 잽니다.</p>
+
+        <p>그래서 <b>자석을 치운 상태</b>를 먼저 재서 "이게 배경이다"라고 알려줘야 합니다.</p>
+
+        <p>맨 위 <b>설정</b> 탭으로 갑니다.</p>
+
+        <figure class="shot shot--narrow">
+          <img src="assets/img/mp_settings.png" alt="설정 탭 — 자력계 배경(MT) 항목에 하드아이언 값 세 칸과 현재 값을 배경으로 버튼, 배경 초기화 버튼">
+          <figcaption>맨 위 <b>자력계 배경 (MT)</b> 항목에 <b>현재 값을 배경으로 (자석 치우고)</b> 버튼이 있습니다.</figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>할 일</b></p>
+          <p>① 자석을 <b>1 m 이상</b> 멀리 치웁니다. 가방에 넣거나 다른 책상에 두세요.</p>
+          <p>② <b>현재 값을 배경으로 (자석 치우고)</b> 를 누릅니다.</p>
+          <p>③ 실시간 값이 <b>0 근처</b>로 내려가면 성공입니다.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">이걸 빼먹으면</span>
+          <p>모든 측정값에 지구 자기장 <b>약 50 µT</b>가 섞여 들어갑니다. 나중에 거리 지수가 엉뚱하게 나옵니다. <b>측정을 시작하기 전에 반드시</b> 하세요.</p>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">언제 다시 해야 하나</span>
+          <p>장치를 <b>옮기거나</b> 노트북 위치를 바꾸면 배경이 달라집니다. 그때는 다시 눌러 주세요. 같은 자리에서 계속 잰다면 한 번이면 됩니다.</p>
+        </div>
+
+        <h3><span class="stepnum">4</span>칸을 고르고 측정합니다</h3>
+
+        <p>다시 <b>측정</b> 탭으로 돌아옵니다.</p>
+
+        <p>재고 싶은 칸을 <b>클릭</b>합니다.</p>
+
+        <figure class="shot shot--narrow">
+          <img src="assets/img/mp_picked.png" alt="격자에서 왼쪽 위 -40,40 칸이 파란 테두리로 선택된 상태. 아래에 (0,0) 선택됨 · (-40, 40) mm 라고 표시됨">
+          <figcaption>고른 칸이 <b>파란 테두리</b>로 바뀌고, 아래에 <b>(0,0) 선택됨 · (−40, 40) mm</b> 라고 나옵니다.</figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>할 일</b></p>
+          <p>① <b>센서를 그 칸 위치에 놓습니다.</b> 화면에서 고른 칸과 실제 센서 위치가 같아야 합니다.</p>
+          <p>② 화면에서 그 칸을 <b>클릭</b>합니다.</p>
+          <p>③ 아래 <b>측정</b> 버튼을 누릅니다. 2초 동안 10번 잽니다.</p>
+          <p>④ 칸 안에 값이 채워집니다.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">측정하는 2초 동안</span>
+          <p><b>손을 떼고 가만히 두세요.</b> 센서를 건드리면 기울기 값이 흔들려서 데이터가 망가집니다. 지난번 자료에서 실제로 이렇게 망가진 칸이 있었습니다.</p>
+        </div>
+
+        <h3><span class="stepnum">5</span>아홉 칸을 다 채웁니다</h3>
+
+        <p>센서를 옮기고 → 칸 클릭 → 측정. 이걸 <b>9번</b> 반복합니다.</p>
+
+        <div class="doit">
+          <p><b>순서를 지키세요</b> — 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9</p>
+          <p>순서가 섞여도 데이터에는 좌표가 남지만, 빠뜨린 칸을 찾기 어려워집니다.</p>
+        </div>
+
+        <p>진행 상황은 <b>데이터</b> 탭에서 확인할 수 있습니다.</p>
+
+        <figure class="shot shot--narrow">
+          <img src="assets/img/mp_data.png" alt="데이터 탭 — 측정된 값들이 표로 나열되어 있는 화면">
+          <figcaption><b>데이터</b> 탭에서 지금까지 잰 값을 표로 볼 수 있습니다. 9칸이 다 찼는지 여기서 확인하세요.</figcaption>
+        </figure>
+
+        <h3><span class="stepnum">6</span>CSV로 내보냅니다</h3>
+
+        <p>9칸을 다 채웠으면 맨 위 오른쪽 <b>CSV 내보내기</b>를 누릅니다.</p>
+
+        <div class="doit">
+          <p><b>할 일</b> — <b>CSV 내보내기</b> 클릭 → 파일이 <b>다운로드 폴더</b>에 저장됩니다.</p>
+        </div>
+
+        <h3><span class="stepnum">7</span>파일 이름을 규칙대로 바꿉니다</h3>
+
+        <p>이게 나중에 코랩에서 자동으로 읽히게 하는 핵심입니다.</p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">파일 이름 규칙</span></div>
+          <pre><code>거리_자석종류_번호_자석위치.csv
+
+        8cm_막대자석_1_m5.csv
+        │    │        │  └── 자석을 놓은 칸 (m1 ~ m9)
+        │    │        └───── 자석 번호 (여러 개면 구분)
+        │    └────────────── 자석 종류
+        └─────────────────── 센서–자석 거리</code></pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:16rem">파일 이름</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>6cm_막대자석_1_m1.csv</code></td><td>6cm 거리, 자석을 1번 칸에</td></tr>
+              <tr><td><code>10cm_막대자석_1_m5.csv</code></td><td>10cm 거리, 자석을 5번 칸에</td></tr>
+              <tr><td><code>8cm_막대자석_1_test.csv</code></td><td>테스트용 — 자석 위치를 안 적음</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">이름을 잘못 붙이면</span>
+          <p>나중에 <b>어느 파일이 어느 조건인지 알 수 없게 됩니다.</b> 측정이 끝나면 바로 이름을 바꾸세요. 나중에 하면 반드시 헷갈립니다.</p>
+        </div>
+
+        <h2 id="plan">오늘 측정할 것</h2>
+
+        <p>거리 <b>2가지</b> × 자석 위치 <b>5군데</b> = <b>10개 파일</b>입니다.</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:7rem">거리</th><th>자석 위치</th><th style="width:5rem">파일 수</th></tr></thead>
+            <tbody>
+              <tr><td><b>6 cm</b></td><td>m1 · m3 · m5 · m7 · m9</td><td>5개</td></tr>
+              <tr><td><b>10 cm</b></td><td>m1 · m3 · m5 · m7 · m9</td><td>5개</td></tr>
+              <tr><td><b>테스트</b></td><td colspan="2">둘 중 아무 거리에서, <b>선생님이 몰래 정한 위치</b> 1개</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <figure class="figure">
+          <svg viewBox="0 0 620 250" role="img" aria-label="자석을 놓을 다섯 위치 — 네 모서리와 가운데" style="color:var(--ink-2)">
+            <g transform="translate(20,10)">
+              <text x="120" y="16" font-size="13" font-weight="600" fill="currentColor" text-anchor="middle">측정할 5군데</text>
+              <rect x="40" y="30" width="160" height="160" rx="4" fill="currentColor" fill-opacity=".04" stroke="currentColor" stroke-opacity=".25"/>
+              <g fill="currentColor" fill-opacity=".16">
+                <circle cx="120" cy="70" r="13"/><circle cx="70" cy="120" r="13"/><circle cx="170" cy="120" r="13"/>
+              </g>
+              <g fill="#d97757">
+                <circle cx="70" cy="70" r="15"/><circle cx="170" cy="70" r="15"/>
+                <circle cx="120" cy="120" r="15"/>
+                <circle cx="70" cy="170" r="15"/><circle cx="170" cy="170" r="15"/>
+              </g>
+              <g fill="#fdfbf7" font-size="12" font-family="ui-monospace,monospace" text-anchor="middle" font-weight="600">
+                <text x="70" y="75">1</text><text x="170" y="75">3</text><text x="120" y="125">5</text>
+                <text x="70" y="175">7</text><text x="170" y="175">9</text>
+              </g>
+              <g fill="currentColor" opacity=".35" font-size="11" font-family="ui-monospace,monospace" text-anchor="middle">
+                <text x="120" y="74">2</text><text x="70" y="124">4</text><text x="170" y="124">6</text>
+              </g>
+              <text x="120" y="214" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">주황 = 오늘 측정 · 회색 = 안 함</text>
+            </g>
+            <g transform="translate(330,10)" fill="currentColor" font-family="system-ui">
+              <text x="0" y="16" font-size="13" font-weight="600">왜 이 5군데인가</text>
+              <text x="0" y="44" font-size="12" opacity=".75">네 모서리 + 가운데를 고르면</text>
+              <text x="0" y="64" font-size="12" opacity=".75">판 전체를 고르게 훑습니다.</text>
+              <text x="0" y="98" font-size="13" font-weight="600">왜 두 거리인가</text>
+              <text x="0" y="126" font-size="12" opacity=".75">거리가 하나면 "거리에 따라</text>
+              <text x="0" y="146" font-size="12" opacity=".75">어떻게 변하나"를 볼 수 없습니다.</text>
+              <text x="0" y="166" font-size="12" opacity=".75">최소 두 개는 있어야 합니다.</text>
+              <text x="0" y="200" font-size="13" font-weight="600">시간이 남으면</text>
+              <text x="0" y="222" font-size="12" opacity=".75">8cm 도 재면 더 좋습니다.</text>
+            </g>
+          </svg>
+          <figcaption>자석을 놓을 다섯 위치. 센서는 매번 9칸을 모두 훑습니다.</figcaption>
+        </figure>
+
+        <div class="note note--tip">
+          <span class="note__t">거리를 바꾸는 법</span>
+          <p>받침대 높이를 바꿔서 <b>센서 판과 자석 사이 수직거리</b>를 6cm / 10cm로 맞춥니다. 자로 재서 확인하세요. 이 숫자가 나중에 분석에 그대로 들어갑니다.</p>
+        </div>
+
+        <h2 id="read">코랩에서 읽기</h2>
+
+        <p>이제 분석입니다. <a href="https://colab.research.google.com" target="_blank" rel="noopener">코랩</a>에서 <b>새 노트</b>를 만드세요.</p>
+
+        <div class="note note--tip">
+          <span class="note__t">오늘은 예제 데이터로 먼저 연습합니다</span>
+          <p>지난번에 잰 <b>8cm 데이터</b>를 미리 올려뒀습니다. 이걸로 코드를 익히고, 여러분이 잰 데이터로 바꿔 넣으면 됩니다.</p>
+          <p style="margin-bottom:0">
+            내려받기 —
+            <a href="data/8cm_막대자석_1_m1.csv" download>m1</a> ·
+            <a href="data/8cm_막대자석_1_m3.csv" download>m3</a> ·
+            <a href="data/8cm_막대자석_1_m4.csv" download>m4</a> ·
+            <a href="data/8cm_막대자석_1_m7.csv" download>m7</a> ·
+            <a href="data/8cm_막대자석_1_m9.csv" download>m9</a> ·
+            <a href="data/mag_8cm_all.csv" download><b>합본</b></a>
+          </p>
+        </div>
+
+        <h3><span class="stepnum">1</span>파일을 불러옵니다</h3>
+
+        <p>합본 파일은 인터넷에서 바로 읽을 수 있습니다. 내려받지 않아도 됩니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 1</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+url = "https://lhc0312.github.io/arduino-class/data/mag_8cm_all.csv"
+df = pd.read_csv(url)
+
+df.head()</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+  magnet  cell_i  cell_j  sample   t_s  x_mm  y_mm  z_mm    Bx_uT ...
+0     m1       0       0       1  0.03 -40.0  40.0   0.0  92.2563 ...
+1     m1       0       0       2  0.25 -40.0  40.0   0.0  95.2864 ...
+2     m1       0       0       3  0.46 -40.0  40.0   0.0  91.2201 ...</div>
+
+        <h3><span class="stepnum">2</span>크기를 확인합니다</h3>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 2</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>print("행 수 :", len(df))
+print("자석  :", sorted(df["magnet"].unique()))
+print("칸 수 :", df.groupby("magnet")[["cell_i","cell_j"]].nunique().iloc[0].to_dict())</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+행 수 : 450
+자석  : ['m1', 'm3', 'm4', 'm7', 'm9']
+칸 수 : {'cell_i': 3, 'cell_j': 3}</div>
+
+        <p class="muted small">
+          450줄 = <b>자석 5개 × 칸 9개 × 반복 10번</b>입니다.
+          한 칸을 10번씩 잰 것이니, 이걸 <b>하나로 줄여야</b> 합니다.
+        </p>
+
+        <h3><span class="stepnum">3</span>열이 무엇인지 봅니다</h3>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:11rem">열</th><th>뜻</th></tr></thead>
+            <tbody>
+              <tr><td><code>magnet</code></td><td>자석을 놓은 칸 (합본에만 있음)</td></tr>
+              <tr><td><code>cell_i</code> <code>cell_j</code></td><td>센서를 놓은 칸 번호 (0~2)</td></tr>
+              <tr><td><code>sample</code></td><td>같은 칸에서 몇 번째 측정인지 (1~10)</td></tr>
+              <tr><td><code>x_mm</code> <code>y_mm</code></td><td>센서 위치 (mm)</td></tr>
+              <tr><td><code>Bx_uT</code> <code>By_uT</code> <code>Bz_uT</code></td><td>수평 보정된 자기장</td></tr>
+              <tr><td><b><code>Bbx_uT</code> <code>Bby_uT</code> <code>Bbz_uT</code></b></td><td><b>센서 기준 자기장 — 오늘 쓸 것</b></td></tr>
+              <tr><td><code>Babs_uT</code></td><td>자기장 크기 (둘 다 같은 값)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">왜 <code>Bb</code>를 쓰나</span>
+          <p><code>B</code>는 기울기를 보정한 값인데, 센서를 건드리면 그 보정이 흔들려서 오히려 값이 튑니다. <code>Bb</code>는 <b>센서가 잰 날것</b>이라 더 안정적입니다.</p>
+        </div>
+
+        <h3><span class="stepnum">4</span>10번 잰 걸 하나로 줄입니다</h3>
+
+        <p>같은 칸을 10번 쟀으니 <b>대표값 하나</b>로 만듭니다. 평균 대신 <b>중앙값</b>을 씁니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 3</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>cell = (df.groupby(["magnet", "cell_i", "cell_j"])
+          .agg(x_mm=("x_mm", "first"),
+               y_mm=("y_mm", "first"),
+               Bx=("Bbx_uT", "median"),
+               By=("Bby_uT", "median"),
+               Bz=("Bbz_uT", "median"))
+          .reset_index())
+
+print(len(cell), "줄")
+cell.head()</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+45 줄
+
+  magnet  cell_i  cell_j  x_mm  y_mm      Bx      By      Bz
+0     m1       0       0 -40.0  40.0  -44.00  -49.59 -407.56
+1     m1       0       1 -40.0   0.0 -223.54  -45.69 -200.54
+2     m1       0       2 -40.0 -40.0 -149.14  -22.72  -48.59</div>
+
+        <div class="note note--tip">
+          <span class="note__t">왜 평균이 아니라 중앙값인가</span>
+          <p>10번 중 <b>한 번만 크게 튀어도</b> 평균은 끌려갑니다. 중앙값은 가운데 값을 고르므로 튄 값 하나에 흔들리지 않습니다. <b>손이 닿아서 한 번 튀는</b> 상황에 강합니다.</p>
+        </div>
+
+        <h3><span class="stepnum">5</span>자기장 세기를 구합니다</h3>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 4</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>cell["B"] = np.sqrt(cell["Bx"]**2 + cell["By"]**2 + cell["Bz"]**2)
+
+cell[["magnet", "x_mm", "y_mm", "B"]].head()</code></pre>
+        </div>
+
+        <h3><span class="stepnum">6</span>자석까지의 거리를 구합니다</h3>
+
+        <p>자석 위치를 알아야 거리를 잽니다. 파일 이름의 <code>m1</code>·<code>m3</code>… 이 그 정보입니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 5</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code># 자석을 놓은 칸의 좌표 (mm)
+POS = {"m1": (-40,  40), "m2": (0,  40), "m3": (40,  40),
+       "m4": (-40,   0), "m5": (0,   0), "m6": (40,   0),
+       "m7": (-40, -40), "m8": (0, -40), "m9": (40, -40)}
+
+DEPTH = 80.0        # 센서 판과 자석 사이 수직거리 (mm) — 8cm
+
+cell["mx"] = cell["magnet"].map(lambda m: POS[m][0])
+cell["my"] = cell["magnet"].map(lambda m: POS[m][1])
+
+cell["r"] = np.sqrt((cell["x_mm"] - cell["mx"])**2
+                  + (cell["y_mm"] - cell["my"])**2
+                  + DEPTH**2)
+
+print(f"거리 범위 : {cell['r'].min():.0f} ~ {cell['r'].max():.0f} mm")
+print(f"세기 범위 : {cell['B'].min():.0f} ~ {cell['B'].max():.0f} µT")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+거리 범위 : 80 ~ 139 mm
+세기 범위 : 67 ~ 419 µT</div>
+
+        <div class="note note--check">
+          <span class="note__t">거리가 다양한 이유</span>
+          <p>센서가 자석 <b>바로 위</b>에 있으면 80mm(=수직거리)이고, <b>대각선 끝</b>에 있으면 139mm입니다. 한 번 측정에 9칸을 훑으니 <b>거리 9가지</b>가 한꺼번에 생깁니다.</p>
+        </div>
+
+        <h3><span class="stepnum">7</span>그림으로 봅니다</h3>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 6</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>plt.figure(figsize=(6, 4))
+plt.scatter(cell["r"], cell["B"], color="crimson")
+
+plt.xlabel("distance r (mm)")
+plt.ylabel("field strength |B| (uT)")
+plt.grid(alpha=0.3)
+plt.show()</code></pre>
+        </div>
+
+        <p class="muted small">멀어질수록 급격히 작아지는 곡선이 보이면 정상입니다. <b>계산하기 전에 항상 눈으로 먼저</b> 봅니다.</p>
+
+        <h2 id="ml">잠깐 · 학습과 테스트</h2>
+
+        <p>회귀를 돌리기 전에 용어 세 개만 짚습니다. 머신러닝에서 계속 나옵니다.</p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 660 230" role="img" aria-label="학습 데이터로 모델을 만들고 테스트 데이터로 채점하는 과정" style="color:var(--ink-2)">
+            <defs><marker id="ar10b" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="currentColor"/></marker></defs>
+
+            <rect x="20" y="30" width="150" height="70" rx="8" fill="none" stroke="#3c6ea8" stroke-width="1.6"/>
+            <text x="95" y="58" font-size="13" font-weight="600" fill="#3c6ea8" text-anchor="middle" font-family="system-ui">학습 데이터</text>
+            <text x="95" y="80" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">답을 아는 것들</text>
+
+            <rect x="250" y="30" width="150" height="70" rx="8" fill="currentColor" fill-opacity=".05" stroke="currentColor" stroke-opacity=".35" stroke-width="1.6"/>
+            <text x="325" y="58" font-size="13" font-weight="600" fill="currentColor" text-anchor="middle" font-family="system-ui">모델</text>
+            <text x="325" y="80" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">규칙을 찾아낸 것</text>
+
+            <rect x="480" y="30" width="150" height="70" rx="8" fill="none" stroke="#4c8f45" stroke-width="1.6"/>
+            <text x="555" y="58" font-size="13" font-weight="600" fill="#4c8f45" text-anchor="middle" font-family="system-ui">예측</text>
+            <text x="555" y="80" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">모델이 내놓은 답</text>
+
+            <rect x="250" y="150" width="150" height="60" rx="8" fill="none" stroke="#c0503c" stroke-width="1.6" stroke-dasharray="5 4"/>
+            <text x="325" y="175" font-size="13" font-weight="600" fill="#c0503c" text-anchor="middle" font-family="system-ui">테스트 데이터</text>
+            <text x="325" y="196" font-size="11.5" fill="currentColor" opacity=".7" text-anchor="middle" font-family="system-ui">학습에 안 쓴 것</text>
+
+            <g stroke="currentColor" stroke-opacity=".5" fill="none" marker-end="url(#ar10b)">
+              <path d="M175 65h68"/>
+              <path d="M405 65h68"/>
+              <path d="M325 145V108"/>
+            </g>
+            <text x="209" y="56" font-size="11" fill="currentColor" opacity=".6" text-anchor="middle" font-family="system-ui">학습</text>
+            <text x="439" y="56" font-size="11" fill="currentColor" opacity=".6" text-anchor="middle" font-family="system-ui">적용</text>
+
+            <path d="M555 108v55h-90" stroke="#4c8f45" stroke-opacity=".6" fill="none" marker-end="url(#ar10b)" stroke-dasharray="4 4"/>
+            <text x="520" y="180" font-size="11.5" fill="#4c8f45" text-anchor="middle" font-family="system-ui">정답과 비교 = 채점</text>
+          </svg>
+          <figcaption>학습 데이터로 규칙을 찾고, 테스트 데이터로 채점합니다.</figcaption>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:10rem">용어</th><th>뜻</th><th>오늘의 예</th></tr></thead>
+            <tbody>
+              <tr><td><b>학습 데이터</b></td><td>규칙을 찾는 데 쓰는 것</td><td>m1·m3·m5·m7·m9 (위치를 앎)</td></tr>
+              <tr><td><b>테스트 데이터</b></td><td>채점에만 쓰는 것</td><td>선생님이 몰래 놓은 자석</td></tr>
+              <tr><td><b>정답</b></td><td>테스트의 진짜 값</td><td>그 자석의 실제 위치</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">규칙 하나</span>
+          <p><b>테스트 데이터는 학습에 쓰면 안 됩니다.</b> 시험 문제를 미리 보고 공부하는 것과 같습니다. 점수는 잘 나오지만 실력은 알 수 없습니다.</p>
+        </div>
+
+        <h2 id="regress">거리 지수를 찾아봅시다</h2>
+
+        <p>이제 오늘의 질문입니다.</p>
+
+        <div class="doit">
+          <p><b>자기장은 거리가 멀어질 때 얼마나 빨리 약해질까?</b></p>
+        </div>
+
+        <p>이렇게 생겼다고 가정합니다.</p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">가정하는 식</span></div>
+          <pre><code>|B| = k / r ⁿ
+
+  r = 자석까지 거리
+  k = 자석의 세기 (상수)
+  n = 거리 지수  ← 이걸 찾는 것</code></pre>
+        </div>
+
+        <p><b>n을 1부터 5까지 하나씩 넣어 보고</b>, 어느 값이 데이터와 가장 잘 맞는지 봅니다.</p>
+
+        <h3><span class="stepnum">1</span>양변에 로그를 씌웁니다</h3>
+
+        <p>곡선은 직선보다 다루기 어렵습니다. 로그를 씌우면 <b>직선</b>이 됩니다.</p>
+
+        <div class="code" data-plain>
+          <div class="code__bar"><span class="code__name">로그를 씌우면</span></div>
+          <pre><code>|B| = k / r ⁿ
+
+log|B| = log k − n · log r
+   ↑              ↑      ↑
+   y      =   절편  −  n · x        ← 직선!</code></pre>
+        </div>
+
+        <p><b>기울기가 곧 −n</b> 입니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 7</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>cell["log_r"] = np.log(cell["r"])
+cell["log_B"] = np.log(cell["B"])
+
+plt.figure(figsize=(6, 4))
+plt.scatter(cell["log_r"], cell["log_B"], color="crimson")
+plt.xlabel("log r")
+plt.ylabel("log |B|")
+plt.grid(alpha=0.3)
+plt.show()</code></pre>
+        </div>
+
+        <p class="muted small">점들이 <b>직선에 가깝게</b> 늘어서면 <code>k/rⁿ</code> 가정이 맞다는 뜻입니다.</p>
+
+        <h3><span class="stepnum">2</span>n = 1~5 를 하나씩 넣어 봅니다</h3>
+
+        <p>n을 고정하고 <b>k만 맞춘 뒤</b>, 얼마나 안 맞는지(잔차) 잽니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 8</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>r = cell["r"].to_numpy()
+B = cell["B"].to_numpy()
+
+for n in [1, 2, 3, 4, 5]:
+    # n 을 고정했을 때 가장 잘 맞는 k
+    k = np.exp(np.mean(np.log(B) + n*np.log(r)))
+    pred = k / r**n
+    err = np.sqrt(np.mean((np.log(pred) - np.log(B))**2))
+    print(f"n = {n}   잔차 = {err:.4f}")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+n = 1   잔차 = 0.3409
+n = 2   잔차 = 0.2016
+n = 3   잔차 = 0.1379
+n = 4   잔차 = 0.2265
+n = 5   잔차 = 0.3709</div>
+
+        <div class="doit">
+          <p><b>n = 3 일 때 잔차가 가장 작습니다.</b></p>
+        </div>
+
+        <h3><span class="stepnum">3</span>n을 자유롭게 풀어봅니다</h3>
+
+        <p>1~5로 제한하지 말고 <b>소수까지</b> 찾아보면 얼마가 나올까요?</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 9</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>a, b = np.polyfit(cell["log_r"], cell["log_B"], 1)
+
+print(f"기울기 = {a:.2f}")
+print(f"→ n = {-a:.2f}")</code></pre>
+        </div>
+
+        <div class="serial">
+          <div class="serial__bar">출력</div>
+기울기 = -2.90
+→ n = 2.90</div>
+
+        <h2 id="why">왜 3일까</h2>
+
+        <p>이 값은 우연이 아닙니다. <b>물리 법칙이 예측한 값</b>입니다.</p>
+
+        <p>자석은 <b>N극과 S극이 한 쌍</b>으로만 존재합니다. N극만 있는 자석은 없습니다.</p>
+
+        <figure class="figure">
+          <svg viewBox="0 0 660 210" role="img" aria-label="극이 하나면 1/r제곱, 두 극이 상쇄되면 1/r세제곱이 되는 과정" style="color:var(--ink-2)">
+            <g transform="translate(30,20)">
+              <text x="110" y="14" font-size="13" font-weight="600" fill="currentColor" text-anchor="middle" font-family="system-ui">만약 극이 하나라면</text>
+              <circle cx="110" cy="70" r="20" fill="#c0503c"/>
+              <text x="110" y="76" font-size="14" fill="#fff" text-anchor="middle" font-weight="600">N</text>
+              <g stroke="#c0503c" stroke-opacity=".4" fill="none">
+                <circle cx="110" cy="70" r="34"/><circle cx="110" cy="70" r="48"/><circle cx="110" cy="70" r="62"/>
+              </g>
+              <text x="110" y="160" font-size="13" fill="currentColor" text-anchor="middle" font-family="ui-monospace,monospace">1 / r²</text>
+              <text x="110" y="180" font-size="11" fill="currentColor" opacity=".6" text-anchor="middle" font-family="system-ui">— 이런 자석은 없음</text>
+            </g>
+            <text x="290" y="95" font-size="20" fill="currentColor" opacity=".4" text-anchor="middle">→</text>
+            <g transform="translate(360,20)">
+              <text x="130" y="14" font-size="13" font-weight="600" fill="currentColor" text-anchor="middle" font-family="system-ui">실제 자석 — 두 극이 한 쌍</text>
+              <rect x="95" y="50" width="70" height="40" rx="5" fill="#c0503c"/>
+              <rect x="130" y="50" width="35" height="40" rx="0" fill="#3c6ea8"/>
+              <text x="112" y="76" font-size="13" fill="#fff" text-anchor="middle" font-weight="600">N</text>
+              <text x="148" y="76" font-size="13" fill="#fff" text-anchor="middle" font-weight="600">S</text>
+              <text x="130" y="120" font-size="11.5" fill="currentColor" opacity=".75" text-anchor="middle" font-family="system-ui">서로 반대라 멀리서는 상쇄</text>
+              <text x="130" y="152" font-size="13" fill="currentColor" text-anchor="middle" font-family="ui-monospace,monospace">1 / r³</text>
+              <text x="130" y="176" font-size="11" fill="#4c8f45" text-anchor="middle" font-family="system-ui">← 우리가 잰 값</text>
+            </g>
+          </svg>
+          <figcaption>두 극이 서로 상쇄되면서 <b>1/r²이 1/r³으로</b> 한 단계 더 빨리 약해집니다.</figcaption>
+        </figure>
+
+        <div class="note note--check">
+          <span class="note__t">한 줄로</span>
+          <p>극이 <b>하나</b>면 1/r², 극이 <b>쌍</b>이면 상쇄되어 1/r³. 자석은 항상 쌍이므로 <b>n = 3</b> 입니다.</p>
+        </div>
+
+        <h3>그런데 2.90이 나왔습니다</h3>
+
+        <p>이론은 3.00인데 측정은 2.90입니다. <b>0.10 차이</b>를 어떻게 볼까요?</p>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">가능성</th><th>내용</th><th style="width:6rem">방향</th></tr></thead>
+            <tbody>
+              <tr><td><b>배경이 남음</b></td><td>배경 보정을 안 했거나 덜 됐으면, 멀리서 값이 덜 떨어져 <b>n이 작아집니다</b></td><td>n ↓</td></tr>
+              <tr><td><b>거리 재기 오차</b></td><td><code>DEPTH</code>를 실제보다 작게 잡으면 n이 달라집니다</td><td>n ↕</td></tr>
+              <tr><td><b>자석 크기</b></td><td>자석이 점이 아니라 크기가 있으면 가까이서 <b>n이 커집니다</b></td><td>n ↑</td></tr>
+              <tr><td><b>측정 잡음</b></td><td>그냥 흔들림. 45점으로는 ±0.1 정도는 흔합니다</td><td>n ↕</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="doit">
+          <p><b>오늘 확인해 볼 것</b> — 배경 보정을 <b>하고</b> 잰 데이터와 <b>안 하고</b> 잰 데이터로 각각 n을 구해 비교해 보세요. 어느 쪽이 3에 가까울까요?</p>
+        </div>
+
+        <h2 id="test">테스트 자석 맞히기</h2>
+
+        <p>마지막입니다. <b>선생님이 몰래 놓은 자석</b>의 위치를 맞혀 봅니다.</p>
+
+        <p>방법은 간단합니다. <b>가장 센 칸이 자석 바로 위</b>입니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀 10</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code># 테스트 파일을 올린 뒤
+from google.colab import files
+files.upload()
+
+test = pd.read_csv("8cm_막대자석_1_test.csv")
+
+t = (test.groupby(["cell_i", "cell_j"])
+        .agg(x_mm=("x_mm","first"), y_mm=("y_mm","first"),
+             Bx=("Bbx_uT","median"), By=("Bby_uT","median"), Bz=("Bbz_uT","median"))
+        .reset_index())
+t["B"] = np.sqrt(t["Bx"]**2 + t["By"]**2 + t["Bz"]**2)
+
+best = t.loc[t["B"].idxmax()]
+print(f"가장 센 칸 : ({best['x_mm']:.0f}, {best['y_mm']:.0f}) mm")
+print(f"세기       : {best['B']:.0f} uT")</code></pre>
+        </div>
+
+        <div class="note note--tip">
+          <span class="note__t">정답 확인</span>
+          <p>추정을 <b>먼저 적어두고</b> 선생님께 정답을 물어보세요. 순서를 바꾸면 안 됩니다. 정답을 보고 나서 맞췄다고 하는 건 채점이 아닙니다.</p>
+        </div>
+
+        <div class="quest">
+          <p class="quest__t">도전 · 칸 사이에 있으면?</p>
+          <p class="small" style="margin-bottom:0">
+            자석이 <b>칸과 칸 사이</b>에 있으면 "가장 센 칸" 방법은 못 맞힙니다. 9개 중 하나만 답할 수 있으니까요.
+            어떻게 하면 <b>중간 위치</b>도 맞힐 수 있을까요? <span class="muted">(힌트: 9칸의 세기를 가중치로 써서 평균을 내면?)</span>
+          </p>
+        </div>
+
+        <h2 id="checklist">마무리 체크리스트</h2>
+        <ul class="checks">
+          <li><label><input type="checkbox" id="c10-1"><span>MagProbe를 BLE로 연결했다</span></label></li>
+          <li><label><input type="checkbox" id="c10-2"><span>자석을 치우고 <b>배경 보정</b>을 눌렀다</span></label></li>
+          <li><label><input type="checkbox" id="c10-3"><span>9칸을 순서대로 다 쟀다</span></label></li>
+          <li><label><input type="checkbox" id="c10-4"><span>CSV로 내보내고 이름을 규칙대로 바꿨다</span></label></li>
+          <li><label><input type="checkbox" id="c10-5"><span>6cm와 10cm, 각각 5군데를 다 쟀다 (10개 파일)</span></label></li>
+          <li><label><input type="checkbox" id="c10-6"><span>코랩에서 CSV를 읽고 45줄로 정리했다</span></label></li>
+          <li><label><input type="checkbox" id="c10-7"><span>학습 데이터와 테스트 데이터의 차이를 설명할 수 있다</span></label></li>
+          <li><label><input type="checkbox" id="c10-8"><span>n = 1~5를 비교해서 가장 잘 맞는 값을 찾았다</span></label></li>
+          <li><label><input type="checkbox" id="c10-9"><span>그 값이 왜 3인지 설명할 수 있다</span></label></li>
+        </ul>
+
+        <div class="note note--check">
+          <span class="note__t">오늘의 한 줄</span>
+          <p>
+            <b>데이터가 물리 법칙을 다시 알려줬습니다.</b>
+            교과서에서 "자기장은 거리 세제곱에 반비례한다"고 읽는 것과,
+            직접 재서 <code>n = 3</code>을 찾아내는 것은 다릅니다.
+          </p>
+        </div>
+
+        <div class="done-bar" data-done-bar>
+          <p></p>
+          <button class="btn btn--quiet" type="button">학습 완료로 표시</button>
+        </div>
+
+        <div class="pager">
+          <a href="09-field3d.html"><span>이전</span><b>09 · 3차원 자기장 시각화</b></a>
+          <a class="next" href="index.html"><span>처음으로</span><b>강의 목록</b></a>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="foot__in">
+    <span>아두이노 기초 · 수업용 학습 자료</span>
+    <span>Arduino IDE 2.x 기준</span>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
