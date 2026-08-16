@@ -401,20 +401,60 @@
           <figcaption>자석을 놓을 다섯 위치. 센서는 매번 9칸을 모두 훑습니다.</figcaption>
         </figure>
 
-        <div class="note note--tip">
-          <span class="note__t">거리를 바꾸는 법</span>
-          <p>받침대 높이를 바꿔서 <b>센서 판과 자석 사이 수직거리</b>를 6cm / 10cm로 맞춥니다. 자로 재서 확인하세요. 이 숫자가 나중에 분석에 그대로 들어갑니다.</p>
+        <h3>장치는 이렇게 생겼습니다</h3>
+
+        <p><b>2층 구조</b>입니다. 위가 센서 판, 아래가 자석 판입니다.</p>
+
+        <figure class="shot">
+          <img src="assets/img/setup.svg" alt="센서 판과 자석 판이 받침대로 떨어져 있는 2층 구조. 왼쪽은 6cm, 오른쪽은 10cm">
+          <figcaption>받침대 높이만 바꿔서 거리를 <b>6cm</b>와 <b>10cm</b>로 맞춥니다. 나머지는 그대로 둡니다.</figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>거리를 바꾸는 법</b></p>
+          <p>① 받침대를 6cm짜리로 바꿔 끼웁니다.</p>
+          <p>② <b>자로 재서 확인</b>합니다 — 자석 윗면이 아니라 <b>자석 중심</b>에서 센서까지입니다.</p>
+          <p>③ 배경 보정을 <b>다시</b> 누릅니다. 장치를 건드렸으니까요.</p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">이 숫자가 결과를 좌우합니다</span>
+          <p>거리를 <code>80</code>으로 넣느냐 <code>90</code>으로 넣느냐에 따라 <b>지수가 2.90에서 3.37로 바뀝니다.</b> 나중에 코랩에서 직접 확인해 볼 겁니다. <b>자로 정확히 재세요.</b></p>
         </div>
 
         <h2 id="read">코랩에서 읽기</h2>
 
-        <p>이제 분석입니다. <a href="https://colab.research.google.com" target="_blank" rel="noopener">코랩</a>에서 <b>새 노트</b>를 만드세요.</p>
+        <div class="doit">
+          <p><b>노트북이 이미 준비돼 있습니다.</b> 아래를 누르면 코랩에서 바로 열립니다.</p>
+          <p style="margin-top:.7rem">
+            <a class="btn" href="https://colab.research.google.com/github/LHC0312/arduino-class/blob/main/notebooks/10_magprobe.ipynb" target="_blank" rel="noopener">코랩에서 열기 ↗</a>
+          </p>
+        </div>
+
+        <p>열면 이런 화면입니다. <b>왼쪽에 목차, 오른쪽에 코드와 결과</b>가 있습니다.</p>
+
+        <figure class="shot">
+          <img src="assets/img/cl_open.png" alt="코랩에서 열린 10강 노트북 — 왼쪽 목차에 1단계부터 15단계까지, 오른쪽에 코드 셀과 실행 결과">
+          <figcaption>
+            왼쪽 <b>목차</b>로 원하는 단계에 바로 갈 수 있습니다.
+            코드 아래 회색 부분이 <b>실행 결과</b>입니다. 이미 한 번 돌려둔 결과가 들어 있습니다.
+          </figcaption>
+        </figure>
+
+        <div class="doit">
+          <p><b>먼저 할 일</b> — 오른쪽 위 <b>로그인</b>으로 구글 계정에 들어간 뒤, 상단 <b>Drive로 복사</b>를 누르세요.</p>
+          <p>내 드라이브에 복사본이 생기고, 그때부터 <b>내가 고치고 실행할 수 있습니다.</b></p>
+        </div>
+
+        <div class="note note--warn">
+          <span class="note__t">복사하지 않으면</span>
+          <p>읽기 전용이라 <b>실행이 안 됩니다.</b> 코드를 고칠 수도 없습니다. 반드시 <b>Drive로 복사</b>를 먼저 누르세요.</p>
+        </div>
 
         <div class="note note--tip">
-          <span class="note__t">오늘은 예제 데이터로 먼저 연습합니다</span>
-          <p>지난번에 잰 <b>8cm 데이터</b>를 미리 올려뒀습니다. 이걸로 코드를 익히고, 여러분이 잰 데이터로 바꿔 넣으면 됩니다.</p>
+          <span class="note__t">데이터 내려받기</span>
           <p style="margin-bottom:0">
-            내려받기 —
+            노트북은 인터넷에서 바로 읽으므로 내려받지 않아도 됩니다. 파일을 직접 보고 싶으면 —
             <a href="data/8cm_막대자석_1_m1.csv" download>m1</a> ·
             <a href="data/8cm_막대자석_1_m3.csv" download>m3</a> ·
             <a href="data/8cm_막대자석_1_m4.csv" download>m4</a> ·
@@ -423,6 +463,11 @@
             <a href="data/mag_8cm_all.csv" download><b>합본</b></a>
           </p>
         </div>
+
+        <p class="muted small">
+          아래는 노트북에 들어 있는 내용을 하나씩 설명한 것입니다.
+          <b>코랩에서 직접 실행하면서</b> 따라오세요.
+        </p>
 
         <h3><span class="stepnum">1</span>파일을 불러옵니다</h3>
 
@@ -440,12 +485,12 @@ df = pd.read_csv(url)
 df.head()</code></pre>
         </div>
 
-        <div class="serial">
-          <div class="serial__bar">출력</div>
-  magnet  cell_i  cell_j  sample   t_s  x_mm  y_mm  z_mm    Bx_uT ...
-0     m1       0       0       1  0.03 -40.0  40.0   0.0  92.2563 ...
-1     m1       0       0       2  0.25 -40.0  40.0   0.0  95.2864 ...
-2     m1       0       0       3  0.46 -40.0  40.0   0.0  91.2201 ...</div>
+        <p>코랩에서는 이렇게 <b>표로</b> 나옵니다.</p>
+
+        <figure class="shot">
+          <img src="assets/img/cl_load.png" alt="코랩에서 pd.read_csv 를 실행해 데이터프레임이 표로 출력된 화면">
+          <figcaption><code>df.head()</code> 는 <b>앞의 5줄</b>만 보여줍니다. 전체가 다 나오면 화면이 넘칩니다.</figcaption>
+        </figure>
 
         <h3><span class="stepnum">2</span>크기를 확인합니다</h3>
 
@@ -577,7 +622,12 @@ plt.grid(alpha=0.3)
 plt.show()</code></pre>
         </div>
 
-        <p class="muted small">멀어질수록 급격히 작아지는 곡선이 보이면 정상입니다. <b>계산하기 전에 항상 눈으로 먼저</b> 봅니다.</p>
+        <p>실행하면 그림이 코드 바로 아래에 그려집니다.</p>
+
+        <figure class="shot">
+          <img src="assets/img/cl_plot.png" alt="코랩에서 산점도를 그린 결과 — 거리가 멀어질수록 자기장이 급격히 줄어드는 곡선">
+          <figcaption>멀어질수록 <b>급격히</b> 작아집니다. 직선이 아니라 곡선입니다. <b>계산하기 전에 항상 눈으로 먼저</b> 봅니다.</figcaption>
+        </figure>
 
         <h2 id="ml">잠깐 · 학습과 테스트</h2>
 
@@ -709,6 +759,11 @@ n = 3   잔차 = 0.1379
 n = 4   잔차 = 0.2265
 n = 5   잔차 = 0.3709</div>
 
+        <figure class="shot">
+          <img src="assets/img/cl_ncompare.png" alt="코랩에서 n을 1부터 5까지 바꿔가며 잔차를 출력한 결과 — n=3에서 0.1379로 가장 작음">
+          <figcaption>코랩에서 실행한 모습. <b>n = 3 에서 잔차가 가장 작습니다.</b></figcaption>
+        </figure>
+
         <div class="doit">
           <p><b>n = 3 일 때 잔차가 가장 작습니다.</b></p>
         </div>
@@ -784,8 +839,51 @@ print(f"→ n = {-a:.2f}")</code></pre>
           </table>
         </div>
 
+        <h3>거리를 잘못 재면 어떻게 되나</h3>
+
+        <p><code>DEPTH</code>를 바꿔가며 n이 어떻게 변하는지 노트북에서 직접 확인할 수 있습니다.</p>
+
+        <div class="code" data-lang="py">
+          <div class="code__bar"><span class="code__name">셀</span><span class="sp"></span><button class="copy" type="button">복사</button></div>
+          <pre><code>for d in [70, 75, 80, 85, 90, 100]:
+    rr = np.sqrt((cell["x_mm"] - cell["mx"])**2
+               + (cell["y_mm"] - cell["my"])**2 + d**2)
+    n = -np.polyfit(np.log(rr), np.log(cell["B"]), 1)[0]
+    print(f"DEPTH = {d:3d} mm  ->  n = {n:.2f}")</code></pre>
+        </div>
+
+        <figure class="shot">
+          <img src="assets/img/cl_depth.png" alt="코랩에서 DEPTH를 70부터 100까지 바꿔가며 지수 n을 출력한 결과">
+          <figcaption>거리를 <b>10mm 잘못 재면</b> 지수가 <b>0.2 이상</b> 달라집니다.</figcaption>
+        </figure>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th style="width:9rem">DEPTH</th><th>나오는 n</th></tr></thead>
+            <tbody>
+              <tr><td>70 mm</td><td>2.47</td></tr>
+              <tr><td>75 mm</td><td>2.68</td></tr>
+              <tr><td><b>80 mm</b></td><td><b>2.90</b> ← 우리가 잰 값</td></tr>
+              <tr><td>85 mm</td><td>3.13</td></tr>
+              <tr><td>90 mm</td><td>3.37</td></tr>
+              <tr><td>100 mm</td><td>3.89</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note note--check">
+          <span class="note__t">여기서 배울 것</span>
+          <p>
+            분석이 아무리 정교해도 <b>자로 잰 숫자가 틀리면 결과가 틀립니다.</b>
+            거리를 <b>10mm</b> 잘못 재면 지수가 <b>0.2</b> 이상 달라집니다.
+            데이터 분석에서 가장 흔한 실수는 계산이 아니라 <b>측정</b>에서 나옵니다.
+          </p>
+        </div>
+
         <div class="doit">
-          <p><b>오늘 확인해 볼 것</b> — 배경 보정을 <b>하고</b> 잰 데이터와 <b>안 하고</b> 잰 데이터로 각각 n을 구해 비교해 보세요. 어느 쪽이 3에 가까울까요?</p>
+          <p><b>오늘 확인해 볼 것</b></p>
+          <p>① 배경 보정을 <b>하고</b> 잰 것과 <b>안 하고</b> 잰 것으로 각각 n을 구해 비교하세요.</p>
+          <p>② 자석 중심까지의 거리를 <b>자로 정확히</b> 재서 <code>DEPTH</code>에 넣어 보세요.</p>
         </div>
 
         <h2 id="test">테스트 자석 맞히기</h2>

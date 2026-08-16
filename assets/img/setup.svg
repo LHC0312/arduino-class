@@ -1,0 +1,72 @@
+<svg viewBox="0 0 760 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="센서 판과 자석 판 2층 구조, 받침대로 거리를 6cm/10cm 로 바꾸는 실험 장치">
+<style>
+ .lbl{font:600 13px system-ui;fill:#3a3833}
+ .sub{font:11.5px system-ui;fill:#6b6862}
+ .mono{font:11px ui-monospace,monospace;fill:#6b6862}
+</style>
+<!-- 왼쪽: 6cm -->
+<g transform="translate(30,40)">
+  <text x="150" y="0" class="lbl" text-anchor="middle">받침대 6 cm</text>
+  <!-- 자석 판 -->
+  <path d="M40 250 L260 250 L300 220 L80 220 Z" fill="#e8e4d8" stroke="#c9c5b8"/>
+  <path d="M40 250 L40 258 L260 258 L260 250 Z" fill="#d5d1c4" stroke="#c9c5b8"/>
+  <!-- 자석 -->
+  <g transform="translate(155,222)">
+    <rect x="-16" y="-16" width="32" height="16" rx="2" fill="#c0503c"/>
+    <rect x="-16" y="-16" width="16" height="16" rx="2" fill="#3c6ea8"/>
+    <text x="-8" y="-4" font-size="9" fill="#fff" text-anchor="middle" font-weight="600">S</text>
+    <text x="8" y="-4" font-size="9" fill="#fff" text-anchor="middle" font-weight="600">N</text>
+  </g>
+  <!-- 받침대 -->
+  <rect x="52" y="160" width="14" height="62" fill="#bcb8ab"/>
+  <rect x="238" y="160" width="14" height="62" fill="#bcb8ab"/>
+  <rect x="88" y="140" width="14" height="82" fill="#cbc7ba" opacity=".7"/>
+  <!-- 센서 판 -->
+  <path d="M40 160 L260 160 L300 130 L80 130 Z" fill="#f2efe6" stroke="#c9c5b8"/>
+  <path d="M40 160 L40 168 L260 168 L260 160 Z" fill="#e0dcd0" stroke="#c9c5b8"/>
+  <!-- 격자점 -->
+  <g fill="#3c6ea8">
+   <circle cx="95" cy="152" r="3.4"/><circle cx="150" cy="152" r="3.4"/><circle cx="205" cy="152" r="3.4"/>
+   <circle cx="110" cy="145" r="3.4"/><circle cx="165" cy="145" r="3.4"/><circle cx="220" cy="145" r="3.4"/>
+   <circle cx="125" cy="138" r="3.4"/><circle cx="180" cy="138" r="3.4"/><circle cx="235" cy="138" r="3.4"/>
+  </g>
+  <!-- 센서 -->
+  <rect x="158" y="128" width="26" height="14" rx="2" fill="#2f5d8a"/>
+  <text x="171" y="138" font-size="8" fill="#fff" text-anchor="middle" font-weight="600">센서</text>
+  <!-- 거리 화살표 -->
+  <g stroke="#c0503c" stroke-width="1.6" fill="none">
+    <path d="M320 138 L320 228" marker-start="url(#a)" marker-end="url(#a)"/>
+  </g>
+  <text x="330" y="188" class="mono" fill="#c0503c">6 cm</text>
+</g>
+<!-- 오른쪽: 10cm -->
+<g transform="translate(410,40)">
+  <text x="150" y="0" class="lbl" text-anchor="middle">받침대 10 cm</text>
+  <path d="M40 250 L260 250 L300 220 L80 220 Z" fill="#e8e4d8" stroke="#c9c5b8"/>
+  <path d="M40 250 L40 258 L260 258 L260 250 Z" fill="#d5d1c4" stroke="#c9c5b8"/>
+  <g transform="translate(155,222)">
+    <rect x="-16" y="-16" width="32" height="16" rx="2" fill="#c0503c"/>
+    <rect x="-16" y="-16" width="16" height="16" rx="2" fill="#3c6ea8"/>
+    <text x="-8" y="-4" font-size="9" fill="#fff" text-anchor="middle" font-weight="600">S</text>
+    <text x="8" y="-4" font-size="9" fill="#fff" text-anchor="middle" font-weight="600">N</text>
+  </g>
+  <rect x="52" y="112" width="14" height="110" fill="#bcb8ab"/>
+  <rect x="238" y="112" width="14" height="110" fill="#bcb8ab"/>
+  <rect x="88" y="92" width="14" height="130" fill="#cbc7ba" opacity=".7"/>
+  <path d="M40 112 L260 112 L300 82 L80 82 Z" fill="#f2efe6" stroke="#c9c5b8"/>
+  <path d="M40 112 L40 120 L260 120 L260 112 Z" fill="#e0dcd0" stroke="#c9c5b8"/>
+  <g fill="#3c6ea8">
+   <circle cx="95" cy="104" r="3.4"/><circle cx="150" cy="104" r="3.4"/><circle cx="205" cy="104" r="3.4"/>
+   <circle cx="110" cy="97" r="3.4"/><circle cx="165" cy="97" r="3.4"/><circle cx="220" cy="97" r="3.4"/>
+   <circle cx="125" cy="90" r="3.4"/><circle cx="180" cy="90" r="3.4"/><circle cx="235" cy="90" r="3.4"/>
+  </g>
+  <rect x="158" y="80" width="26" height="14" rx="2" fill="#2f5d8a"/>
+  <text x="171" y="90" font-size="8" fill="#fff" text-anchor="middle" font-weight="600">센서</text>
+  <g stroke="#c0503c" stroke-width="1.6" fill="none">
+    <path d="M320 90 L320 228" marker-start="url(#a)" marker-end="url(#a)"/>
+  </g>
+  <text x="330" y="163" class="mono" fill="#c0503c">10 cm</text>
+</g>
+<defs><marker id="a" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 2L5 5L0 8z" fill="#c0503c"/></marker></defs>
+<text x="380" y="378" class="sub" text-anchor="middle">받침대 높이만 바꾸고 나머지는 그대로 둡니다 · 파란 점 9개 = 센서를 옮겨 가며 재는 칸</text>
+</svg>

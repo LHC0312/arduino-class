@@ -73,7 +73,7 @@ assets/site.js        구문 강조 · 진도 저장 · 시뮬레이터
 | 07 | 시리얼 플로터 — 자석 근접에 따른 X·Y·Z 파형 |
 | 08 | 최소제곱 — 슬라이더로 직선을 맞추며 SSE가 줄어드는 것을 확인 |
 | 09 | 3D 자기장 벡터 — 거리를 바꾸며 9개 지점의 화살표 변화를 확인 |
-| 10 | (시뮬레이터 없음 — MagProbe 실제 화면 캡처 6장)|
+| 10 | (시뮬레이터 없음 — MagProbe 6장 + 코랩 5장 실제 캡처, 실행형 노트북)|
 
 - 회로도와 보드 그림은 모두 인라인 SVG라 확대해도 깨지지 않고, 다크 모드에서 라벨 색이 함께 바뀝니다.
 - 진도 체크와 체크리스트 상태는 브라우저의 `localStorage`에 저장됩니다.
@@ -120,7 +120,11 @@ df = pd.read_csv("https://lhc0312.github.io/arduino-class/data/field_sample.csv"
 
 ## 10강 (8/17 수업) 자료
 
-- 화면 캡처: `assets/img/mp_*.png` — MagProbe 실제 UI를 headless Chrome으로 캡처
+- **코랩 노트북**: `notebooks/10_magprobe.ipynb` — 37셀, 실제 실행해 출력·그림 포함
+  - 바로 열기: https://colab.research.google.com/github/LHC0312/arduino-class/blob/main/notebooks/10_magprobe.ipynb
+- 화면 캡처: `assets/img/mp_*.png` (MagProbe UI), `assets/img/cl_*.png` (코랩 화면)
+  — 둘 다 headless Chrome + CDP 로 실제 사이트를 열어 촬영
+- 실험 장치 그림: `assets/img/setup.svg` (2층 구조, 6cm/10cm)
 - 예제 데이터: `data/8cm_막대자석_1_m{1,3,4,7,9}.csv` (개별), `data/mag_8cm_all.csv` (합본 450행)
 - 합본은 코랩에서 URL로 바로 읽힙니다 (파일명 ASCII)
 
@@ -137,3 +141,25 @@ df = pd.read_csv("https://lhc0312.github.io/arduino-class/data/field_sample.csv"
 | 5 | 0.3709 |
 
 연속으로 풀면 n = 2.90 (R² = 0.92). 쌍극자 이론값 3.00과 0.10 차이.
+
+### 거리를 잘못 재면
+
+`DEPTH` 를 바꿔가며 지수를 구하면:
+
+| DEPTH | n |
+|---|---|
+| 70 mm | 2.47 |
+| 75 mm | 2.68 |
+| **80 mm** | **2.90** |
+| 85 mm | 3.13 |
+| 90 mm | 3.37 |
+| 100 mm | 3.89 |
+
+10mm 오차가 지수 0.2 이상을 바꿉니다. 수업에서 "분석보다 측정이 중요하다"는 지점으로 씁니다.
+
+### 노트북 재생성
+
+```bash
+/usr/bin/python3 scratchpad/build_nb.py notebooks/10_magprobe.ipynb
+```
+nbclient 로 실제 실행 후 출력을 저장합니다 (pandas·matplotlib 필요).
